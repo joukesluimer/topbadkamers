@@ -668,7 +668,7 @@ APP_JS = r'''/* Topschilder.nl — formulierlogica, tracking en Supabase-verzend
       "",
       "Kanaal:      " + kanaal,
       d.utm_campaign ? "Campagne:    " + d.utm_campaign : "",
-      "Pagina:      https://topschilder.nl" + (d.bron_url || "")
+      "Pagina:      https://joukesluimer.github.io/topbadkamers" + (d.bron_url || "")
     ];
 
     var plat = { soort: soort, tabel: table, onderwerp: titel, samenvatting: regels.filter(Boolean).join("\n"), kanaal: kanaal };

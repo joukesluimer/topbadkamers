@@ -673,7 +673,7 @@ def build_huiscalculator(write, out):
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Huiscalculator schilderwerk",
-        "url": "https://topschilder.nl" + PAD,
+        "url": "https://joukesluimer.github.io/topbadkamers" + PAD,
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Alle",
         "inLanguage": "nl-NL",

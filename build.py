@@ -1825,7 +1825,7 @@ def build_static_pages():
   <p><small>Laatst bijgewerkt: {TODAY}</small></p>
 
   <h2>Wie zijn wij</h2>
-  <p>{SITE['naam']}, gevestigd te {SITE['adres']}, KvK {SITE['kvk']}, is verwerkingsverantwoordelijke voor de gegevens die via {SITE['domein']} worden verzameld. Contact: <a href="mailto:{SITE['email']}">{SITE['email']}</a>.</p>
+  <p>{SITE['naam']}, gevestigd te {SITE['adres']}, KvK {SITE['kvk']}, is verwerkingsverantwoordelijke voor de gegevens die via {SITE['domein'] or SITE['url'].split('//')[1]} worden verzameld. Contact: <a href="mailto:{SITE['email']}">{SITE['email']}</a>.</p>
 
   <h2>Welke gegevens verzamelen we</h2>
   <ul>
@@ -2127,8 +2127,9 @@ ErrorDocument 404 /404.html
     # CNAME koppelt het custom domein. .nojekyll voorkomt dat GitHub de site
     # door Jekyll haalt; die negeert namelijk mappen en bestanden die met een
     # underscore beginnen en dat sloopt je build.
-    with open(os.path.join(OUT, "CNAME"), "w", encoding="utf-8") as f:
-        f.write(SITE["domein"] + "\n")
+    if SITE["domein"]:
+        with open(os.path.join(OUT, "CNAME"), "w", encoding="utf-8") as f:
+            f.write(SITE["domein"] + "\n")
     open(os.path.join(OUT, ".nojekyll"), "w").close()
 
 

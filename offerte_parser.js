@@ -1,4 +1,4 @@
-/* Offerteparser voor topschilder.nl.
+/* Offerteparser voor top-badkamers.nl.
    Leest de tekst van een schildersofferte uit: posten, aantallen, totalen, btw en
    afspraken. Draait in de browser (window.TSOfferte) en in Node (tests/).
    Alles gebeurt lokaal; er wordt niets verstuurd. */

@@ -222,7 +222,7 @@ def build_schilderweer(write, out):
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Schilderweer-check",
-        "url": "https://topschilder.nl" + PAD,
+        "url": "https://joukesluimer.github.io/topbadkamers" + PAD,
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Alle browsers",
         "inLanguage": "nl-NL",

@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Contentmodel voor Topschilder.nl
+Contentmodel voor Top-badkamers.nl
 Alles wat je aanpast in dit bestand rolt automatisch door de hele site.
 """
 
 SITE = {
-    "naam": "Topschilder",
-    "domein": "topschilder.nl",
-    "url": "https://topschilder.nl",
-    "tagline": "Vergelijk schilders bij jou in de buurt",
+    "naam": "Top Badkamers",
+    # Tijdelijk op het gratis GitHub-adres. Het domein top-badkamers.nl komt later:
+    # vul het dan hier in ("domein" leeg = geen CNAME) en zet "url" erop.
+    "domein": "",
+    "url": "https://joukesluimer.github.io/topbadkamers",
+    "tagline": "Vergelijk badkamerspecialisten bij jou in de buurt",
     "email": "joukesluimer@hotmail.com",
     "telefoon": "085 - 000 00 00",
     "kvk": "97150975",

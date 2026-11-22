@@ -430,7 +430,7 @@ def build_onderhoudscheck(write):
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Onderhoudscheck schilderwerk",
-        "url": "https://topschilder.nl" + PAD,
+        "url": "https://joukesluimer.github.io/topbadkamers" + PAD,
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Alle browsers",
         "inLanguage": "nl-NL",
@@ -785,11 +785,11 @@ PAGE_JS = r"""<script>
     var d1 = v.replace(/-/g, ""), d2 = iso(eind).replace(/-/g, "");
     var nu = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
     var titel = ["Onderhoudscheck schilderwerk opnieuw doen", "Offertes buitenschilderwerk aanvragen", "Offertes buitenschilderwerk aanvragen", "Schilder laten kijken naar houtrot"][res.n];
-    var oms = "Uitslag onderhoudscheck: " + DATA.meter[res.n] + ".\n" + samenvatting().join("\n") + "\n\nOpnieuw doen of offertes aanvragen: https://topschilder.nl/onderhoudscheck/";
+    var oms = "Uitslag onderhoudscheck: " + DATA.meter[res.n] + ".\n" + samenvatting().join("\n") + "\n\nOpnieuw doen of offertes aanvragen: https://joukesluimer.github.io/topbadkamers/onderhoudscheck/";
     var r = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Topschilder.nl//Onderhoudscheck//NL", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
-      "BEGIN:VEVENT", "UID:" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10) + "@topschilder.nl", "DTSTAMP:" + nu,
+      "BEGIN:VEVENT", "UID:" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10) + "@top-badkamers.nl", "DTSTAMP:" + nu,
       "DTSTART;VALUE=DATE:" + d1, "DTEND;VALUE=DATE:" + d2, "SUMMARY:" + icsTekst(titel), "DESCRIPTION:" + icsTekst(oms),
-      "URL:https://topschilder.nl/onderhoudscheck/", "TRANSP:TRANSPARENT",
+      "URL:https://joukesluimer.github.io/topbadkamers/onderhoudscheck/", "TRANSP:TRANSPARENT",
       "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + icsTekst(titel), "TRIGGER:PT9H", "END:VALARM",
       "END:VEVENT", "END:VCALENDAR"].map(vouw).join("\r\n") + "\r\n";
     var blob = new Blob([r], { type: "text/calendar;charset=utf-8" });

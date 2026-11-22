@@ -17,6 +17,9 @@ Hetzelfde als Topschilder, maar dan voor badkamers:
 - [ ] De foto's van Topschilder zijn bewust niet meegenomen (`fotos/` is leeg).
   - Die gaan over schilderwerk, en de licenties en vermeldingen horen bij die site.
   - De site bouwt daardoor nog niet volledig. Zie "Fase 1".
+- [x] Eigen Supabase-project **TopBadkamers** (ref `zedqxocehypoioskzsfc`, EU-West, gratis plan). Het schema staat erin, met de tabel `monteurs` in plaats van `schilders`. Lezen met de publieke sleutel wordt geweigerd. `supabase_leadbeheer.sql` is nog niet uitgevoerd, want de leadprijzen daarin gaan nog over schilderwerk.
+- [x] GitHub-repo `joukesluimer/topbadkamers` (publiek), met alle code behalve `.github/workflows`. Die komt erbij zodra de site bouwt, zodat er geen mislukte deploys komen.
+- [x] De Make-webhook van Topschilder is losgekoppeld (`WEBHOOK_URL` is leeg).
 - [ ] Alle teksten gaan nog over schilderwerk. Er staan ongeveer 1.500 vermeldingen van "schilder" in de code.
 
 ## Hoe het concept vertaalt
@@ -38,9 +41,9 @@ Hetzelfde als Topschilder, maar dan voor badkamers:
 
 ## Wat ik van je nodig heb
 
-1. **Domeinnaam.**
-   - Topbadkamers.nl is al geregistreerd door iemand anders. Die naam is niet beschikbaar, tenzij hij van jou is.
-   - Vrij op 22 november: top-badkamers.nl, topbadkamermonteur.nl en topbadkamer.com.
+1. **Domeinnaam: top-badkamers.nl, later.** Jouke koopt het domein later. Tot die tijd draait de site op het gratis GitHub-adres `https://joukesluimer.github.io/topbadkamers/` (`SITE["domein"]` is leeg, dus er komt geen CNAME).
+   - **Let op voor fase 1:** de site staat dan in een submap (`/topbadkamers/`), maar de code gebruikt links vanaf de root (`/assets/...`, `/kosten/...`). Bij het bouwen moeten die een voorvoegsel krijgen, of die links breken op het GitHub-adres.
+   - Bij de overstap naar het domein: `domein` en `url` in `data.py` invullen, het voorvoegsel weer leeg maken en DNS bij de registrar op GitHub Pages zetten.
 2. **Hoe "spullen" werkt.** Kies een van deze vormen:
    - (a) alleen neutrale kopersgidsen en richtprijzen, zonder winkel;
    - (b) doorverwijzen naar webwinkels, eventueel met affiliatelinks;
@@ -48,8 +51,6 @@ Hetzelfde als Topschilder, maar dan voor badkamers:
    - Als je een eigen winkel wilt koppelen, moet de site daar eerlijk over zijn.
 3. **Werkgebied.** Hetzelfde als Topschilder (Flevoland, het Gooi, de Veluwe, Zwolle/Kampen, Amersfoort), of groter?
 4. **Bedrijfsgegevens.** Hetzelfde KvK-nummer en e-mailadres als Topschilder, of nieuwe?
-5. **Leads.** Een eigen Supabase-project, of een aparte tabel in het bestaande project?
-6. **GitHub.** Mag ik een nieuwe repository voorbereiden? Jij maakt hem aan, en daarna richten we Pages en het domein in.
 
 ## Fases
 

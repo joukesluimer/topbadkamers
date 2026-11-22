@@ -731,7 +731,7 @@ def build_kleurenkiezer(write, out_dir):
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Kleurenkiezer voor gevel en kozijnen",
-        "url": "https://topschilder.nl" + PAD,
+        "url": "https://joukesluimer.github.io/topbadkamers" + PAD,
         "applicationCategory": "DesignApplication",
         "operatingSystem": "Alle browsers",
         "inLanguage": "nl-NL",
@@ -1289,7 +1289,7 @@ KLEUREN_JS = r'''/* Kleurenkiezer — staat in de URL-hash, zodat elk ontwerp ee
       x.fillStyle = "#f4820b";
       x.font = "700 24px -apple-system, Segoe UI, Roboto, Arial, sans-serif";
       x.textAlign = "right";
-      x.fillText("topschilder.nl/kleuren-kiezen", 1232, 1030);
+      x.fillText("top-badkamers.nl/kleuren-kiezen", 1232, 1030);
       c.toBlob(function (blob) {
         if (!blob) { zeg("Bewaren lukte niet in deze browser. Maak anders een schermafbeelding."); return; }
         var a = document.createElement("a");

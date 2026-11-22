@@ -87,7 +87,7 @@ def head(title, description, canonical, jsonld=None, depth_ok=True, noindex=Fals
 <meta property="og:url" content="{SITE['url']}{canonical}">
 <meta property="og:locale" content="nl_NL">
 <meta name="theme-color" content="#3c290f">
-<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml"><meta property="og:image" content="https://topschilder.nl/assets/merk/logo.svg">
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml"><meta property="og:image" content="https://joukesluimer.github.io/topbadkamers/assets/merk/logo.svg">
 <link rel="stylesheet" href="/assets/css/style.css">
 {ld}
 </head>"""

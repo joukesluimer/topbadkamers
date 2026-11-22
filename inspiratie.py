@@ -589,9 +589,9 @@ def build_gids(write, sleutel, n_start):
     artikel_ld = {
         "@context": "https://schema.org", "@type": "Article", "headline": g["h1"],
         "description": g["description"], "inLanguage": "nl-NL",
-        "image": f"https://topschilder.nl/assets/fotos/{fotos[0]['naam']}-1600.webp",
-        "mainEntityOfPage": f"https://topschilder.nl{url}",
-        "publisher": {"@type": "Organization", "name": "Topschilder", "url": "https://topschilder.nl/"},
+        "image": f"https://joukesluimer.github.io/topbadkamers/assets/fotos/{fotos[0]['naam']}-1600.webp",
+        "mainEntityOfPage": f"https://joukesluimer.github.io/topbadkamers{url}",
+        "publisher": {"@type": "Organization", "name": "Topschilder", "url": "https://joukesluimer.github.io/topbadkamers/"},
     }
     html = page(title(g["titel"]), g["description"], url, body, [cr_ld, artikel_ld, faq_ld])
     html = html.replace('<link rel="stylesheet" href="/assets/css/style.css">',
@@ -674,7 +674,7 @@ def build_inspiratie(write, out_dir):
         "itemListElement": [
             {"@type": "ListItem", "position": i + 1,
              "name": f"{st['naam']} ({WONINGTYPE_NAAM[st['type']].lower()})",
-             "url": f"https://topschilder.nl{PAD}#{st['id']}"}
+             "url": f"https://joukesluimer.github.io/topbadkamers{PAD}#{st['id']}"}
             for i, st in enumerate(STIJLEN)
         ],
     }
