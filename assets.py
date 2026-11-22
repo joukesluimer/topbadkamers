@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Topschilder.nl — CSS, JavaScript en favicon.
+Top Badkamers: CSS, JavaScript en favicon.
 
 Deze staan hier als tekst zodat de hele site uit een handvol losse bestanden
 bestaat en er geen mappenstructuur nodig is in de repository. build.py schrijft
@@ -10,26 +10,26 @@ Wil je de Supabase-koppeling aanpassen? Dat doe je onderin dit bestand in
 CONFIG_JS. Vormgeving zit in STYLE_CSS.
 """
 
-STYLE_CSS = r'''/* Topschilder.nl — eigen CSS, geen frameworks. ~14kb, geen render-blocking JS. */
+STYLE_CSS = r'''/* Top Badkamers: eigen CSS, geen frameworks. ~14kb, geen render-blocking JS. */
 
 :root{
-  --navy:#3c290f;
-  --navy-700:#513a17;
-  --navy-500:#6b5024;
-  --accent:#f4820b;
-  --accent-dark:#d96f00;
-  --accent-soft:#fff4e6;
+  --navy:#0b4a56;
+  --navy-700:#174851;
+  --navy-500:#24606b;
+  --accent:#c4511f;
+  --accent-dark:#a8431a;
+  --accent-soft:#fdefe8;
   --green:#0f8a5f;
-  --ink:#241906;
-  --body:#57492f;
-  --muted:#6f6047;
-  --line:#e9e2d6;
+  --ink:#082f37;
+  --body:#3f5459;
+  --muted:#55696e;
+  --line:#d9e5e7;
   --bg:#ffffff;
-  --bg-soft:#faf7f1;
+  --bg-soft:#f2f8f8;
   --radius:12px;
   --radius-lg:18px;
-  --shadow:0 1px 2px rgba(60,41,15,.06), 0 8px 24px rgba(60,41,15,.07);
-  --shadow-lg:0 2px 4px rgba(60,41,15,.06), 0 18px 46px rgba(60,41,15,.13);
+  --shadow:0 1px 2px rgba(11,74,86,.06), 0 8px 24px rgba(11,74,86,.07);
+  --shadow-lg:0 2px 4px rgba(11,74,86,.06), 0 18px 46px rgba(11,74,86,.13);
   --max:1160px;
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
@@ -63,7 +63,7 @@ small{font-size:.85rem}
 .soft{background:var(--bg-soft)}
 .dark{background:var(--navy);color:#c7d6e5}
 .dark h1,.dark h2,.dark h3{color:#fff}
-.dark a{color:#ffd9ab}
+.dark a{color:#f4c7b5}
 .center{text-align:center}
 .lead{font-size:1.14rem;color:var(--body)}
 .mt0{margin-top:0}.mb0{margin-bottom:0}
@@ -97,7 +97,7 @@ small{font-size:.85rem}
 }
 .btn:hover{text-decoration:none;transform:translateY(-1px)}
 .btn-primary{background:var(--accent);color:#fff;box-shadow:0 3px 0 var(--accent-dark)}
-.btn-primary:hover{background:var(--accent-dark);box-shadow:0 4px 0 #b85e00;color:#fff}
+.btn-primary:hover{background:var(--accent-dark);box-shadow:0 4px 0 #8e3815;color:#fff}
 .btn-dark{background:var(--navy);color:#fff}
 .btn-dark:hover{background:var(--navy-700);color:#fff}
 .btn-ghost{background:#fff;border-color:var(--line);color:var(--ink)}
@@ -106,8 +106,8 @@ small{font-size:.85rem}
 .btn-block{display:block;width:100%}
 
 /* ---------- Hero ---------- */
-.hero{background:linear-gradient(165deg,var(--navy) 0%,#241906 60%,#5c431a 100%);color:#c7d6e5;position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;inset:auto -10% -60% 40%;height:520px;background:radial-gradient(closest-side,rgba(244,130,11,.20),transparent);pointer-events:none}
+.hero{background:linear-gradient(165deg,var(--navy) 0%,#082f37 60%,#1a525c 100%);color:#c7d6e5;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto -10% -60% 40%;height:520px;background:radial-gradient(closest-side,rgba(196,81,31,.20),transparent);pointer-events:none}
 .hero-in{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center;padding-top:74px;padding-bottom:84px;position:relative;z-index:2}
 .hero h1{color:#fff;margin-bottom:.4em}
 .hero p.lead{color:#b8cadd;font-size:1.16rem;max-width:52ch}
@@ -115,7 +115,7 @@ small{font-size:.85rem}
 .hero-usps li{display:flex;gap:11px;align-items:flex-start;margin-bottom:11px;color:#dbe7f2;font-weight:500}
 .check{flex:0 0 22px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.13);color:#7ee2b0;display:grid;place-items:center;font-size:.72rem;margin-top:2px;font-weight:700}
 .hero-proof{display:flex;gap:26px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:.9rem;color:#9db3c9}
-.stars{color:#ffc043;letter-spacing:2px}
+.stars{color:#e36939;letter-spacing:2px}
 
 @media(max-width:920px){
   .hero-in{grid-template-columns:1fr;gap:34px;padding-top:48px;padding-bottom:56px}
@@ -138,7 +138,7 @@ input[type=text],input[type=email],input[type=tel],input[type=number],select,tex
   width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:1rem;
   font-family:inherit;color:var(--ink);background:#fff;transition:border-color .12s
 }
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(244,130,11,.14)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(196,81,31,.14)}
 textarea{min-height:110px;resize:vertical}
 .field{margin-bottom:16px}
 .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -164,7 +164,7 @@ textarea{min-height:110px;resize:vertical}
 .oc-stap:first-of-type{margin-top:4px}
 .oc-plak{margin:0 0 12px;font-size:.93rem}
 .oc-plak summary{cursor:pointer;color:var(--navy);font-weight:600;margin-bottom:10px}
-input[type=file]{width:100%;padding:12px;border:1.5px dashed var(--line);border-radius:10px;background:#faf8f5;font-size:.93rem}
+input[type=file]{width:100%;padding:12px;border:1.5px dashed var(--line);border-radius:10px;background:#f6f8f9;font-size:.93rem}
 .oc-melding{font-size:.85rem;color:var(--muted);margin:6px 0 0}
 .oc-rij{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 8px;align-items:end;padding:10px 0 12px;border-bottom:1px solid var(--line)}
 .oc-rij select,.oc-rij input[type=text]{padding:7px 8px;font-size:.88rem;height:38px;box-sizing:border-box}
@@ -175,7 +175,7 @@ input[type=file]{width:100%;padding:12px;border:1.5px dashed var(--line);border-
 .oc-veld-type{grid-column:1/-1}
 .oc-mee{grid-column:1/-1;display:flex;gap:8px;align-items:center;font-size:.84rem;font-weight:400;margin:2px 0 0}
 .oc-mee input{accent-color:var(--accent);width:16px;height:16px}
-.oc-label{grid-column:1/-1;color:#8a5200;font-size:.8rem}
+.oc-label{grid-column:1/-1;color:#6a290f;font-size:.8rem}
 @media(max-width:560px){.oc-rij{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 .oc-totalen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:6px}
 .oc-totalen .field{margin:0}
@@ -184,7 +184,7 @@ input[type=file]{width:100%;padding:12px;border:1.5px dashed var(--line);border-
 @media(max-width:420px){.oc-totalen{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.oc-totalen .field:nth-child(2){grid-column:1/-1;order:3}}
 .oc-controle{font-size:.86rem;margin:6px 0 10px;padding:0}
 .oc-controle.oc-ok{color:#1e6b3a;background:#e7f5ec;padding:8px 10px;border-radius:8px}
-.oc-controle.oc-let,.oc-gevonden .oc-let{color:#8a3b00;background:#fff4e6;padding:8px 10px;border-radius:8px}
+.oc-controle.oc-let,.oc-gevonden .oc-let{color:#6a290f;background:#fdefe8;padding:8px 10px;border-radius:8px}
 .oc-gevonden{background:var(--bg-soft);border-radius:10px;padding:12px 14px;margin:12px 0 4px;font-size:.86rem}
 .oc-gevonden h4{font-size:.92rem;margin:0 0 6px}
 .oc-gevonden dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:3px 12px;margin:0}
@@ -289,7 +289,7 @@ td.num{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:650;colo
 .callout strong{color:var(--ink)}
 
 /* ---------- CTA blok ---------- */
-.cta{background:linear-gradient(150deg,var(--navy),#241906);border-radius:var(--radius-lg);padding:44px;color:#c7d6e5;text-align:center}
+.cta{background:linear-gradient(150deg,var(--navy),#082f37);border-radius:var(--radius-lg);padding:44px;color:#c7d6e5;text-align:center}
 .cta h2{color:#fff;margin-bottom:.4em}
 .cta p{max-width:52ch;margin:0 auto 24px;color:#b8cadd}
 @media(max-width:600px){.cta{padding:30px 22px}}
@@ -317,13 +317,13 @@ td.num{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:650;colo
   .sticky-cta{
     display:block;position:fixed;left:0;right:0;bottom:0;z-index:70;
     background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:10px 16px;
-    box-shadow:0 -4px 20px rgba(60,41,15,.10)
+    box-shadow:0 -4px 20px rgba(11,74,86,.10)
   }
   body{padding-bottom:76px}
 }
 
-.badge{display:inline-block;background:var(--accent-soft);color:#a35200;font-size:.78rem;font-weight:750;padding:5px 11px;border-radius:99px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:14px}
-.badge-dark{background:rgba(255,255,255,.12);color:#ffd9ab}
+.badge{display:inline-block;background:var(--accent-soft);color:#9c4019;font-size:.78rem;font-weight:750;padding:5px 11px;border-radius:99px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:14px}
+.badge-dark{background:rgba(255,255,255,.12);color:#f4c7b5}
 
 .stat{text-align:center}
 .stat .n{font-size:2.1rem;font-weight:800;color:var(--ink);letter-spacing:-.03em;line-height:1.1}
@@ -363,16 +363,17 @@ td.num{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:650;colo
 .vn{position:relative;border-radius:var(--radius-lg);overflow:hidden;user-select:none;touch-action:none;border:1px solid var(--line);background:var(--bg-soft)}
 .vn img,.vn svg{display:block;width:100%;height:auto}
 .vn-na{position:absolute;inset:0;clip-path:inset(0 0 0 50%)}
-.vn-greep{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;box-shadow:0 0 0 1px rgba(60,41,15,.25);cursor:ew-resize}
+.vn-greep{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;box-shadow:0 0 0 1px rgba(11,74,86,.25);cursor:ew-resize}
 .vn-greep::after{content:"";position:absolute;top:50%;left:50%;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;background:#fff;box-shadow:var(--shadow)}
 .vn-greep::before{content:"◀ ▶";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;font-size:.7rem;color:var(--accent-dark);letter-spacing:-1px}
-.vn-label{position:absolute;bottom:14px;font-size:.78rem;font-weight:700;background:rgba(36,25,6,.82);color:#fff;padding:5px 12px;border-radius:99px;letter-spacing:.03em}
+.vn-label{position:absolute;bottom:14px;font-size:.78rem;font-weight:700;background:rgba(8,47,55,.82);color:#fff;padding:5px 12px;border-radius:99px;letter-spacing:.03em}
 .vn-label.l{left:14px}.vn-label.r{right:14px}
 
 /* ---------- Prijsindicator ---------- */
 .calc{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:26px;box-shadow:var(--shadow)}
 .calc h3{margin-bottom:18px}
 .calc .rij{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.calc .rij[hidden]{display:none}
 .calc label{margin:0;flex:0 0 120px}
 .calc select{flex:1;min-width:180px}
 .calc input[type=range]{flex:1;min-width:160px;accent-color:var(--accent);height:6px}
@@ -406,35 +407,35 @@ a.card:hover::after{transform:scaleX(1)}
 
 /* ---------- Sectieritme ---------- */
 @media(min-width:900px){.section{padding:84px 0}}
-.section .center > h2::after{content:"";display:block;width:52px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--accent),#ffb15c);margin:16px auto 0}
-.soft{background:linear-gradient(180deg,#faf6ee 0%,var(--bg-soft) 100%)}
-.badge{box-shadow:inset 0 0 0 1px rgba(217,111,0,.18)}
-.badge-dark{box-shadow:inset 0 0 0 1px rgba(255,217,171,.22)}
+.section .center > h2::after{content:"";display:block;width:52px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--accent),#f0a37f);margin:16px auto 0}
+.soft{background:linear-gradient(180deg,#f1f6f7 0%,var(--bg-soft) 100%)}
+.badge{box-shadow:inset 0 0 0 1px rgba(168,67,26,.18)}
+.badge-dark{box-shadow:inset 0 0 0 1px rgba(244,199,181,.22)}
 
 /* ---------- Hero met foto ---------- */
-.hero-foto{background:#241906;isolation:isolate}
+.hero-foto{background:#082f37;isolation:isolate}
 .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 40%;z-index:-2;max-width:none}
 .hero-foto::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(100deg,rgba(28,19,5,.93) 0%,rgba(28,19,5,.80) 40%,rgba(28,19,5,.42) 68%,rgba(28,19,5,.28) 100%),
-             linear-gradient(0deg,rgba(28,19,5,.55),transparent 40%)}
+  background:linear-gradient(100deg,rgba(5,25,28,.93) 0%,rgba(5,25,28,.80) 40%,rgba(5,25,28,.42) 68%,rgba(5,25,28,.28) 100%),
+             linear-gradient(0deg,rgba(5,25,28,.55),transparent 40%)}
 .hero-foto::after{z-index:-1}
 .hero-foto .hero-in{z-index:auto;padding-top:84px;padding-bottom:96px}
 .hero-foto h1{font-size:clamp(2rem,4.6vw,3.35rem);text-shadow:0 2px 24px rgba(0,0,0,.25)}
-.hero-foto p.lead{color:#eadfcd}
-.hero-foto .hero-usps li{color:#f6efe4}
+.hero-foto p.lead{color:#d5e0e2}
+.hero-foto .hero-usps li{color:#e9f0f1}
 .hero-foto .check{background:rgba(126,226,176,.16);box-shadow:inset 0 0 0 1px rgba(126,226,176,.35)}
 .hero-tags{list-style:none;padding:0;margin:4px 0 0;display:flex;flex-wrap:wrap;gap:8px}
-.hero-tags li{margin:0;font-size:.85rem;font-weight:600;color:#f3e7d6;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);padding:6px 12px;border-radius:99px;backdrop-filter:blur(4px)}
+.hero-tags li{margin:0;font-size:.85rem;font-weight:600;color:#dee9eb;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);padding:6px 12px;border-radius:99px;backdrop-filter:blur(4px)}
 .hero .formcard{border-top:4px solid var(--accent);box-shadow:0 30px 70px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.12)}
 @media(max-width:920px){
-  .hero-foto::before{background:linear-gradient(180deg,rgba(28,19,5,.80) 0%,rgba(28,19,5,.90) 45%,rgba(28,19,5,.97) 100%)}
+  .hero-foto::before{background:linear-gradient(180deg,rgba(5,25,28,.80) 0%,rgba(5,25,28,.90) 45%,rgba(5,25,28,.97) 100%)}
   .hero-bg{height:620px;object-position:60% 30%}
   .hero-foto .hero-in{padding-top:44px;padding-bottom:52px}
 }
 @media(max-width:560px){.hero-tags{display:none}}
 
 /* ---------- Vertrouwensbalk ---------- */
-.trustbar{background:#fff;border-bottom:1px solid var(--line);box-shadow:0 6px 24px rgba(60,41,15,.05);position:relative;z-index:3}
+.trustbar{background:#fff;border-bottom:1px solid var(--line);box-shadow:0 6px 24px rgba(11,74,86,.05);position:relative;z-index:3}
 .trustbar ul{list-style:none;margin:0;padding:18px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .trustbar li{display:flex;align-items:center;gap:11px;margin:0;font-size:.93rem;color:var(--body);line-height:1.35}
 .trustbar li strong{color:var(--ink)}
@@ -445,13 +446,13 @@ a.card:hover::after{transform:scaleX(1)}
 /* ---------- Zo werkt het ---------- */
 .steps3{gap:22px;position:relative}
 .steps3 li{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:30px 26px 26px;box-shadow:var(--shadow);position:relative;z-index:1}
-.steps3 li::before{left:auto;right:22px;top:22px;width:34px;height:34px;font-size:.92rem;background:var(--accent-soft);color:var(--accent-dark);box-shadow:inset 0 0 0 1px rgba(217,111,0,.2)}
+.steps3 li::before{left:auto;right:22px;top:22px;width:34px;height:34px;font-size:.92rem;background:var(--accent-soft);color:var(--accent-dark);box-shadow:inset 0 0 0 1px rgba(168,67,26,.2)}
 .step-ic{display:grid;place-items:center;width:58px;height:58px;border-radius:16px;margin-bottom:18px;color:#fff;
-  background:linear-gradient(140deg,var(--accent) 0%,var(--accent-dark) 100%);box-shadow:0 10px 22px rgba(217,111,0,.28)}
+  background:linear-gradient(140deg,var(--accent) 0%,var(--accent-dark) 100%);box-shadow:0 10px 22px rgba(168,67,26,.28)}
 .steps3 h3{font-size:1.2rem;margin-bottom:.4em}
 @media(min-width:761px) and (max-width:980px){.steps3{gap:14px}.steps3 li{padding:24px 18px 20px}.steps3 h3{font-size:1.06rem}.step-ic{width:50px;height:50px;border-radius:14px}}
 @media(min-width:761px){
-  .steps3::before{content:"";position:absolute;top:58px;left:12%;right:12%;border-top:2px dashed #e7cba6;z-index:0}
+  .steps3::before{content:"";position:absolute;top:58px;left:12%;right:12%;border-top:2px dashed #b8d1d5;z-index:0}
 }
 /* zonder icoon (oudere markup) blijft de nummerbol links staan */
 .steps3 li:not(:has(.step-ic)){padding-left:76px}
@@ -459,38 +460,38 @@ a.card:hover::after{transform:scaleX(1)}
 
 /* ---------- Kaarten ---------- */
 .card{border-radius:var(--radius-lg)}
-.card .ic{width:52px;height:52px;border-radius:14px;background:linear-gradient(140deg,#fff1df,#ffe2bf);box-shadow:inset 0 0 0 1px rgba(217,111,0,.15)}
+.card .ic{width:52px;height:52px;border-radius:14px;background:linear-gradient(140deg,#fbeae3,#f7d5c7);box-shadow:inset 0 0 0 1px rgba(168,67,26,.15)}
 .card .ic svg{width:25px;height:25px}
-.g4 > .card{box-shadow:0 1px 2px rgba(60,41,15,.04)}
-.g4 > .card:hover{box-shadow:var(--shadow);border-color:#e3d3bb}
-a.card{display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(60,41,15,.05)}
-a.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px);border-color:#ecd9bd}
+.g4 > .card{box-shadow:0 1px 2px rgba(11,74,86,.04)}
+.g4 > .card:hover{box-shadow:var(--shadow);border-color:#c6d5d8}
+a.card{display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(11,74,86,.05)}
+a.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px);border-color:#cadcdf}
 a.card > .foto{margin:-24px -24px 18px;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
 a.card > .foto img{border-radius:0;aspect-ratio:3/2;object-fit:cover;transition:transform .5s ease}
 a.card:hover > .foto img{transform:scale(1.05)}
 a.card > .illu{margin:-24px -24px 18px;width:calc(100% + 48px);max-width:none;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
 a.card .price{display:inline-block;align-self:flex-start;background:var(--bg-soft);border:1px solid var(--line);color:var(--ink);padding:4px 11px;border-radius:99px;font-size:.84rem;margin-top:auto}
 a.card .go{display:inline-flex;align-items:center;gap:6px}
-a.card .go{color:#a65300}
-a.card:hover .go{color:#8a4500}
-.footer-bot{color:#c2b39b}
+a.card .go{color:#803112}
+a.card:hover .go{color:#6a290f}
+.footer-bot{color:#a6b5b7}
 
 /* ---------- Chips ---------- */
 .chips a{transition:border-color .15s,color .15s,transform .15s,box-shadow .15s}
-.chips a:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(60,41,15,.08)}
+.chips a:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(11,74,86,.08)}
 
 /* ---------- Tabellen ---------- */
-.tablewrap{border-radius:var(--radius-lg);box-shadow:0 1px 2px rgba(60,41,15,.05),0 10px 30px rgba(60,41,15,.06)}
-th{background:linear-gradient(180deg,#fbf3e6,#f7ecdb);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:#5a3d12;border-bottom:2px solid #efdcc0}
-tbody tr:nth-child(even) td{background:#fdfbf7}
+.tablewrap{border-radius:var(--radius-lg);box-shadow:0 1px 2px rgba(11,74,86,.05),0 10px 30px rgba(11,74,86,.06)}
+th{background:linear-gradient(180deg,#ecf4f5,#e3edef);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:#124f5a;border-bottom:2px solid #cddfe2}
+tbody tr:nth-child(even) td{background:#f9fbfb}
 tbody tr{transition:background .15s}
-tbody tr:hover td{background:#fff7ec}
-td.num{color:#8a4700}
+tbody tr:hover td{background:#fdf2ee}
+td.num{color:#6a290f}
 td:first-child{font-weight:600;color:var(--ink)}
 td:first-child small{font-weight:400}
 
 /* ---------- Callouts en lijsten ---------- */
-.callout{position:relative;background:linear-gradient(135deg,#fff6ea 0%,#fff1df 100%);border:1px solid #f6d9b2;border-left:5px solid var(--accent);border-radius:var(--radius);padding:20px 24px 20px 64px;box-shadow:0 6px 20px rgba(217,111,0,.07)}
+.callout{position:relative;background:linear-gradient(135deg,#fcf1ed 0%,#fbeae3 100%);border:1px solid #c5dfe3;border-left:5px solid var(--accent);border-radius:var(--radius);padding:20px 24px 20px 64px;box-shadow:0 6px 20px rgba(168,67,26,.07)}
 .callout::before{content:"i";font-family:Georgia,serif;font-style:italic;position:absolute;left:18px;top:18px;width:32px;height:32px;border-radius:50%;background:var(--accent-dark);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.95rem}
 .callout-prijs::before{content:"€";font-family:var(--font);font-style:normal}
 @media(max-width:520px){.callout{padding:18px 18px 18px 56px}.callout::before{left:14px}}
@@ -498,33 +499,33 @@ td:first-child small{font-weight:400}
 .checklist li::before{content:"";top:3px;width:22px;height:22px;border-radius:50%;background:#e4f4ec url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f8a5f' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-9'/%3E%3C/svg%3E") center/13px no-repeat}
 .prose ol{counter-reset:po;list-style:none;padding-left:0}
 .prose ol > li{counter-increment:po;position:relative;padding-left:44px;margin-bottom:.9em}
-.prose ol > li::before{content:counter(po);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);font-weight:800;font-size:.9rem;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(217,111,0,.22)}
+.prose ol > li::before{content:counter(po);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);font-weight:800;font-size:.9rem;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(168,67,26,.22)}
 .prose h2{position:relative;padding-left:18px}
-.prose h2::before{content:"";position:absolute;left:0;top:.18em;bottom:.18em;width:5px;border-radius:5px;background:linear-gradient(180deg,var(--accent),#ffb15c)}
+.prose h2::before{content:"";position:absolute;left:0;top:.18em;bottom:.18em;width:5px;border-radius:5px;background:linear-gradient(180deg,var(--accent),#f0a37f)}
 .prose .foto img{box-shadow:var(--shadow)}
 
 /* ---------- FAQ ---------- */
 .faq details{transition:border-color .15s,box-shadow .15s}
-.faq details:hover{border-color:#e7cfae}
-.faq details[open]{border-color:#efd3ad;box-shadow:0 6px 20px rgba(60,41,15,.06)}
+.faq details:hover{border-color:#bed3d7}
+.faq details[open]{border-color:#bfd8dd;box-shadow:0 6px 20px rgba(11,74,86,.06)}
 .faq summary::after{width:28px;height:28px;flex:0 0 28px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;font-size:1.1rem}
 
 /* ---------- CTA en donkere secties ---------- */
 .cta{position:relative;overflow:hidden;isolation:isolate;padding:56px 44px}
-.cta::before{content:"";position:absolute;width:520px;height:520px;right:-160px;top:-260px;border-radius:50%;background:radial-gradient(closest-side,rgba(244,130,11,.32),transparent);z-index:-1}
-.cta::after{content:"";position:absolute;width:420px;height:420px;left:-160px;bottom:-240px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,177,92,.16),transparent);z-index:-1}
-.cta p{color:#e3d6c2}
+.cta::before{content:"";position:absolute;width:520px;height:520px;right:-160px;top:-260px;border-radius:50%;background:radial-gradient(closest-side,rgba(196,81,31,.32),transparent);z-index:-1}
+.cta::after{content:"";position:absolute;width:420px;height:420px;left:-160px;bottom:-240px;border-radius:50%;background:radial-gradient(closest-side,rgba(240,163,127,.16),transparent);z-index:-1}
+.cta p{color:#cbd8da}
 .section.dark{position:relative;overflow:hidden;isolation:isolate}
-.section.dark::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(600px 300px at 85% 0%,rgba(244,130,11,.18),transparent),radial-gradient(500px 260px at 0% 100%,rgba(255,177,92,.10),transparent)}
+.section.dark::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(600px 300px at 85% 0%,rgba(196,81,31,.18),transparent),radial-gradient(500px 260px at 0% 100%,rgba(240,163,127,.10),transparent)}
 
 /* ---------- Knoppen: subtiele glans ---------- */
 .btn-primary{position:relative;overflow:hidden}
 .btn-primary::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg);transition:left .6s ease;pointer-events:none}
 .btn-primary:hover::after{left:120%}
-.btn:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #ffb15c;outline-offset:2px}
+.btn:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #f0a37f;outline-offset:2px}
 
 /* ---------- Pagina-intro met formulier (diensten, plaatsen, checken) ---------- */
-.section-sm:has(.g2 .formcard){background:radial-gradient(700px 440px at 88% 46%,#fff0dc 0%,rgba(255,240,220,0) 70%)}
+.section-sm:has(.g2 .formcard){background:radial-gradient(700px 440px at 88% 46%,#fbe8e0 0%,rgba(251,232,224,0) 70%)}
 .section-sm:has(.g2 .formcard) .g2 .foto img{aspect-ratio:16/9;object-fit:cover}
 .g2 .formcard{border-top:4px solid var(--accent)}
 @media(min-width:981px){.g2 > div:has(> .formcard){position:sticky;top:94px;align-self:start}}
@@ -538,7 +539,7 @@ input[type=file]::file-selector-button:hover{background:var(--navy-700)}
 }
 '''
 
-APP_JS = r'''/* Topschilder.nl — formulierlogica, tracking en Supabase-verzending. */
+APP_JS = r'''/* Top Badkamers: formulierlogica, tracking en Supabase-verzending. */
 (function () {
   "use strict";
 
@@ -600,7 +601,7 @@ APP_JS = r'''/* Topschilder.nl — formulierlogica, tracking en Supabase-verzend
   /* ------------------------------------------------------------- verzenden */
   function postToSupabase(table, payload) {
     if (CFG.DEMO_MODE || !CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY) {
-      console.log("[Topschilder] DEMO_MODE — dit zou naar Supabase gaan:", table, payload);
+      console.log("[Top Badkamers] DEMO_MODE — dit zou naar Supabase gaan:", table, payload);
       return Promise.resolve({ demo: true });
     }
     return fetch(CFG.SUPABASE_URL.replace(/\/$/, "") + "/rest/v1/" + table, {
@@ -624,7 +625,7 @@ APP_JS = r'''/* Topschilder.nl — formulierlogica, tracking en Supabase-verzend
   // Make/Zapier alleen "onderwerp" en "samenvatting" hoeft te mappen en klaar bent.
   function buildWebhookPayload(table, d) {
     var soort = table === "leads" ? "Offerteaanvraag"
-              : table === "monteurs" ? "Schilder aanmelding"
+              : table === "monteurs" ? "Monteur aanmelding"
               : table === "offerte_checks" ? "Offerte-check"
               : "Contactbericht";
 
@@ -636,7 +637,7 @@ APP_JS = r'''/* Topschilder.nl — formulierlogica, tracking en Supabase-verzend
     var titel = table === "leads"
         ? (d.dienst || "Aanvraag") + " " + (d.plaats || "") + " — " + (d.telefoon || "")
         : table === "monteurs"
-        ? "Schilder: " + (d.bedrijfsnaam || "") + " (" + (d.werkgebied || "") + ")"
+        ? "Monteur: " + (d.bedrijfsnaam || "") + " (" + (d.werkgebied || "") + ")"
         : soort + " — " + (d.naam || "");
 
     if (d.opslag_mislukt) titel = "LET OP, niet opgeslagen: " + titel;
@@ -917,11 +918,15 @@ APP_JS = r'''/* Topschilder.nl — formulierlogica, tracking en Supabase-verzend
     function reken() {
       var o = kies.options[kies.selectedIndex];
       var van = parseFloat(o.dataset.van), tot = parseFloat(o.dataset.tot);
-      var n = parseInt(schuif.value, 10);
-      aantalUit.textContent = n + " " + (o.dataset.eenheid || "");
+      // Vaste prijs (per badkamer, per toilet): geen schuif, alleen de range.
+      var vast = o.dataset.min === o.dataset.max;
+      var rij = schuif.closest(".rij");
+      if (rij) rij.hidden = vast;
+      var n = vast ? 1 : parseInt(schuif.value, 10);
+      aantalUit.textContent = vast ? "" : n + " " + (o.dataset.eenheid || "");
       bedragUit.textContent = euro(van * n) + " – " + euro(tot * n);
       subUit.textContent = o.dataset.uitleg || "";
-      if (link) link.href = "/schilderwerk/" + o.value + "/";
+      if (link) link.href = "/diensten/" + o.value + "/";
     }
     kies.addEventListener("change", function () {
       var o = kies.options[kies.selectedIndex];
@@ -955,7 +960,7 @@ APP_JS = r'''/* Topschilder.nl — formulierlogica, tracking en Supabase-verzend
 '''
 
 CONFIG_JS = r'''/* =========================================================================
-   TOPSCHILDER — CONFIGURATIE
+   TOP BADKAMERS: CONFIGURATIE
    Dit is het ENIGE bestand dat je hoeft aan te passen om leads te ontvangen.
    Vul hieronder je Supabase project-URL en anon key in.
 
@@ -999,13 +1004,9 @@ window.TS_CONFIG = {
 '''
 
 FAVICON_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<rect width="64" height="64" rx="14" fill="#3c290f"/>
-<rect x="34" y="13" width="20" height="8" rx="4" fill="#f4820b"/>
-<path d="M44 21v5a3 3 0 0 1-3 3h-6" stroke="#f4820b" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-<rect x="31" y="27" width="7" height="9" rx="2" fill="#f4820b"/>
-<circle cx="23" cy="24" r="9" fill="#fff"/>
-<path d="M13 24a10 10 0 0 1 20 0z" fill="#fff"/>
-<path d="M15 38h16l4 14H11z" fill="#fff"/>
+<rect width="64" height="64" rx="14" fill="#0b4a56"/>
+<path d="M32 9C32 9 16 27.6 16 38.8a16 16 0 0 0 32 0C48 27.6 32 9 32 9z" fill="#fff"/>
+<path d="M24.4 39.6a7.8 7.8 0 0 0 7.6 7.8" fill="none" stroke="#c4511f" stroke-width="4.2" stroke-linecap="round"/>
 </svg>'''
 
 
@@ -1013,22 +1014,22 @@ FAVICON_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
 STYLE_CSS += r'''
 /* Werkgebiedkaart */
 .kaart-knoppen{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.chip-k{font:inherit;font-size:.92rem;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid #d9c8a8;background:#fff;color:#3c290f;cursor:pointer}
-.chip-k:hover{border-color:#f4820b}
-.chip-k[aria-pressed="true"]{background:#3c290f;border-color:#3c290f;color:#fff}
-.chip-k:focus-visible,.kaart-link:focus-visible{outline:3px solid #f4820b;outline-offset:2px}
+.chip-k{font:inherit;font-size:.92rem;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid #b5c8cc;background:#fff;color:#0b4a56;cursor:pointer}
+.chip-k:hover{border-color:#c4511f}
+.chip-k[aria-pressed="true"]{background:#0b4a56;border-color:#0b4a56;color:#fff}
+.chip-k:focus-visible,.kaart-link:focus-visible{outline:3px solid #c4511f;outline-offset:2px}
 .kaart-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:stretch}
-.kaart svg{width:100%;height:auto;aspect-ratio:1000/944;display:block;border-radius:var(--radius-lg);border:1px solid #e6d9c2;background:#dfe9e8}
-.kw{fill:#dfe9e8}.kl{fill:#f7f1e6;stroke:#ddcfb6;stroke-width:1.5}.ka{fill:#fbe9cf}
+.kaart svg{width:100%;height:auto;aspect-ratio:1000/944;display:block;border-radius:var(--radius-lg);border:1px solid #ccdadc;background:#dfe9e8}
+.kw{fill:#dfe9e8}.kl{fill:#ebf1f2;stroke:#c1d0d2;stroke-width:1.5}.ka{fill:#f8ddd1}
 .kp{cursor:pointer;outline:none}.kh{fill:transparent}
-.kd{fill:#f4820b;stroke:#3c290f;stroke-width:2.5;transition:fill .15s}
-.kp text{fill:#3c290f;font-weight:700;paint-order:stroke;stroke:#fffaf2;stroke-width:5px;stroke-linejoin:round;pointer-events:none;display:none}
+.kd{fill:#c4511f;stroke:#0b4a56;stroke-width:2.5;transition:fill .15s}
+.kp text{fill:#0b4a56;font-weight:700;paint-order:stroke;stroke:#f6fbfb;stroke-width:5px;stroke-linejoin:round;pointer-events:none;display:none}
 .kp.kg text,.kaart svg.zoom .kp text,.kp:hover text,.kp:focus text,.kp.aan text{display:block}
-.kp:hover .kd,.kp:focus .kd,.kp.aan .kd{fill:#3c290f;stroke:#f4820b;stroke-width:4}
+.kp:hover .kd,.kp:focus .kd,.kp.aan .kd{fill:#0b4a56;stroke:#c4511f;stroke-width:4}
 .kp[hidden]{display:none}
-.kaart-info{background:#3c290f;color:#f7f1e6;border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
-.kaart-prov{margin:0;color:#ffc98a;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.kaart-naam{color:#fff;margin:0}.kaart-hook{color:#f7f1e6;margin:0 0 auto;font-size:.97rem}
+.kaart-info{background:#0b4a56;color:#ebf1f2;border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.kaart-prov{margin:0;color:#f0b199;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.kaart-naam{color:#fff;margin:0}.kaart-hook{color:#ebf1f2;margin:0 0 auto;font-size:.97rem}
 .kaart-link{margin-top:14px}
 .kaart-bron{font-size:.8rem;margin-top:10px}
 @media(max-width:860px){.kaart-grid{grid-template-columns:minmax(0,1fr)}.kaart-hook{margin-bottom:0}}
@@ -1085,7 +1086,7 @@ APP_JS += r'''
   function toon(p) {
     punten.forEach(function (q) { q.classList.toggle("aan", q === p); });
     prov.textContent = p.dataset.prov;
-    naam.textContent = "Schilder " + p.dataset.naam;
+    naam.textContent = "Badkamerspecialist " + p.dataset.naam;
     hook.textContent = p.dataset.hook;
     link.textContent = "Bekijk " + p.dataset.naam + " →";
     link.href = p.getAttribute("href");
@@ -1113,363 +1114,9 @@ APP_JS += r'''
 '''
 
 
-APP_JS += r"""
-/* ------------------------------------------------- offertecheck in de browser */
-// Alles gebeurt hier in de browser: de offerte wordt nergens naartoe gestuurd.
-// Het uitlezen zelf staat in /assets/js/offerte-parser.js (window.TSOfferte).
-(function () {
-  var box = document.querySelector("[data-offertecheck]");
-  if (!box || !window.TSOfferte) return;
-  var O = window.TSOfferte;
-  var BANDEN = window.TS_PRIJSBANDEN || {};
-  var hand = document.querySelector("[data-handcheck]");
-  document.querySelectorAll("[data-check-uit]").forEach(function (e) { e.hidden = true; });
-  document.querySelectorAll("[data-check-aan]").forEach(function (e) { e.hidden = false; });
-  box.hidden = false;
-  if (hand) hand.hidden = true;
-  box.querySelector("[data-oc-hand]").addEventListener("click", function () { if (hand) hand.hidden = false; });
-
-  var $ = function (s) { return box.querySelector(s); };
-  var rijen = $("[data-oc-rijen]"), melding = $("[data-oc-melding]"), fout = $("[data-oc-fout]");
-  var uitslag = $("[data-oc-uitslag]"), plaats = $("[name=plaats]"), gevonden = $("[data-oc-gevonden]");
-  var vTex = $("[data-oc-tex]"), vTin = $("[data-oc-tin]"), vTarief = $("[data-oc-tarief]"), ctrl = $("[data-oc-controle]");
-  var gelezen = null; // laatste uitleesresultaat, voor de extra gegevens
-
-  function esc(t) {
-    return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-  var euro = O.euro, getal = O.getal;
-  function nl(n) { return n == null ? "" : String(Math.round(n * 100) / 100).replace(".", ","); }
-  function basis() { return box.querySelector("[name=btwsoort]:checked").value; }
-
-  var typeOpties = Object.keys(O.TYPES).map(function (k) {
-    return "<option value='" + k + "'>" + O.TYPES[k].naam + "</option>";
-  }).join("");
-  var eenheidOpties = "<option value=''>–</option>" + Object.keys(O.EENHEDEN).map(function (k) {
-    return "<option value='" + k + "'>" + O.EENHEDEN[k] + "</option>";
-  }).join("");
-
-  /* --------------------------- posten (bewerkbaar) */
-  function voegRijToe(p) {
-    p = p || {};
-    var r = document.createElement("div");
-    r.className = "oc-rij";
-    var labels = [];
-    if (p.berekend && p.eenheidsprijs != null) labels.push("berekend: " + nl(p.aantal) + " × " + euro(p.eenheidsprijs));
-    if (p.stelpost) labels.push("stelpost");
-    if (p.optie) labels.push(p.variant ? "andere variant" : "optie, niet in het totaal");
-    else if (p.naTotaal) labels.push("staat na het totaal");
-    if (p.alleenTarief) labels.push("alleen een prijs per eenheid");
-    r.innerHTML =
-      "<input type='text' class='oc-oms' aria-label='Omschrijving' placeholder='Omschrijving'>" +
-      "<button type='button' class='oc-weg' aria-label='Post verwijderen'>×</button>" +
-      "<label class='oc-veld oc-veld-type'><span>Soort werk</span><select class='oc-type'>" + typeOpties + "</select></label>" +
-      "<label class='oc-veld'><span>Aantal</span><input type='text' inputmode='decimal' class='oc-aantal'></label>" +
-      "<label class='oc-veld'><span>Eenheid</span><select class='oc-eenheid'>" + eenheidOpties + "</select></label>" +
-      "<label class='oc-veld'><span>Bedrag</span><input type='text' inputmode='decimal' class='oc-bedrag' placeholder='€'></label>" +
-      "<label class='oc-veld'><span>Btw</span><select class='oc-btwp'><option value=''>–</option><option value='9'>9%</option><option value='21'>21%</option></select></label>" +
-      "<label class='oc-mee'><input type='checkbox' class='oc-tel'> telt mee in het totaal</label>" +
-      (labels.length ? "<small class='oc-label'>" + esc(labels.join(" · ")) + "</small>" : "");
-    var q = function (s) { return r.querySelector(s); };
-    q(".oc-oms").value = p.omschrijving || "";
-    q(".oc-type").value = p.type || "wanden";
-    if (p.aantal != null) q(".oc-aantal").value = nl(p.aantal);
-    q(".oc-eenheid").value = p.eenheid || (p.type ? "" : O.TYPES.wanden.eenheid);
-    var bedrag = p.bedrag != null ? p.bedrag : (p.alleenTarief ? null : null);
-    if (bedrag != null) q(".oc-bedrag").value = nl(bedrag);
-    else if (p.alleenTarief && p.eenheidsprijs != null) q(".oc-bedrag").placeholder = euro(p.eenheidsprijs) + " per " + (O.EENHEDEN[p.eenheid] || "eenheid");
-    q(".oc-btwp").value = p.btw != null ? String(p.btw) : "";
-    q(".oc-tel").checked = p.meetellen !== false;
-    r._post = p;
-    q(".oc-type").addEventListener("change", function () {
-      var t = O.TYPES[this.value];
-      if (t && t.eenheid && !q(".oc-eenheid").value) q(".oc-eenheid").value = t.eenheid;
-      if (this.value === "korting") { var b = getal(q(".oc-bedrag").value); if (b > 0) q(".oc-bedrag").value = nl(-b); }
-    });
-    q(".oc-weg").addEventListener("click", function () { r.remove(); werkControleBij(); });
-    rijen.appendChild(r);
-  }
-  function leesRijen() {
-    return [].slice.call(rijen.children).map(function (r) {
-      var q = function (s) { return r.querySelector(s); };
-      var oud = r._post || {};
-      var bedrag = getal(q(".oc-bedrag").value);
-      var type = q(".oc-type").value;
-      if (type === "korting" && bedrag > 0) bedrag = -bedrag;
-      return {
-        omschrijving: q(".oc-oms").value.trim(), type: type, aantal: getal(q(".oc-aantal").value),
-        eenheid: q(".oc-eenheid").value || null, bedrag: bedrag, btw: q(".oc-btwp").value ? parseInt(q(".oc-btwp").value, 10) : null,
-        meetellen: q(".oc-tel").checked, stelpost: !!oud.stelpost, optie: !!oud.optie,
-        alleenTarief: bedrag == null && !!oud.alleenTarief, eenheidsprijs: bedrag == null ? oud.eenheidsprijs : null
-      };
-    });
-  }
-  $("[data-oc-plus]").addEventListener("click", function () { voegRijToe({ type: "wanden", eenheid: "m2" }); });
-  rijen.addEventListener("input", werkControleBij);
-  rijen.addEventListener("change", werkControleBij);
-  [vTex, vTin, vTarief].forEach(function (e) { e.addEventListener("input", werkControleBij); });
-  box.querySelectorAll("[name=btwsoort]").forEach(function (e) { e.addEventListener("change", werkControleBij); });
-  voegRijToe({ type: "wanden", eenheid: "m2" });
-
-  /* --------------------------- tellen ze op? */
-  function controle() {
-    var posten = leesRijen().filter(function (p) { return p.meetellen && p.bedrag != null; });
-    var som = posten.reduce(function (s, p) { return s + p.bedrag; }, 0);
-    var b = basis(), tex = getal(vTex.value), tin = getal(vTin.value);
-    var tegen = b === "incl" ? tin : tex;
-    return { n: posten.length, som: Math.round(som * 100) / 100, tegen: tegen, basis: b,
-      klopt: tegen == null || !posten.length ? null : Math.abs(som - tegen) <= Math.max(1.5, tegen * 0.003) };
-  }
-  function werkControleBij() {
-    var c = controle(), b = c.basis === "incl" ? "incl. btw" : "excl. btw";
-    ctrl.className = "oc-controle";
-    if (!c.n) { ctrl.textContent = ""; return; }
-    if (c.klopt === true) {
-      ctrl.classList.add("oc-ok");
-      ctrl.textContent = "De posten tellen op tot " + euro(c.som) + " " + b + ". Dat is gelijk aan het totaal op de offerte.";
-    } else if (c.klopt === false) {
-      ctrl.classList.add("oc-let");
-      ctrl.textContent = "Let op: de posten tellen op tot " + euro(c.som) + " " + b + ", maar het totaal is " + euro(c.tegen) +
-        " (verschil " + euro(c.tegen - c.som) + "). Mist er een post, staat er een dubbel, of klopt incl./excl. btw niet? Pas het hieronder aan.";
-    } else {
-      ctrl.textContent = "De posten tellen op tot " + euro(c.som) + " " + b + ". Vul het totaal van de offerte in om te controleren of alles is gevonden.";
-    }
-  }
-
-  /* --------------------------- uitlezen en invullen */
-  function vulIn(res) {
-    gelezen = res;
-    rijen.innerHTML = "";
-    res.posten.forEach(voegRijToe);
-    if (!res.posten.length) voegRijToe({ type: "wanden", eenheid: "m2" });
-    box.querySelector("[name=btwsoort][value=" + (res.basis === "incl" ? "incl" : "excl") + "]").checked = true;
-    vTex.value = nl(res.totaal.excl); vTin.value = nl(res.totaal.incl);
-    var t = res.btwTarieven || [];
-    vTarief.value = t.length > 1 ? "gemengd" : t.length ? String(t[0]) : "";
-    if (res.totaal.twijfel != null && res.totaal.incl == null && res.totaal.excl == null) vTin.value = nl(res.totaal.twijfel);
-    Object.keys(res.lijst).forEach(function (k) {
-      var c = box.querySelector("[name=lijst][value=" + k + "]");
-      if (c) c.checked = res.lijst[k];
-    });
-
-    // Wat we lazen, zodat je het kunt nalopen.
-    var bron = function (k) {
-      var b = res.totaal.bron[k];
-      return b === "berekend" ? " (berekend)" : b === "posten" ? " (opgeteld uit de posten)" : b === "betalingsschema" ? " (uit het betalingsschema)" : "";
-    };
-    var regels = [];
-    if (res.totaal.excl != null) regels.push(["Totaal excl. btw", euro(res.totaal.excl) + bron("excl")]);
-    if (res.totaal.btw != null && res.totaal.btw > 0) regels.push(["Btw", euro(res.totaal.btw) + (t.length ? " (" + t.join("% en ") + "%)" : "")]);
-    if (res.totaal.incl != null) regels.push(["Totaal incl. btw", euro(res.totaal.incl) + bron("incl")]);
-    if (res.totaal.twijfel != null && res.totaal.incl == null && res.totaal.excl == null)
-      regels.push(["Totaal", euro(res.totaal.twijfel) + ". Er staat niet bij of dit incl. of excl. btw is. We hebben het als incl. btw ingevuld: pas het aan als dat niet klopt."]);
-    if (res.varianten.length > 1) regels.push(["Varianten", res.varianten.map(function (v) { return v.naam + ": " + euro(v.totaal) + " " + v.soort + "."; }).join(" · ")]);
-    if (res.merken.length) regels.push(["Verf", res.merken.join(", ")]);
-    if (res.lagen.tekst) regels.push(["Lagen", res.lagen.tekst]);
-    if (res.uurloon) regels.push(["Uurloon", euro(res.uurloon)]);
-    if (res.garantie) regels.push(["Garantie", res.garantie]);
-    if (res.geldigheid) regels.push(["Geldig", res.geldigheid]);
-    if (res.termijnen.length) regels.push(["Betaling", res.termijnen.map(function (x) { return (x.procent != null ? x.procent + "% " : "") + x.omschrijving.toLowerCase() + " (" + euro(x.bedrag) + ")"; }).join(", ")]);
-    if (res.betaaltermijn) regels.push(["Betaaltermijn", res.betaaltermijn]);
-    if (res.doorlooptijd) regels.push(["Doorlooptijd", res.doorlooptijd]);
-    gevonden.innerHTML = regels.length ? "<h4>Dit hebben we gelezen</h4><dl>" + regels.map(function (r) {
-      return "<dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd>";
-    }).join("") + "</dl>" + res.meldingen.map(function (m) { return "<p class='oc-let'>" + esc(m) + "</p>"; }).join("") : "";
-    gevonden.hidden = !regels.length;
-
-    var n = res.posten.length;
-    melding.textContent = n
-      ? n + (n === 1 ? " post" : " posten") + " gevonden. Loop ze hieronder na: klopt een bedrag of soort werk niet, pas het dan aan."
-      : res.totaal.twijfel != null || res.totaal.incl != null || res.totaal.excl != null
-        ? "We vonden een totaal maar geen losse posten. Vul de posten zelf in als je ze per stuk wilt vergelijken."
-        : "We vonden geen posten met een bedrag. Vul ze hieronder zelf in.";
-    werkControleBij();
-    $("[data-oc-stap2]").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  var pdfjs = null;
-  function laadPdfjs() {
-    if (pdfjs) return pdfjs;
-    pdfjs = new Promise(function (ok, nee) {
-      var s = document.createElement("script");
-      s.src = "/assets/vendor/pdfjs/pdf.min.js";
-      s.onload = function () {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/assets/vendor/pdfjs/pdf.worker.min.js";
-        ok(window.pdfjsLib);
-      };
-      s.onerror = nee;
-      document.head.appendChild(s);
-    });
-    return pdfjs;
-  }
-  function pdfNaarTekst(bestand) {
-    return Promise.all([laadPdfjs(), bestand.arrayBuffer()]).then(function (x) {
-      return x[0].getDocument({ data: x[1] }).promise;
-    }).then(function (doc) {
-      var paginas = [];
-      for (var i = 1; i <= Math.min(doc.numPages, 10); i++) paginas.push(doc.getPage(i).then(function (pg) { return pg.getTextContent(); }));
-      return Promise.all(paginas);
-    }).then(function (inh) {
-      return inh.map(function (c) { return O.regelsUitItems(c.items); }).join("\n");
-    });
-  }
-
-  $("[data-oc-lees]").addEventListener("click", function () {
-    var bestand = $("[name=bestand]").files[0];
-    var tekst = $("[name=tekst]").value;
-    melding.textContent = "";
-    if (bestand) {
-      if (bestand.type !== "application/pdf" && !/\.pdf$/i.test(bestand.name)) { melding.textContent = "Alleen pdf-bestanden kunnen we uitlezen. Heb je een foto, vul de posten dan zelf in."; return; }
-      melding.textContent = "Bezig met uitlezen…";
-      pdfNaarTekst(bestand).then(function (t) {
-        if (t.replace(/\s/g, "").length < 30) {
-          melding.textContent = "Deze pdf bevat geen leesbare tekst, waarschijnlijk een scan. Vul de posten zelf in.";
-          return;
-        }
-        vulIn(O.leesOfferte(t));
-      }).catch(function () { melding.textContent = "Deze pdf konden we niet openen. Vul de posten zelf in."; });
-    } else if (tekst.trim().length > 10) {
-      vulIn(O.leesOfferte(tekst));
-    } else {
-      melding.textContent = "Kies een pdf of plak eerst de tekst van de offerte.";
-    }
-  });
-
-  /* --------------------------- uitslag */
-  // Link naar het aanvraagformulier met klus en plaats alvast ingevuld.
-  function aanvraagLink(posten) {
-    var cats = posten.map(function (p) { return p.type; });
-    var heeft = function (c) { return cats.indexOf(c) >= 0; };
-    var dienst = (heeft("buitenkozijn") || heeft("steiger") || heeft("boeidelen") || heeft("buitendeur") || heeft("dakkapel")) ? "Buitenschilderwerk"
-      : heeft("houtrot") ? "Houtrot reparatie"
-      : (heeft("keukenfront") && cats.length === 1) ? "Spuitwerk"
-      : (heeft("behang") && cats.length === 1) ? "Behangen"
-      : "Binnenschilderwerk";
-    var naam = plaats.value && plaats.value !== "1" ? plaats.options[plaats.selectedIndex].text : "";
-    return "/offerte-aanvragen/?dienst=" + encodeURIComponent(dienst) +
-      (naam ? "&plaats=" + encodeURIComponent(naam) : "") + "&via=offertecheck#offerte";
-  }
-
-  $("[data-oc-check]").addEventListener("click", function () {
-    fout.classList.remove("show");
-    if (!plaats.value) { fout.textContent = "Kies je plaats."; fout.classList.add("show"); return; }
-    var index = parseFloat(plaats.value) || 1;
-    var b = basis();
-    var tarief = vTarief.value === "21" ? 21 : 9;
-    var posten = leesRijen().filter(function (p) { return p.bedrag != null || p.alleenTarief; });
-    var tex = getal(vTex.value), tin = getal(vTin.value);
-    if (!posten.length && tex == null && tin == null) { fout.textContent = "Vul minstens één post of het totaal in."; fout.classList.add("show"); return; }
-
-    var LABEL = { laag: "Onder de richtprijs", binnen: "Binnen de richtprijs", hoog: "Boven de richtprijs" };
-    var tel = { laag: 0, binnen: 0, hoog: 0 }, html = "", postVragen = [];
-    posten.forEach(function (p) {
-      var o = O.beoordeelPost(p, BANDEN, index, b, tarief);
-      var naam = p.omschrijving || O.TYPES[p.type].naam;
-      var soort = O.TYPES[p.type].naam;
-      var detail = [];
-      if (p.aantal != null) detail.push(nl(p.aantal) + " " + (O.EENHEDEN[p.eenheid] || ""));
-      if (p.bedrag != null) detail.push(euro(p.bedrag) + (b === "incl" ? " incl." : " excl.") + " btw" + (p.btw ? " (" + p.btw + "%)" : ""));
-      else if (p.eenheidsprijs != null) detail.push(euro(p.eenheidsprijs) + " per " + (O.EENHEDEN[p.eenheid] || "eenheid"));
-      if (!p.meetellen) detail.push("telt niet mee in het totaal");
-      var badge;
-      if (o.oordeel) {
-        tel[o.oordeel]++;
-        badge = "<span class='oc-oordeel oc-" + o.oordeel + "'>" + LABEL[o.oordeel] + "</span>";
-        if (o.inclBtw && b === "excl") detail.push("met btw " + euro(Math.round(o.vergelijk)));
-        detail.push("richtprijs " + euro(o.van) + " – " + euro(o.tot) + (o.inclBtw ? " incl." : " excl.") + " btw");
-      } else {
-        var waarom = { "geen richtprijs": "geen richtprijs voor dit soort werk", "geen aantal": "vul het aantal in om te vergelijken",
-          "andere eenheid": "vergelijken kan in " + (O.EENHEDEN[(O.TYPES[p.type] || {}).eenheid] || "een andere eenheid"), "korting": "korting", "geen bedrag": "geen bedrag" }[o.reden] || "";
-        badge = "<span class='oc-oordeel oc-geen'>Niet te vergelijken</span>";
-        if (waarom && o.reden !== "korting") detail.push(waarom);
-      }
-      // In de lijst onderaan alleen de posten die opvallen; de rest staat bij de post zelf.
-      if (o.oordeel === "hoog") postVragen.push(naam + ": waarom ligt deze post boven de richtprijs? Wat zit er precies in?");
-      else if (o.oordeel === "laag") postVragen.push(naam + ": zitten alle lagen en het voorwerk in deze prijs?");
-      o.vragen.forEach(function (v) { if (/stelpost|21% btw/.test(v) && postVragen.indexOf(v) < 0) postVragen.push(naam + ": " + v.charAt(0).toLowerCase() + v.slice(1)); });
-      html += "<li><div class='oc-post'><strong>" + esc(naam) + "</strong>" + badge + "</div>" +
-        "<small>" + esc(soort) + " · " + esc(detail.join(" · ")) + "</small>" +
-        (o.vragen.length ? "<p class='oc-vraag'>" + esc(o.vragen[0]) + "</p>" : "") + "</li>";
-    });
-
-    var lijst = {};
-    box.querySelectorAll("[name=lijst]").forEach(function (c) { lijst[c.value] = c.checked; });
-    var res = gelezen || { posten: posten, termijnen: [], lijst: lijst };
-    var buiten = posten.some(function (p) { return ["buitenkozijn", "buitendeur", "boeidelen", "dakkapel", "steiger", "houtrot"].indexOf(p.type) >= 0; });
-    var c = controle();
-    var info = { buiten: buiten || !!res.buiten, termijnen: res.termijnen || [], concept: res.concept, garantie: res.garantie,
-      controle: c, btwTarieven: vTarief.value === "gemengd" ? [9, 21] : vTarief.value ? [parseInt(vTarief.value, 10)] : [], posten: posten };
-    var algemeen = O.algemeneVragen(info, lijst);
-    // Uurloon voor meerwerk naast de richtprijs leggen.
-    if (gelezen && gelezen.uurloon && BANDEN.uurloon && !posten.some(function (p) { return p.type === "uren"; })) {
-      var ul = O.beoordeelPost({ type: "uren", aantal: 1, eenheid: "uur", bedrag: gelezen.uurloon }, BANDEN, index, gelezen.basis, tarief);
-      if (ul.oordeel === "hoog") algemeen.push("Het uurloon voor meerwerk (" + euro(gelezen.uurloon) + ") ligt boven de richtprijs. Vraag of daar iets over te zeggen valt.");
-    }
-    var vragen = algemeen.concat(postVragen.filter(function (v) { return algemeen.indexOf(v) < 0; }));
-
-    var kop = tel.hoog > 0 ? "Een deel van je offerte ligt boven de richtprijs"
-      : tel.laag > 0 ? "Je offerte ligt deels onder de richtprijs"
-      : tel.binnen > 0 ? "Je offerte ligt binnen de richtprijzen" : "We konden de posten niet naast de richtprijs leggen";
-    var uitleg = tel.hoog > 0 ? "Dat kan kloppen, bijvoorbeeld bij slecht hout of veel voorwerk. Vraag de schilder waar het verschil in zit, of leg er een tweede offerte naast."
-      : tel.laag > 0 ? "Een lage prijs is niet altijd slecht. Check wel of alles erin zit, zoals het aantal lagen, de steiger en houtrot."
-      : tel.binnen > 0 ? "Check hieronder of er niets ontbreekt. Dan weet je zeker dat je appels met appels vergelijkt."
-      : "Vul bij de posten het soort werk en het aantal in, dan kunnen we ze naast de richtprijs leggen.";
-    var totaalTekst = [tex != null ? euro(tex) + " excl. btw" : "", tin != null ? euro(tin) + " incl. btw" : ""].filter(Boolean).join(" · ");
-    var tarTekst = vTarief.value === "gemengd" ? " (9% en 21% btw)" : vTarief.value ? " (" + vTarief.value + "% btw)" : "";
-
-    uitslag.innerHTML = "<h2>" + kop + "</h2><p>" + uitleg + "</p>" +
-      (totaalTekst ? "<p><strong>Totaal van de offerte:</strong> " + totaalTekst + tarTekst + "</p>" : "") +
-      (c.n ? "<p class='oc-controle " + (c.klopt === false ? "oc-let" : c.klopt ? "oc-ok" : "") + "'>" + esc(ctrl.textContent) + "</p>" : "") +
-      (html ? "<h3>Per post</h3><ul class='oc-posten'>" + html + "</ul>" : "") +
-      "<h3>" + (vragen.length ? "Vraag de schilder" : "Alles staat erin") + "</h3>" +
-      (vragen.length ? "<ul class='oc-vragen'>" + vragen.map(function (m) { return "<li>" + esc(m) + "</li>"; }).join("") + "</ul>" : "<p>De belangrijkste punten staan in de offerte. Goed teken.</p>") +
-      "<p class='formfoot'>Vergeleken met onze richtprijzen voor jouw regio. Dit is een indicatie, geen oordeel over het bedrijf.</p>" +
-      "<div class='formnav'><a class='btn btn-primary' href='" + aanvraagLink(posten) + "'>" +
-      (tel.hoog > 0 ? "Leg er een tweede offerte naast" : "Vraag vergelijkende offertes aan") + "</a></div>";
-    uitslag.hidden = false;
-    uitslag.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-})();
-"""
-
-APP_JS += r"""
-/* ------------------------------------------------- verfcalculator */
-(function () {
-  var box = document.querySelector("[data-verfcalc]");
-  if (!box) return;
-  var uit = box.querySelector("[data-vc-uitkomst]");
-  function n(id) { var v = parseFloat(String(box.querySelector(id).value).replace(",", ".")); return isNaN(v) || v < 0 ? 0 : v; }
-  function blikken(l) {
-    // Kleinste combinatie van gangbare blikmaten die genoeg is.
-    var maten = [10, 5, 2.5, 1], rest = l, out = [];
-    maten.forEach(function (m) { while (rest >= m * 0.9 && m >= 2.5) { out.push(m); rest -= m; } });
-    while (rest > 0.05) { out.push(rest > 1 ? 2.5 : 1); rest -= rest > 1 ? 2.5 : 1; }
-    var tel = {};
-    out.forEach(function (m) { tel[m] = (tel[m] || 0) + 1; });
-    return Object.keys(tel).sort(function (a, b) { return b - a; }).map(function (m) {
-      return tel[m] + " × " + String(m).replace(".", ",") + " liter";
-    }).join(" + ");
-  }
-  function reken() {
-    var l = n("#vc-l"), b = n("#vc-b"), h = n("#vc-h"), r = n("#vc-r");
-    var wat = box.querySelector("#vc-wat").value, lagen = n("#vc-lagen"), ond = n("#vc-ond") || 1;
-    var muur = Math.max(0, 2 * (l + b) * h - r * 1.8), plafond = l * b;
-    var m2 = 0, liters = 0;
-    if (wat !== "plafond") { m2 += muur; liters += muur / 9 * lagen * ond; }
-    if (wat !== "muren") { m2 += plafond; liters += plafond / 8 * lagen * ond; }
-    if (!m2) { uit.innerHTML = "<p>Vul de maten in.</p>"; return; }
-    var afgerond = Math.ceil(liters * 2) / 2;
-    uit.innerHTML = "<p><strong>Je hebt ongeveer " + String(afgerond).replace(".", ",") + " liter nodig</strong> voor " +
-      Math.round(m2) + " m² en " + lagen + (lagen === 1 ? " laag" : " lagen") + ".</p>" +
-      "<p style='margin-top:6px;font-size:.9rem'>Bijvoorbeeld: " + blikken(afgerond) + ". Gerekend met 9 m² per liter voor muren en 8 m² voor plafonds; kijk op het blik voor het precieze rendement.</p>";
-  }
-  box.addEventListener("input", reken);
-  box.addEventListener("change", reken);
-  reken();
-})();
-"""
+# De offertecheck en de verfcalculator van Topschilder zijn hier weggehaald: ze
+# werden niet meer aangeroepen. De badkamerofferte-checker komt in fase 3 (zie
+# PLAN.md); de oude code staat in de git-geschiedenis.
 
 
 STYLE_CSS += r'''
@@ -1487,7 +1134,7 @@ STYLE_CSS += r'''
 @media(max-width:760px){.cookiebanner{left:10px;right:10px;bottom:10px;padding:16px}}
 '''
 
-TOESTEMMING_JS = r'''/* Topschilder.nl: cookietoestemming en Meta-pixel.
+TOESTEMMING_JS = r'''/* Top Badkamers: cookietoestemming en Meta-pixel.
    Zonder "Accepteren" wordt er niets van Meta geladen. De keuze staat alleen
    in de lokale opslag van deze browser (sleutel ts_toestemming). */
 (function () {
@@ -1595,23 +1242,23 @@ TOESTEMMING_JS = r'''/* Topschilder.nl: cookietoestemming en Meta-pixel.
 
 STYLE_CSS += r'''
 /* ---------- Tools-sectie (home en /tools/) ---------- */
-.tools-sectie{background:linear-gradient(160deg,#3c290f 0%,#241906 70%);color:#e3d6c2;position:relative;overflow:hidden;isolation:isolate}
-.tools-sectie::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(640px 320px at 12% 0%,rgba(244,130,11,.22),transparent),radial-gradient(560px 300px at 100% 100%,rgba(255,177,92,.12),transparent)}
+.tools-sectie{background:linear-gradient(160deg,#0b4a56 0%,#082f37 70%);color:#cbd8da;position:relative;overflow:hidden;isolation:isolate}
+.tools-sectie::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(640px 320px at 12% 0%,rgba(196,81,31,.22),transparent),radial-gradient(560px 300px at 100% 100%,rgba(240,163,127,.12),transparent)}
 .tools-sectie h2{color:#fff}
-.tools-sectie .lead{color:#e3d6c2}
-.tools-sectie .center > h2::after{background:linear-gradient(90deg,var(--accent),#ffcf94)}
+.tools-sectie .lead{color:#cbd8da}
+.tools-sectie .center > h2::after{background:linear-gradient(90deg,var(--accent),#f2b8a1)}
 .tools-pagina{padding-top:56px}
 .tools-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:22px}
 .tool-kaart{flex:1 1 300px;max-width:372px;display:flex;flex-direction:column;background:#fff;border-radius:var(--radius-lg);overflow:hidden;color:var(--body);box-shadow:0 1px 2px rgba(0,0,0,.2),0 18px 40px rgba(0,0,0,.25);transition:transform .25s ease,box-shadow .25s ease}
 .tool-kaart:hover{text-decoration:none;transform:translateY(-6px);box-shadow:0 2px 4px rgba(0,0,0,.2),0 28px 60px rgba(0,0,0,.35)}
-.tool-beeld{position:relative;height:150px;display:grid;place-items:center;background:linear-gradient(140deg,#fff6ea,#ffe7c8)}
+.tool-beeld{position:relative;height:150px;display:grid;place-items:center;background:linear-gradient(140deg,#fcf1ed,#f8dbcf)}
 .tool-kleuren .tool-beeld{background:linear-gradient(140deg,#eef4ef,#dfeadf)}
-.tool-onderhoud .tool-beeld{background:linear-gradient(140deg,#f7f3ea,#ece3d1)}
+.tool-onderhoud .tool-beeld{background:linear-gradient(140deg,#eef3f3,#d8e3e5)}
 .tool-weer .tool-beeld{background:linear-gradient(140deg,#eaf3fb,#d8e8f6)}
-.tool-inspiratie .tool-beeld{background:linear-gradient(140deg,#f8efe9,#f0dfd3)}
+.tool-inspiratie .tool-beeld{background:linear-gradient(140deg,#edf3f4,#dbe6e8)}
 .tool-beeld svg{width:170px;height:auto;transition:transform .35s ease}
 .tool-kaart:hover .tool-beeld svg{transform:scale(1.06) rotate(-1.5deg)}
-.tool-label{position:absolute;top:12px;left:12px;font-size:.74rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase;color:#7a3f00;background:rgba(255,255,255,.85);padding:4px 10px;border-radius:99px}
+.tool-label{position:absolute;top:12px;left:12px;font-size:.74rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase;color:#115c69;background:rgba(255,255,255,.85);padding:4px 10px;border-radius:99px}
 .tool-tekst{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1}
 .tool-tekst h2,.tool-tekst h3{font-size:1.25rem;margin:0 0 .2em;color:var(--ink)}
 .tool-kort{font-weight:650;color:var(--ink);margin:0 0 .5em}
@@ -1620,15 +1267,15 @@ STYLE_CSS += r'''
 .tool-knop span{transition:transform .2s}
 .tool-kaart:hover .tool-knop{background:var(--navy-700)}
 .tool-kaart:hover .tool-knop span{transform:translateX(4px)}
-.tools-alle{color:#ffd9ab;font-weight:700}
-.tool-hero{background:radial-gradient(700px 360px at 85% 55%,#fff0dc 0%,rgba(255,240,220,0) 70%)}
-.tools-pagina{background:linear-gradient(180deg,#faf6ee,#f6efe2)}
+.tools-alle{color:#f4c7b5;font-weight:700}
+.tool-hero{background:radial-gradient(700px 360px at 85% 55%,#fbe8e0 0%,rgba(251,232,224,0) 70%)}
+.tools-pagina{background:linear-gradient(180deg,#f1f6f7,#e8eff1)}
 .tools-pagina::before{display:none}
 .tools-pagina .tool-kaart{box-shadow:var(--shadow);border:1px solid var(--line)}
 .tools-pagina .tool-kaart:hover{box-shadow:var(--shadow-lg)}
 
 /* ---------- Kostenpagina: bovenkant met prijskaart ---------- */
-.kosten-kop{background:radial-gradient(700px 440px at 88% 50%,#fff0dc 0%,rgba(255,240,220,0) 70%)}
+.kosten-kop{background:radial-gradient(700px 440px at 88% 50%,#fbe8e0 0%,rgba(251,232,224,0) 70%)}
 .kosten-kop-in{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.8fr);gap:52px;align-items:center}
 .kosten-kop-in h1{font-size:clamp(1.9rem,4vw,2.8rem)}
 @media(max-width:900px){.kosten-kop-in{grid-template-columns:minmax(0,1fr);gap:26px}}
@@ -1640,7 +1287,7 @@ STYLE_CSS += r'''
 .prijskaart > .foto{margin:0}
 .prijskaart > .foto img{border-radius:0;aspect-ratio:16/8;object-fit:cover}
 .prijskaart-in{padding:22px 24px 24px}
-.prijskaart-kop{font-size:.78rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:#a35200;margin:0 0 2px}
+.prijskaart-kop{font-size:.78rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:#9c4019;margin:0 0 2px}
 .prijskaart-bedrag{font-size:clamp(2rem,4vw,2.6rem);font-weight:800;color:var(--ink);letter-spacing:-.03em;line-height:1.1;margin:0;font-variant-numeric:tabular-nums}
 .prijskaart-bedrag span{color:var(--accent-dark);font-weight:700}
 .prijskaart-eenheid{font-weight:650;color:var(--ink);margin:2px 0 8px}
@@ -1675,8 +1322,8 @@ STYLE_CSS += r'''
 @media(max-width:980px){.plaats-foto{display:none}}
 
 /* ---------- CTA halverwege ---------- */
-.cta-midden{display:flex;align-items:center;gap:22px;margin:34px 0;padding:22px 26px;border-radius:var(--radius-lg);background:linear-gradient(135deg,#3c290f,#241906);color:#e3d6c2;position:relative;overflow:hidden;isolation:isolate;box-shadow:0 14px 34px rgba(60,41,15,.18)}
-.cta-midden::before{content:"";position:absolute;width:300px;height:300px;right:-90px;top:-150px;border-radius:50%;background:radial-gradient(closest-side,rgba(244,130,11,.35),transparent);z-index:-1}
+.cta-midden{display:flex;align-items:center;gap:22px;margin:34px 0;padding:22px 26px;border-radius:var(--radius-lg);background:linear-gradient(135deg,#0b4a56,#082f37);color:#cbd8da;position:relative;overflow:hidden;isolation:isolate;box-shadow:0 14px 34px rgba(11,74,86,.18)}
+.cta-midden::before{content:"";position:absolute;width:300px;height:300px;right:-90px;top:-150px;border-radius:50%;background:radial-gradient(closest-side,rgba(196,81,31,.35),transparent);z-index:-1}
 .cta-midden-tekst{flex:1;min-width:0}
 .cta-midden-titel{color:#fff;font-weight:750;font-size:1.12rem;margin:0 0 .2em;letter-spacing:-.01em}
 .cta-midden p:not(.cta-midden-titel){margin:0;font-size:.95rem}
@@ -1685,7 +1332,7 @@ STYLE_CSS += r'''
 
 /* ---------- FAQ ---------- */
 .faq summary{transition:color .15s,background .15s}
-.faq summary:hover{color:#8a4500;background:#fffaf3}
+.faq summary:hover{color:#6a290f;background:#f6fbfc}
 .faq details[open]{border-left:4px solid var(--accent)}
 .faq details[open] .a{animation:fade .25s ease}
 .faq summary::after{transition:transform .25s ease,background .2s}
@@ -1695,23 +1342,23 @@ STYLE_CSS += r'''
 .steps div{transition:background .35s ease}
 .choice label{transition:border-color .15s,background .15s,box-shadow .15s,transform .1s}
 .choice label:active{transform:scale(.985)}
-.choice label:has(input:checked){box-shadow:0 0 0 3px rgba(244,130,11,.15)}
-.choice label:has(input:focus-visible){outline:3px solid #ffb15c;outline-offset:2px}
+.choice label:has(input:checked){box-shadow:0 0 0 3px rgba(196,81,31,.15)}
+.choice label:has(input:focus-visible){outline:3px solid #f0a37f;outline-offset:2px}
 .choice input:checked{animation:vink .25s ease}
 @keyframes vink{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
-input:hover:not(:focus),select:hover:not(:focus),textarea:hover:not(:focus){border-color:#d8c9b0}
+input:hover:not(:focus),select:hover:not(:focus),textarea:hover:not(:focus){border-color:#bbcacd}
 .formcard .formnav .btn-ghost:hover{background:var(--bg-soft)}
 
 /* ---------- Header en mobiele sticky CTA ---------- */
 .header{transition:box-shadow .2s ease}
-.header.is-gescrold{box-shadow:0 6px 20px rgba(60,41,15,.08)}
+.header.is-gescrold{box-shadow:0 6px 20px rgba(11,74,86,.08)}
 .nav a:not(.btn){position:relative}
 .nav a:not(.btn)::after{content:"";position:absolute;left:13px;right:13px;bottom:4px;height:2px;border-radius:2px;background:var(--accent);transform:scaleX(0);transition:transform .2s ease}
 .nav a:not(.btn):hover::after{transform:scaleX(1)}
 @media(max-width:900px){.nav a:not(.btn)::after{display:none}}
 @media(max-width:760px){
   .sticky-cta{background:transparent;border-top:0;box-shadow:none;padding:10px 14px calc(10px + env(safe-area-inset-bottom));transition:transform .3s ease,opacity .3s ease;pointer-events:none}
-  .sticky-cta .btn{pointer-events:auto;box-shadow:0 3px 0 var(--accent-dark),0 10px 28px rgba(60,41,15,.28);border-radius:12px}
+  .sticky-cta .btn{pointer-events:auto;box-shadow:0 3px 0 var(--accent-dark),0 10px 28px rgba(11,74,86,.28);border-radius:12px}
   .sticky-cta.is-weg{transform:translateY(120%);opacity:0}
 }
 
@@ -1771,56 +1418,56 @@ STYLE_CSS += r"""
    Ronde 3 — visuele bouwstenen (componenten staan in components.py)
    ========================================================================= */
 
-:root{--penseel:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 24' preserveAspectRatio='none'%3E%3Cpath d='M3 12C40 5 90 4 130 6s60 3 87 1l-1 10c-30 4-62 2-96 1S40 16 4 21z' fill='%23f4820b' fill-opacity='.4'/%3E%3C/svg%3E");--golf:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 28' preserveAspectRatio='none'%3E%3Cpath d='M0 28V16C140 5 260 1 390 6s250 18 380 16 250-16 380-17 210 6 290 12v11z'/%3E%3C/svg%3E")}
+:root{--penseel:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 24' preserveAspectRatio='none'%3E%3Cpath d='M3 12C40 5 90 4 130 6s60 3 87 1l-1 10c-30 4-62 2-96 1S40 16 4 21z' fill='%23c4511f' fill-opacity='.4'/%3E%3C/svg%3E");--golf:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 28' preserveAspectRatio='none'%3E%3Cpath d='M0 28V16C140 5 260 1 390 6s250 18 380 16 250-16 380-17 210 6 290 12v11z'/%3E%3C/svg%3E")}
 
 /* ---------- Typografie en ritme ---------- */
 h1,h2,h3{text-wrap:balance}
 p,li{text-wrap:pretty}
 .lead{line-height:1.6}
 
-/* ---------- Penseelstreek onder een woord: streep("woord") ---------- */
+/* ---------- Accentstreep onder een woord: streep("woord") ---------- */
 .section .center > h2:has(.streep)::after{display:none}
 .streep{background:var(--penseel) 0 88%/100% .42em no-repeat;padding:0 .08em;margin:0 -.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 
 /* ---------- Dienst-iconen: vlakken in de accentkleur ---------- */
 .dicon .ia{fill:var(--accent);stroke:none;opacity:.9}
 .badge-ic{display:inline-flex;align-items:center;gap:7px}
-.badge-ic .dicon{color:#7a3f00}
+.badge-ic .dicon{color:#115c69}
 
 /* ---------- Dienstkaarten: icoon op de foto ---------- */
 .card-dienst > .foto{position:relative}
-.card-chip{position:absolute;left:14px;bottom:14px;width:46px;height:46px;border-radius:14px;background:#fff;color:var(--navy);display:grid;place-items:center;box-shadow:0 6px 16px rgba(36,25,6,.22);transition:transform .3s ease}
+.card-chip{position:absolute;left:14px;bottom:14px;width:46px;height:46px;border-radius:14px;background:#fff;color:var(--navy);display:grid;place-items:center;box-shadow:0 6px 16px rgba(8,47,55,.22);transition:transform .3s ease}
 .card-dienst:hover .card-chip{transform:translateY(-3px) rotate(-5deg)}
 @media(max-width:600px){.card-chip{display:none}}
 
 /* ---------- Feitenblok: feiten_blok([...]) ---------- */
 .feiten{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:14px;margin:34px 0 0}
-.feit{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px 16px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(60,41,15,.04)}
-.feit::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--accent),#ffcf94)}
+.feit{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px 16px;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(11,74,86,.04)}
+.feit::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--accent),#f2b8a1)}
 .feit-getal{display:inline-block;font-size:clamp(1.8rem,3.4vw,2.3rem);font-weight:800;color:var(--ink);line-height:1.05;margin:0 0 6px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;background:var(--penseel) 0 100%/100% .3em no-repeat;padding-bottom:.18em}
 .feit-label{font-size:.9rem;margin:0;color:var(--body);line-height:1.45}
-.feit-label a{color:#8a4500;font-size:.82rem}
+.feit-label a{color:#6a290f;font-size:.82rem}
 .feiten-noot{font-size:.82rem;color:var(--muted);margin:10px 0 0}
 .soft .feit{background:#fff}
 .feiten-donker .feit{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);box-shadow:none}
 .feiten-donker .feit-getal{color:#fff}
-.feiten-donker .feit-label{color:#e3d6c2}
+.feiten-donker .feit-label{color:#cbd8da}
 .prose .feiten{margin:24px 0 8px}
 @media(max-width:560px){.feiten{grid-template-columns:1fr 1fr;gap:10px}.feit{padding:14px 14px 12px}.feit-getal{font-size:1.6rem}.feit-label{font-size:.84rem}.feit:last-child:nth-child(odd){grid-column:1/-1}}
 
 /* ---------- Stappen-tijdlijn: stappen_blok([...]) ---------- */
 .stappen{list-style:none;padding:0;margin:22px 0 26px}
 ol.stappen > li{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:18px;margin:0;padding:0 0 22px;counter-increment:none;position:relative}
-ol.stappen > li::before{content:"";counter-increment:none;border-radius:0;box-shadow:none;height:auto;display:block;font-size:0;position:absolute;left:21px;top:50px;bottom:4px;width:2px;background:repeating-linear-gradient(180deg,#eebd85 0 7px,transparent 7px 12px)}
+ol.stappen > li::before{content:"";counter-increment:none;border-radius:0;box-shadow:none;height:auto;display:block;font-size:0;position:absolute;left:21px;top:50px;bottom:4px;width:2px;background:repeating-linear-gradient(180deg,#a2cad1 0 7px,transparent 7px 12px)}
 ol.stappen > li:last-child{padding-bottom:0}
 ol.stappen > li:last-child::before{display:none}
-.stap-nr{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.05rem;color:#fff;background:var(--navy);box-shadow:0 0 0 4px var(--accent-soft),0 0 0 6px #f6c995;position:relative;z-index:1}
+.stap-nr{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.05rem;color:#fff;background:var(--navy);box-shadow:0 0 0 4px var(--accent-soft),0 0 0 6px #f1b39a;position:relative;z-index:1}
 .stappen h3,.prose .stappen h3{margin:8px 0 .2em;font-size:1.1rem}
 .stappen p{margin:0;font-size:.97rem}
 
 /* ---------- Foto met bijschrift: foto_kader(...) ---------- */
 .foto-kader{position:relative;isolation:isolate;margin:34px 0 30px}
-.foto-kader::before{content:"";position:absolute;left:-10px;top:-10px;width:110px;height:110px;border-radius:16px;background:repeating-linear-gradient(-45deg,#fbd3a2 0 5px,transparent 5px 11px);z-index:-1}
+.foto-kader::before{content:"";position:absolute;left:-10px;top:-10px;width:110px;height:110px;border-radius:16px;background:repeating-linear-gradient(-45deg,#f3bfaa 0 5px,transparent 5px 11px);z-index:-1}
 .foto-kader img{box-shadow:var(--shadow-lg)}
 .foto-kader figcaption{font-size:.86rem;color:var(--muted);margin-top:12px;padding-left:12px;border-left:3px solid var(--accent);line-height:1.5}
 .foto-credit{display:block;font-size:.78rem;margin-top:2px}
@@ -1831,10 +1478,10 @@ ol.stappen > li:last-child::before{display:none}
 .prijs-balken ul{list-style:none;padding:0;margin:0}
 .prijs-balken li{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1.4fr) 8.6em;gap:16px;align-items:center;margin:0;padding:10px 0;border-top:1px solid var(--line)}
 .prijs-balken li:first-child{border-top:0}
-.pb-eenheid{font-size:.78rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:#a35200;margin:0 0 4px}
+.pb-eenheid{font-size:.78rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:#9c4019;margin:0 0 4px}
 .pb-label{font-weight:650;color:var(--ink);font-size:.93rem;line-height:1.35}
 .pb-baan{height:12px;border-radius:99px;background:var(--bg-soft);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
-.pb-balk{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#ffb15c,var(--accent));transform-origin:left center}
+.pb-balk{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#f0a37f,var(--accent));transform-origin:left center}
 .pb-bedrag{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);font-size:.92rem;white-space:nowrap;text-align:right}
 .pb-noot{font-size:.82rem;color:var(--muted);margin:8px 0 0}
 .prijs-balken.reveal .pb-balk{transform:scaleX(0);transition:transform .9s cubic-bezier(.2,.7,.2,1) .25s}
@@ -1846,7 +1493,7 @@ ol.stappen > li:last-child::before{display:none}
 }
 
 /* ---------- Voor/na: label dat het een illustratie is ---------- */
-.vn-soort{position:absolute;top:12px;left:12px;font-size:.72rem;font-weight:750;letter-spacing:.05em;text-transform:uppercase;background:rgba(255,255,255,.92);color:#6b3600;padding:4px 10px;border-radius:99px}
+.vn-soort{position:absolute;top:12px;left:12px;font-size:.72rem;font-weight:750;letter-spacing:.05em;text-transform:uppercase;background:rgba(255,255,255,.92);color:#0f505c;padding:4px 10px;border-radius:99px}
 
 /* ---------- Mobiel menu ---------- */
 .burger{width:44px;height:44px;padding:0;position:relative;border-radius:11px;background:#fff;font-size:0;color:var(--ink)}
@@ -1855,7 +1502,7 @@ ol.stappen > li:last-child::before{display:none}
 .burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
 .burger[aria-expanded="true"] span:nth-child(2){opacity:0}
 .burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
-.burger:focus-visible,.nav a:focus-visible{outline:3px solid #ffb15c;outline-offset:2px}
+.burger:focus-visible,.nav a:focus-visible{outline:3px solid #f0a37f;outline-offset:2px}
 .nav-ic,.nav-noot{display:none}
 .nav-scherm{display:none}
 @media(max-width:900px){
@@ -1863,22 +1510,22 @@ ol.stappen > li:last-child::before{display:none}
   .nav.open{visibility:visible;opacity:1;transform:none;transition:opacity .2s ease,transform .2s ease}
   .nav a:not(.btn){display:flex;align-items:center;gap:13px;padding:10px;border-radius:12px;font-size:1.04rem}
   .nav a:not(.btn)::after{display:block;content:"›";position:static;margin-left:auto;transform:none;background:none;height:auto;width:auto;font-size:1.4rem;line-height:1;color:var(--muted)}
-  .nav-ic{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:#a35200}
+  .nav-ic{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:#9c4019}
   .nav .btn{padding:15px;margin-top:10px}
   .nav-noot{display:block;text-align:center;font-size:.85rem;color:var(--muted);margin:10px 0 0}
-  .nav-scherm{display:block;position:fixed;inset:70px 0 0;background:rgba(36,25,6,.45);z-index:55;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility 0s linear .2s}
+  .nav-scherm{display:block;position:fixed;inset:70px 0 0;background:rgba(8,47,55,.45);z-index:55;opacity:0;visibility:hidden;transition:opacity .2s ease,visibility 0s linear .2s}
   body.menu-open{overflow:hidden}
   body.menu-open .nav-scherm{opacity:1;visibility:visible;transition:opacity .2s ease}
 }
 
 /* ---------- Footer ---------- */
-.footer{position:relative;background:linear-gradient(180deg,#3c290f 0%,#2a1d09 100%);color:#d9c9ae;padding-top:52px}
-.footer-golf{position:absolute;left:0;right:0;top:-27px;height:28px;background:#3c290f;-webkit-mask:var(--golf) 0 0/100% 100% no-repeat;mask:var(--golf) 0 0/100% 100% no-repeat;pointer-events:none}
-.footer a{color:#e8dcc8}
+.footer{position:relative;background:linear-gradient(180deg,#0b4a56 0%,#09343d 100%);color:#bacacd;padding-top:52px}
+.footer-golf{position:absolute;left:0;right:0;top:-27px;height:28px;background:#0b4a56;-webkit-mask:var(--golf) 0 0/100% 100% no-repeat;mask:var(--golf) 0 0/100% 100% no-repeat;pointer-events:none}
+.footer a{color:#d1dddf}
 .footer a:hover{color:#fff}
 .footer .fh{color:#fff;font-size:.82rem;text-transform:uppercase;letter-spacing:.08em}
 .footer-cta{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:22px 26px;margin:0 0 44px;border-radius:var(--radius-lg);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
-.footer-cta p{margin:0;color:#e3d6c2}
+.footer-cta p{margin:0;color:#cbd8da}
 .footer-cta .footer-cta-titel{color:#fff;font-weight:750;font-size:1.15rem;margin-bottom:2px}
 .footer-cta .btn{flex:0 0 auto}
 section:has(.cta) + .footer .footer-cta{display:none}
@@ -1886,12 +1533,12 @@ section:has(.cta) + .footer .footer-cta{display:none}
 .footer-diensten a,.footer-tools a{display:inline-flex;align-items:center;gap:10px}
 .f-ic{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.08);color:#fff;flex:0 0 30px}
 .footer-tools{margin-top:16px!important}
-.footer-tools a{font-weight:650;color:#ffd9ab}
-.footer-tools svg{color:#ffb15c}
+.footer-tools a{font-weight:650;color:#f4c7b5}
+.footer-tools svg{color:#f0a37f}
 .footer-plaatsen{display:grid;grid-template-columns:1fr 1fr;column-gap:14px}
-.footer-meer{color:#ffd9ab!important;font-weight:700}
-.footer-bot{border-top-color:rgba(255,255,255,.12);color:#c9b89c}
-.footer-bot a{color:#d9c9ae}
+.footer-meer{color:#f4c7b5!important;font-weight:700}
+.footer-bot{border-top-color:rgba(255,255,255,.12);color:#a8babd}
+.footer-bot a{color:#bacacd}
 
 @media(prefers-reduced-motion:reduce){
   .card-chip,.burger span,.nav,.nav-scherm{transition:none!important}
@@ -1959,7 +1606,7 @@ STYLE_CSS += r'''
 .prose .pc-bars > li::before{content:none;display:none}
 .pc-lab{color:var(--ink);white-space:nowrap}
 .pc-bar{display:block;height:14px;background:var(--bg-soft);border-radius:7px;overflow:hidden}
-.pc-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ffb15c);border-radius:7px}
+.pc-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#f0a37f);border-radius:7px}
 .pc-val{font-variant-numeric:tabular-nums;font-weight:650;color:var(--ink);white-space:nowrap;text-align:right}
 .pc-n{font-weight:400;color:var(--muted)}
 .pc-bron{color:var(--muted);margin-top:18px}
@@ -1982,14 +1629,14 @@ STYLE_CSS += r'''
 STYLE_CSS += r'''
 /* ---------- Effecten: basis ---------- */
 :root{--ease-uit:cubic-bezier(.2,.7,.2,1);--veer:cubic-bezier(.34,1.56,.64,1);
-  --penseel-vol:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 24' preserveAspectRatio='none'%3E%3Cpath d='M3 13C38 6 88 4 129 6s61 2 88 0l-2 9c-29 5-61 4-95 3S41 16 5 21z' fill='%23f4820b'/%3E%3Cpath d='M30 17c40-3 90-4 150-2' stroke='%23ffb15c' stroke-width='1.6' fill='none' stroke-linecap='round' opacity='.7'/%3E%3C/svg%3E")}
+  --penseel-vol:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 24' preserveAspectRatio='none'%3E%3Cpath d='M3 13C38 6 88 4 129 6s61 2 88 0l-2 9c-29 5-61 4-95 3S41 16 5 21z' fill='%23c4511f'/%3E%3Cpath d='M30 17c40-3 90-4 150-2' stroke='%23f0a37f' stroke-width='1.6' fill='none' stroke-linecap='round' opacity='.7'/%3E%3C/svg%3E")}
 h1{font-weight:800;letter-spacing:-.03em}
 h2{letter-spacing:-.025em}
 
-/* ---------- Hero (home): diepte, bewegende gloed, verfstreek ---------- */
+/* ---------- Hero (home): diepte, bewegende gloed, accentstreep ---------- */
 .hero-foto .hero-bg{will-change:transform;transform:translate3d(0,var(--hero-y,0px),0) scale(1.06);transform-origin:50% 30%}
-.hero-foto::after{inset:auto -15% -70% 30%;height:640px;background:radial-gradient(closest-side,rgba(244,130,11,.30),transparent);animation:ts-drift 16s ease-in-out infinite alternate}
-.hero-foto .hero-in::before{content:"";position:absolute;width:420px;height:420px;left:-180px;top:-160px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,177,92,.16),transparent);pointer-events:none;z-index:-1;animation:ts-drift 20s ease-in-out -6s infinite alternate-reverse}
+.hero-foto::after{inset:auto -15% -70% 30%;height:640px;background:radial-gradient(closest-side,rgba(196,81,31,.30),transparent);animation:ts-drift 16s ease-in-out infinite alternate}
+.hero-foto .hero-in::before{content:"";position:absolute;width:420px;height:420px;left:-180px;top:-160px;border-radius:50%;background:radial-gradient(closest-side,rgba(240,163,127,.16),transparent);pointer-events:none;z-index:-1;animation:ts-drift 20s ease-in-out -6s infinite alternate-reverse}
 @keyframes ts-drift{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(-60px,-40px,0) scale(1.12)}}
 .hero h1::after,.section-sm:has(> .wrap > .g2 .formcard) h1::after,.kosten-kop h1::after,.tool-hero h1::after{
   content:"";display:block;width:min(230px,58%);height:13px;margin-top:.32em;background:var(--penseel-vol) 0 0/100% 100% no-repeat;
@@ -2006,10 +1653,10 @@ h2{letter-spacing:-.025em}
 
 /* ---------- Pagina-intro's (dienst, plaats, kosten, tools): gradient-mesh ---------- */
 .section-sm:has(> .wrap > .g2 .formcard),.kosten-kop,.tool-hero{position:relative;isolation:isolate;overflow:clip;
-  background:radial-gradient(620px 380px at 92% 18%,rgba(255,214,166,.55),transparent 70%),
-             radial-gradient(520px 340px at 70% 100%,rgba(255,232,204,.6),transparent 70%),
-             radial-gradient(460px 300px at 0% 0%,rgba(251,239,222,.9),transparent 70%),
-             linear-gradient(180deg,#fffaf3 0%,#fff 85%)}
+  background:radial-gradient(620px 380px at 92% 18%,rgba(244,196,177,.55),transparent 70%),
+             radial-gradient(520px 340px at 70% 100%,rgba(249,221,210,.6),transparent 70%),
+             radial-gradient(460px 300px at 0% 0%,rgba(230,241,243,.9),transparent 70%),
+             linear-gradient(180deg,#f6fbfc 0%,#fff 85%)}
 /* overflow:clip (geen hidden) zodat het sticky formulier blijft werken; zonder clip-ondersteuning geen streep */
 @supports not (overflow:clip){.section-sm:has(> .wrap > .g2 .formcard)::before,.kosten-kop::before,.tool-hero::before{display:none!important}}
 .section-sm:has(> .wrap > .g2 .formcard)::before,.kosten-kop::before,.tool-hero::before{content:"";position:absolute;right:-60px;top:24px;width:340px;height:60px;z-index:-1;pointer-events:none;
@@ -2018,16 +1665,16 @@ h2{letter-spacing:-.025em}
 
 /* ---------- Kaarten: lift, spotlicht onder de muis, focus = hover ---------- */
 a.card::before,.tool-kaart::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;opacity:0;transition:opacity .25s ease;
-  background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(244,130,11,.10),transparent 70%)}
+  background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(196,81,31,.10),transparent 70%)}
 .tool-kaart{position:relative}
 a.card:hover::before,.tool-kaart:hover::before,a.card:focus-visible::before{opacity:1}
 a.card > *,.tool-kaart > *{position:relative;z-index:1}
 a.card > .card-chip{position:absolute}
 a.card{transition:box-shadow .25s var(--ease-uit),transform .25s var(--ease-uit),border-color .2s}
-a.card:focus-visible{box-shadow:var(--shadow-lg);transform:translateY(-4px);border-color:#ecd9bd;outline:3px solid #ffb15c;outline-offset:3px}
+a.card:focus-visible{box-shadow:var(--shadow-lg);transform:translateY(-4px);border-color:#cadcdf;outline:3px solid #f0a37f;outline-offset:3px}
 a.card:focus-visible::after{transform:scaleX(1)}
 a.card:active{transform:translateY(-1px) scale(.995);transition-duration:.08s}
-.tool-kaart:focus-visible{transform:translateY(-6px);outline:3px solid #ffb15c;outline-offset:3px}
+.tool-kaart:focus-visible{transform:translateY(-6px);outline:3px solid #f0a37f;outline-offset:3px}
 .g4 > .card,.feit{transition:transform .25s var(--ease-uit),box-shadow .25s,border-color .2s}
 .g4 > .card:hover,.feit:hover{transform:translateY(-3px)}
 .card .ic{transition:transform .35s var(--veer)}
@@ -2039,10 +1686,10 @@ a.card:hover .go,a.card:focus-visible .go{gap:10px}
 .btn{transition:transform .15s var(--ease-uit),box-shadow .15s ease,background .15s ease,border-color .15s,color .15s}
 .btn:active{transform:translateY(1px)}
 .btn-primary:active{box-shadow:0 1px 0 var(--accent-dark)}
-.btn-ghost:hover{box-shadow:0 6px 16px rgba(60,41,15,.08);background:#fff}
-.btn:focus-visible{outline:3px solid #ffb15c;outline-offset:3px}
-.chips a:focus-visible{outline:3px solid #ffb15c;outline-offset:2px;border-color:var(--accent)}
-.choice label:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(60,41,15,.07)}
+.btn-ghost:hover{box-shadow:0 6px 16px rgba(11,74,86,.08);background:#fff}
+.btn:focus-visible{outline:3px solid #f0a37f;outline-offset:3px}
+.chips a:focus-visible{outline:3px solid #f0a37f;outline-offset:2px;border-color:var(--accent)}
+.choice label:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(11,74,86,.07)}
 .choice label:active{transform:scale(.985)}
 
 /* ---------- Sectiekoppen: accentstreep groeit bij in beeld komen ---------- */
@@ -2067,7 +1714,7 @@ a.card:hover .go,a.card:focus-visible .go{gap:10px}
 
 /* ---------- Leesvoortgang (pagina's met lopende tekst) ---------- */
 @supports (animation-timeline: scroll()){
-  body:has(.prose) .header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:linear-gradient(90deg,var(--accent),#ffb15c);
+  body:has(.prose) .header::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:linear-gradient(90deg,var(--accent),#f0a37f);
     transform-origin:0 50%;transform:scaleX(0);animation:ts-voortgang linear both;animation-timeline:scroll(root)}
   @keyframes ts-voortgang{to{transform:scaleX(1)}}
 }
@@ -2099,11 +1746,11 @@ a.card:hover .go,a.card:focus-visible .go{gap:10px}
 .ts-tik{animation:ts-tik .45s var(--veer)}
 @keyframes ts-tik{0%{transform:scale(1)}40%{transform:scale(1.045)}100%{transform:scale(1)}}
 [data-vc-uitkomst].ts-tik,.kk-kleurinfo.ts-tik,.sw-conclusie.ts-tik{animation-name:ts-tik-klein}
-@keyframes ts-tik-klein{0%{transform:scale(1)}40%{transform:scale(1.015);box-shadow:0 8px 24px rgba(217,111,0,.14)}100%{transform:scale(1)}}
+@keyframes ts-tik-klein{0%{transform:scale(1)}40%{transform:scale(1.015);box-shadow:0 8px 24px rgba(168,67,26,.14)}100%{transform:scale(1)}}
 .calc-uit .bedrag,.hc-regel,.ohc-teller,.sw-conclusie{display:inline-block}
 .calc-uit .bedrag{display:block}
 .hc-opts label,.ohc-opts label,.ohc-opts button,.kk-stijl,.sw-dag{transition:transform .15s var(--ease-uit),box-shadow .15s,border-color .15s,background .15s}
-.hc-opts label:hover,.ohc-opts label:hover,.ohc-opts button:hover,.kk-stijl:hover,.sw-dag:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(60,41,15,.08)}
+.hc-opts label:hover,.ohc-opts label:hover,.ohc-opts button:hover,.kk-stijl:hover,.sw-dag:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(11,74,86,.08)}
 .hc-opts label:active,.ohc-opts label:active,.ohc-opts button:active,.kk-stijl:active,.sw-dag:active{transform:scale(.97)}
 .kk-kleur i{transition:transform .2s var(--veer),box-shadow .2s}
 .kk-kleur:hover i{transform:scale(1.14)}
@@ -2240,7 +1887,7 @@ APP_JS += r'''
       });
     });
   });
-  document.querySelectorAll(".calc, .hc-pagina, .kk-tool, .ohc-quiz, .ohc-card, .sw-app, [data-verfcalc]").forEach(function (root) {
+  document.querySelectorAll(".calc, .hc-pagina, .kk-tool, .ohc-quiz, .ohc-card, .sw-app").forEach(function (root) {
     mo.observe(root, { subtree: true, childList: true, characterData: true });
   });
 })();
@@ -2273,7 +1920,7 @@ STYLE_CSS += r'''
   .footer{padding-bottom:calc(26px + 76px + env(safe-area-inset-bottom))}
 }
 
-/* ---------- Gecentreerde kop: penseelstreek ook gecentreerd ---------- */
+/* ---------- Gecentreerde kop: accentstreep ook gecentreerd ---------- */
 .center h1::after,h1.center::after{margin-left:auto;margin-right:auto}
 
 /* ---------- Tools: vast beeldvlak 16:11 (klaar voor renders als <img>) ---------- */
@@ -2292,8 +1939,8 @@ STYLE_CSS += r'''
    en vielen daardoor als losse vlakken. Nu kleurt de hele rij. */
 @media(max-width:560px){
   .hc-vb-tabel td,.hc-vb-tabel th,.hc-vb-tabel tbody tr:hover td{background:transparent}
-  .hc-vb-tabel tbody tr:nth-child(even){background:#fdfbf7}
-  .hc-vb-tabel tfoot tr{background:linear-gradient(180deg,#fbf3e6,#f7ecdb);border-bottom:0}
+  .hc-vb-tabel tbody tr:nth-child(even){background:#f9fbfb}
+  .hc-vb-tabel tfoot tr{background:linear-gradient(180deg,#ecf4f5,#e3edef);border-bottom:0}
   .hc-vb-tabel tfoot th{border:0}
 }
 
@@ -2313,4 +1960,10 @@ STYLE_CSS += r'''
 /* ---------- Kaarten met een 'Lees meer'-link (kennisbank): link onderaan op één lijn ---------- */
 .grid > div.card:has(> p:last-child > .go:only-child){display:flex;flex-direction:column}
 .grid > div.card > p:last-child:has(> .go:only-child){margin-top:auto;margin-bottom:0;padding-top:4px}
+'''
+
+STYLE_CSS += r'''
+/* ---------- Knop in het hoofdmenu: witte tekst op de accentkleur (contrast AA) ---------- */
+.nav a.btn-primary,.nav a.btn-primary:hover{color:#fff}
+.nav a.btn-primary:hover{background:var(--accent-dark)}
 '''

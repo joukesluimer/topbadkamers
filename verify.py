@@ -2,6 +2,7 @@
 """Controleert de gegenereerde site op kapotte links, dubbele titels en JSON-LD-fouten."""
 
 import os, re, json, sys, html as htmllib
+from data import SITE as _SITE
 from collections import Counter, defaultdict
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -107,6 +108,7 @@ for p in problems[:40]:
 if len(problems) > 40:
     print(f"  ... en nog {len(problems)-40}")
 
+_n_vroeg = len(problems)
 # --- extra SEO-controles (seo-ronde 4) ---
 indexeerbaar = {u for u, h in pages.items() if 'content="noindex' not in h} - {"/404.html"}
 
@@ -122,7 +124,7 @@ for tekst, n in h1_teller.items():
 
 # 2. canonical moet naar de pagina zelf wijzen
 for u in indexeerbaar:
-    m = re.search(r'<link rel="canonical" href="https://topschilder\.nl([^"]*)">', pages[u])
+    m = re.search(r'<link rel="canonical" href="' + re.escape(_SITE["url"]) + r'([^"]*)">', pages[u])
     if m and m.group(1) != u:
         problems.append(f"{u}: canonical wijst naar {m.group(1)}")
 
@@ -157,7 +159,7 @@ for u in indexeerbaar:
 
 # sitemap-check
 sm = open(os.path.join(SITE, "sitemap.xml"), encoding="utf-8").read()
-locs = re.findall(r"<loc>https://topschilder\.nl(.*?)</loc>", sm)
+locs = re.findall(r"<loc>" + re.escape(_SITE["url"]) + r"(.*?)</loc>", sm)
 print(f"\n--- Sitemap ---\n  {len(locs)} URL's")
 not_on_disk = [l for l in locs if l not in exists]
 print(f"  niet op schijf: {not_on_disk[:5] if not_on_disk else 'geen'}")
@@ -169,6 +171,12 @@ print(f"  noindex maar wel in sitemap: {noindex_in_sitemap[:5] if noindex_in_sit
 lastmods = re.findall(r"<lastmod>(.*?)</lastmod>", sm)
 foute_lastmod = [d for d in lastmods if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", d)]
 print(f"  lastmod-datums: {len(set(lastmods))} verschillend" + (f", {len(foute_lastmod)} ongeldig" if foute_lastmod else ""))
+
+_laat = problems[_n_vroeg:]
+if _laat:
+    print(f"\n--- SEO-controles ({len(_laat)}) ---")
+    for p in _laat[:40]:
+        print("  " + p)
 
 ok = (not missing and not asset_missing and not dupes and not dd and not problems and not not_on_disk
       and not noindex_in_sitemap and not foute_lastmod)
