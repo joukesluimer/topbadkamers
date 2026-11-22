@@ -16,7 +16,7 @@ import { zodOutputFormat } from "npm:@anthropic-ai/sdk/helpers/zod";
 const MODEL = Deno.env.get("OFFERTECHECK_MODEL") ?? "claude-opus-5-5";
 const MAX_BYTES = 6 * 1024 * 1024; // 6 MB per bestand
 const MAX_TEKST = 20_000; // tekens bij geplakte tekst
-const TOEGESTAAN = ["https://topschilder.nl", "https://www.topschilder.nl"];
+const TOEGESTAAN = ["https://joukesluimer.github.io", "https://top-badkamers.nl", "https://www.top-badkamers.nl"];
 const EXTRA_ORIGIN = Deno.env.get("OFFERTECHECK_EXTRA_ORIGIN"); // bv. http://localhost:8000 om te testen
 const TYPES: Record<string, "pdf" | "image"> = {
   "application/pdf": "pdf",
