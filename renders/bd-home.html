@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · home</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bd-common.js';
+const { THREE, MAT } = C;
+C.pageStyle();
+
+// Home: lichte, moderne badkamer met inloopdouche, zwevend meubel en hangtoilet.
+const { renderer, scene, camera } = C.setup({ exposure: 0.85 });
+const W = 3.6, D = 3.2, H = 2.6;
+
+const wallTile = C.tileMaterial({ tile: [0.6, 1.2], grout: 0.002, color: '#efebe4', groutColor: '#dcd7cd', surface: 'matte', rough: 0.42, nx: 3, ny: 2, ppm: 700, seed: 3, varL: 0.012, tilt: 0.004 });
+const accent = C.tileMaterial({ tile: [0.075, 0.3], grout: 0.0022, color: '#a7b8a6', groutColor: '#e6e3dc', surface: 'glossy', nx: 16, ny: 4, ppm: 1100, seed: 8, varL: 0.06, tilt: 0.004, pattern: 'stack', rough: 0.2, clearcoat: 0 });
+const floor = C.tileMaterial({ tile: [0.6, 0.6], grout: 0.0025, color: '#c9c2b6', groutColor: '#b2ab9f', surface: 'concrete', nx: 3, ny: 3, ppm: 700, seed: 5, varL: 0.03, tilt: 0.003 });
+const plaster = C.plasterMaterial('#f4f2ee');
+
+const R = C.room(scene, {
+  W, D, H,
+  walls: { back: wallTile, left: wallTile, right: wallTile, front: wallTile },
+  floor, ceil: plaster,
+  windows: [{ wall: 'right', a0: 1.55, a1: 2.45, y0: 1.42, y1: 2.32, frame: '#f2f2f0', glow: 5 }],
+});
+
+// accent in de douchehoek: achterwand en rechterwand
+const sx = 2.35, sz = 1.15;
+C.wainscot(scene, 'back', sx, W, 0, H, accent, R);
+C.wainscot(scene, 'right', 0.006, sz, 0, H, accent, R);
+
+// glazen wand
+const panel = C.glassPanel({ w: sz, h: 2.0, frame: 'black' });
+panel.rotation.y = -Math.PI / 2;
+panel.position.set(sx, 0, 0.006);
+scene.add(panel);
+// stabilisatiestang naar de achterwand... hier naar de rechterwand
+const black = MAT.black();
+scene.add(C.box(W - sx - 0.006, 0.018, 0.018, black, (sx + W) / 2, 2.0 - 0.03, sz - 0.03, { worldUV: false }));
+
+// douche
+const shower = C.showerSet(black, { headH: 2.15, arm: 0.42, head: 0.3 });
+shower.position.set((sx + W) / 2 + 0.02, 0, 0.006);
+scene.add(shower);
+const drain = C.linearDrain(W - sx - 0.12);
+drain.position.set((sx + W) / 2 + 0.02, 0, 0.07);
+scene.add(drain);
+// planchet in de douche
+scene.add(C.rbox(0.36, 0.012, 0.12, 0.003, black, W - 0.3, 1.25, 0.066));
+scene.add(C.cyl(0.026, 0.17, MAT.plastic('#e9e3d8'), W - 0.38, 1.256 + 0.085, 0.07));
+scene.add(C.cyl(0.024, 0.15, MAT.plastic('#8e9a8a'), W - 0.31, 1.256 + 0.075, 0.07));
+
+// wastafelmeubel
+const oak = C.woodMaterial({ light: '#cfab84', dark: '#a27c56', seed: 4, ring: 30, rough: 0.55 });
+const solid = new THREE.MeshPhysicalMaterial({ color: '#f4f3ef', roughness: 0.32, clearcoat: 0.3, clearcoatRoughness: 0.2, envMapIntensity: 0.7 });
+const van = C.vanity({ w: 1.2, d: 0.46, h: 0.46, y0: 0.42, front: oak, basin: 'integrated', basinMat: solid, drawers: 2, handle: 'groove' });
+van.position.set(1.25, 0, 0.006);
+scene.add(van);
+const topY = van.userData.topY;
+scene.add(C.wallFaucet(black, 1.25 - 0.065, topY + 0.21, { z: 0.006 }));
+const mir = C.mirror({ w: 0.78, shape: 'round', frameMat: black });
+mir.position.set(1.25, 1.62, 0.006);
+scene.add(mir);
+// zeeppompje en tandenborstelbeker
+scene.add(C.cyl(0.03, 0.13, MAT.ceramic('#e6e0d6'), 1.72, topY + 0.065, 0.12));
+scene.add(C.cyl(0.006, 0.04, black, 1.72, topY + 0.15, 0.12));
+scene.add(C.cylBetween(new THREE.Vector3(1.72, topY + 0.165, 0.12), new THREE.Vector3(1.72, topY + 0.165, 0.165), 0.005, black));
+scene.add(C.cyl(0.032, 0.1, MAT.ceramic('#7d8b7c'), 1.62, topY + 0.05, 0.1));
+
+// handdoekradiator links van het meubel
+const rad = C.towelRadiator(black, { w: 0.45, h: 1.25, y0: 0.35, bars: 15 });
+rad.position.set(0.33, 0, 0.006);
+scene.add(rad);
+scene.add(C.towel('#efe8dc', 0.33, 0.35 + 0.06 + (13 / 14) * 1.13, 0.066, 0.4, 0.55));
+
+// voorzetwand met hangtoilet rechts
+const ledgeD = 0.2, lz0 = 1.3, lz1 = D;
+scene.add(C.box(ledgeD, 1.12, lz1 - lz0, wallTile, W - ledgeD / 2, 0.56, (lz0 + lz1) / 2));
+scene.add(C.box(ledgeD + 0.02, 0.03, lz1 - lz0, solid, W - ledgeD / 2 - 0.01, 1.135, (lz0 + lz1) / 2));
+const wc = C.hangingToilet({ seatH: 0.43 });
+C.place(wc, 'right', 2.0, R);
+wc.position.x = W - ledgeD;
+scene.add(wc);
+const plate = C.flushPlate({ style: 'black' });
+C.place(plate, 'right', 2.0, R, 0.98);
+plate.position.x = W - ledgeD;
+scene.add(plate);
+// rolhouder
+scene.add(C.box(0.1, 0.008, 0.02, black, W - ledgeD - 0.05, 0.72, 2.55, { worldUV: false }));
+scene.add(C.cyl(0.055, 0.1, MAT.whiteMatte('#f7f6f2'), W - ledgeD - 0.08, 0.66, 2.57, { axis: 'z' }));
+// vaasje met takje op de voorzetwand
+scene.add(C.cyl(0.04, 0.16, MAT.ceramic('#d9cfc0'), W - 0.1, 1.15 + 0.08, 2.80, { rTop: 0.03 }));
+const stem = new THREE.MeshStandardMaterial({ color: '#5d6b4c', roughness: 0.8 });
+scene.add(C.tube([[W - 0.1, 1.3, 2.80], [W - 0.13, 1.5, 2.78], [W - 0.18, 1.68, 2.81]], 0.003, stem));
+scene.add(C.tube([[W - 0.1, 1.3, 2.80], [W - 0.07, 1.48, 2.85], [W - 0.04, 1.6, 2.91]], 0.0025, stem));
+const leaf = new THREE.MeshStandardMaterial({ color: '#6f7f57', roughness: 0.7, side: THREE.DoubleSide });
+for (let i = 0; i < 14; i++) {
+  const t = i / 13, br = i % 2;
+  const p = br ? [W - 0.1 + 0.06 * t, 1.33 + 0.27 * t, 2.80 + 0.11 * t] : [W - 0.1 - 0.08 * t, 1.33 + 0.35 * t, 2.80 + 0.01 * t];
+  const lf = new THREE.Mesh(new THREE.CircleGeometry(0.022, 10), leaf);
+  lf.scale.set(1, 0.55, 1);
+  lf.position.set(...p);
+  lf.rotation.set(i * 1.3, i * 0.7, i * 0.4);
+  lf.castShadow = true;
+  scene.add(lf);
+}
+
+// plafond: spots en ventiel
+C.downlight(scene, 1.25, 0.55, H, { intensity: 2.5 });
+C.downlight(scene, (sx + W) / 2, 0.85, H, { intensity: 2.5 });
+C.downlight(scene, 1.6, 2.1, H, { intensity: 2.5 });
+C.downlight(scene, W - 0.75, 2.45, H, { intensity: 1.5 });
+C.ventValve(scene, 1.95, 1.25, H);
+
+// licht
+const w0 = R.windows[0];
+C.windowLight(scene, { ...w0, intensity: 14 });
+C.bounceLight(scene, {
+  surfaces: [
+    { origin: [0.9, 0, 1.3], u: [1.8, 0, 0], v: [0, 0, 1.7], normal: [0, 1, 0], color: '#f1ece4', weight: 2 },
+    { origin: [0, 0.3, 0.2], u: [0, 0, 2.8], v: [0, 2, 0], normal: [1, 0, 0], color: '#f3efe8', weight: 1.5 },
+    { origin: [0.2, 0.4, 0], u: [2, 0, 0], v: [0, 2, 0], normal: [0, 0, 1], color: '#f1ede6', weight: 1 },
+    { origin: [0.3, H, 0.3], u: [3, 0, 0], v: [0, 0, 2.6], normal: [0, -1, 0], color: '#f6f4f0', weight: 1 },
+  ],
+  target: [1.8, 1.1, 1.6], intensity: 7, count: 3,
+});
+
+C.archCamera(camera, [0.42, 1.42, 3.12], [2.55, 0, 0], -0.05, 62);
+await C.finish(renderer, scene, camera, 'bd-home', { envPos: [1.6, 1.4, 1.8], frames: 64, envBoost: 0.6, envAmbient: 1.0, hemi: 0.03 });
+</script>
+</body>
+</html>

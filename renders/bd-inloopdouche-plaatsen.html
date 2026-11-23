@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · inloopdouche plaatsen</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bd-common.js';
+const { THREE, MAT } = C;
+C.pageStyle();
+
+// Inloopdouche: glazen wand, douchegoot langs de wand en een regendouche,
+// met marmerlook-tegels op de wand en een antraciet vloer.
+const { renderer, scene, camera } = C.setup({ exposure: 0.78 });
+const W = 2.7, D = 2.6, H = 2.6;
+
+const marble = C.tileMaterial({ tile: [0.6, 1.2], grout: 0.002, color: '#f1efea', groutColor: '#dcd8d0', surface: 'marble', nx: 3, ny: 2, ppm: 700, seed: 51, varL: 0.01, tilt: 0.003, rough: 0.18 });
+const floor = C.tileMaterial({ tile: [0.6, 0.6], grout: 0.0025, color: '#5d5b58', groutColor: '#4d4b48', surface: 'concrete', nx: 3, ny: 3, ppm: 700, seed: 52, varL: 0.025, tilt: 0.002 });
+const plaster = C.plasterMaterial('#f2f0ec');
+
+const R = C.room(scene, {
+  W, D, H,
+  walls: { back: marble, left: marble, right: marble, front: marble },
+  floor, ceil: plaster,
+  windows: [{ wall: 'right', a0: 0.9, a1: 1.8, y0: 1.3, y1: 2.25, frame: '#f2f2f0', glow: 5 }],
+});
+
+const chrome = MAT.chrome();
+// douchezone links achter: 1,35 m breed, glazen wand van 1,2 m
+const sx = 1.35, sz = 1.2;
+const panel = C.glassPanel({ w: sz, h: 2.0, frame: 'chrome' });
+panel.rotation.y = -Math.PI / 2;
+panel.position.set(sx, 0, 0.0);
+scene.add(panel);
+// stabilisatiestang naar de achterwand
+scene.add(C.cyl(0.009, sz - 0.05, chrome, sx - 0.01, 1.97, (sz - 0.05) / 2, { axis: 'z' }));
+scene.add(C.cyl(0.022, 0.008, chrome, sx - 0.01, 1.97, 0.004, { axis: 'z' }));
+// regendouche en thermostaat aan de achterwand
+const shower = C.showerSet(chrome, { headH: 2.18, arm: 0.45, head: 0.3, round: true, mixerH: 1.05 });
+shower.position.set(0.62, 0, 0);
+scene.add(shower);
+// douchegoot langs de achterwand
+const drain = C.linearDrain(sx - 0.18);
+drain.position.set(sx / 2, 0, 0.08);
+scene.add(drain);
+// nis met flesjes: verdiepte strook in de linkerwand (donkere achterkant + planchet)
+const nicheBack = C.tileMaterial({ tile: [0.6, 1.2], grout: 0.002, color: '#e9e6e0', groutColor: '#dcd8d0', surface: 'marble', nx: 3, ny: 2, ppm: 600, seed: 53, varL: 0.01, tilt: 0.002, rough: 0.2 });
+scene.add(C.box(0.005, 0.3, 0.6, nicheBack, 0.0025, 1.25, 0.6, { cast: false }));
+scene.add(C.rbox(0.09, 0.012, 0.6, 0.002, chrome, 0.045, 1.1, 0.6));
+scene.add(C.rbox(0.09, 0.012, 0.6, 0.002, chrome, 0.045, 1.4, 0.6));
+scene.add(C.cyl(0.028, 0.18, MAT.plastic('#2f3a38'), 0.045, 1.106 + 0.09, 0.5));
+scene.add(C.cyl(0.026, 0.15, MAT.plastic('#e7e1d6'), 0.045, 1.106 + 0.075, 0.62));
+scene.add(C.cyl(0.024, 0.12, MAT.plastic('#b9c7c0'), 0.045, 1.106 + 0.06, 0.72));
+// teakhouten krukje in de douche
+const teak = C.woodMaterial({ light: '#b07a4c', dark: '#7d5130', seed: 11, ring: 28, rough: 0.6 });
+const stool = new THREE.Group();
+for (let i = 0; i < 5; i++) stool.add(C.rbox(0.42, 0.022, 0.05, 0.006, teak, 0, 0.44, -0.12 + i * 0.06));
+for (const sxx of [-1, 1]) {
+  stool.add(C.rbox(0.03, 0.43, 0.3, 0.008, teak, sxx * 0.18, 0.215, 0));
+}
+stool.position.set(0.35, 0, 1.0);
+stool.rotation.y = Math.PI / 2;
+scene.add(stool);
+
+// buiten de douche: handdoekradiator op de achterwand
+const rad = C.towelRadiator(chrome, { w: 0.5, h: 1.2, y0: 0.3, bars: 15 });
+rad.position.set(2.1, 0, 0);
+scene.add(rad);
+scene.add(C.towel('#d9cbb5', 2.1, 0.3 + 0.06 + (13 / 14) * 1.08, 0.06, 0.42, 0.6));
+
+C.downlight(scene, 0.62, 0.85, H, { intensity: 2.4 });
+C.downlight(scene, 1.9, 1.6, H, { intensity: 1.8 });
+C.ventValve(scene, 1.9, 0.6, H);
+C.autoLights(scene, R, { window: 15, bounce: 6, colors: { floor: '#77746f' } });
+
+C.archCamera(camera, [2.15, 1.45, 2.55], [0.95, 0, 0], -0.06, 60);
+await C.finish(renderer, scene, camera, 'bd-inloopdouche-plaatsen', { envPos: [1.4, 1.4, 1.3], frames: 64, envBoost: 0.6, envAmbient: 1.0, hemi: 0.03 });
+</script>
+</body>
+</html>

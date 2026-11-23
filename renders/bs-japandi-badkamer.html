@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · japandi badkamer</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bs-common.js';
+const { THREE } = C;
+C.pageStyle();
+
+// Japandi: gebroken witte langwerpige tegel in visgraat achter het meubel, zandkleurige kalkverf,
+// warme terrazzo op de vloer, licht eiken, zwarte accenten, nis in de douche en weinig spullen.
+const room = { w: 3.2, d: 3.6, h: 2.6 };
+const { renderer, scene, camera } = C.setup({ exposure: 0.95, fov: 56 });
+
+const visgraat = C.tileMaterial({ pattern: 'herring', tw: 0.3, th: 0.075, joint: 0.0018, base: '#ece6db', varL: 0.025, varS: 0.03, grout: '#d6cfc2', gloss: 0.12, seed: 51, wobble: 0.25, bevel: 2, rotate: Math.PI / 4, clearcoat: 0.4, normalScale: 0.7 });
+const zand = C.plasterMaterial('#d9cdbb', { cloud: 0.045, seed: 3 });
+const terrazzo = C.tileMaterial({ pattern: 'grid', tw: 0.6, th: 0.6, joint: 0.002, base: '#e6dfd3', varL: 0.008, grout: '#d5cdc0', gloss: 0.35, seed: 53, surface: C.SURF.terrazzo(['#b58c6a', '#8f8a82', '#d2c2ad', '#6f6a63', '#c7a183', '#f4efe7']), periodX: 1.2, periodY: 1.2, normalScale: 0.4 });
+const plafond = C.plasterMaterial('#efe9df', { cloud: 0.02 });
+const eiken = C.woodMaterial({ base: '#cfab80', seed: 61, size: 0.9, contrast: 0.12, roughness: 0.6 });
+const zwart = C.metalMaterial('zwart');
+const salie = C.fabricMaterial('#a4ae95');
+
+C.floorCeil(scene, room, terrazzo, plafond);
+const raam = { u0: 1.55, u1: 2.45, v0: 1.3, v1: 2.3 };
+const nis = { u0: 0.22, u1: 0.82, v0: 1.05, v1: 1.4 };
+// douche: terrazzo-wand; achter meubel: visgraat; rest: kalkverf
+C.wall(scene, room, 'back', (u) => (u < 1.02 ? terrazzo : visgraat), (u) => (u < 1.02 ? terrazzo : zand), 1.25, [nis], 0.12, [1.02]);
+// boven de douche loopt de terrazzo door tot het plafond
+C.wall(scene, room, 'left', (u) => (u < 1.0 ? terrazzo : zand), (u) => (u < 1.0 ? terrazzo : zand), 1.25, [raam], 0.12, [1.0]);
+C.wall(scene, room, 'right', zand, zand, room.h, []);
+C.niche(scene, nis, terrazzo, 0.09);
+C.windowLight(scene, room, 'left', raam, { frame: '#cfab80', reveal: zand, sill: eiken, sunDir: [-1.0, 1.0, 0.5], sun: 5.5, fill: 1.3, glowI: 1.45 });
+
+// inloopdouche met dun zwart profiel
+scene.add(C.shower('zwart', 0.52, room.h, { armY: 2.15, reach: 0.4, headR: 0.15, mixY: 1.0, handX: 0.32 }));
+scene.add(C.drain(0.52, 0.1, 0.8, 'zwart'));
+const glas = C.glassPanel({ len: 1.0, h: 2.0, wallProfile: zwart, profileMat: null, stab: zwart, stabLen: 1.02 });
+glas.position.set(1.02, 0, 0); scene.add(glas);
+scene.add(C.bottle(C.matteMaterial('#efe8dc', 0.4), 0.4, 1.05, -0.045, 0.16, 0.028, zwart));
+scene.add(C.bottle(C.matteMaterial('#8a7f70', 0.4), 0.5, 1.05, -0.045, 0.13, 0.026, zwart));
+
+// eiken meubel met lage open plank en een opzetkom in zandsteenkleur
+const mx = 1.98;
+const meubel = C.vanity({ type: 'zwevend', w: 1.1, d: 0.46, h: 0.38, top: 0.85, mat: eiken, blad: eiken, bladT: 0.035, sink: 'opzet', bowlR: 0.2, bowlShape: 'rond', bowlScale: [1.0, 0.82], bowlMat: C.matteMaterial('#e8e1d6', 0.45), drawers: 1, handle: null });
+meubel.position.set(mx, 0, 0); scene.add(meubel);
+scene.add(C.tap('hoog', 'zwart', mx, 0.85, 0.07, 0.19));
+const sp = C.mirror(0.7, 0.7, 'rond', zwart, 0.012); sp.position.set(mx, 1.62, 0); scene.add(sp);
+scene.add(C.bottle(C.matteMaterial('#d8cfc0', 0.5), mx + 0.38, 0.85, 0.14, 0.12, 0.035, zwart));
+// krukje met handdoeken en een plant
+scene.add(C.stool(eiken, 2.85, 0.85, 0.45, 0.16));
+scene.add(C.towelStack([salie, C.fabricMaterial('#efe9de')], 2.85, 0.45, 0.85, 0.26, 0.2));
+scene.add(C.plant(2.92, 0.3, { potMat: C.matteMaterial('#cbbfae', 0.95), h: 0.6, seed: 10, potR: 0.14, potH: 0.32 }));
+
+// hangtoilet onder het raam
+const wc = C.toilet(); wc.rotation.y = Math.PI / 2; wc.position.set(0, 0, 2.0); scene.add(wc);
+const plate = C.flushPlate('zwart', 0, 1.05, 0); plate.rotation.y = Math.PI / 2; plate.position.set(0, 0, 2.0); scene.add(plate);
+const warm = C.KELVIN.warm;
+C.spot(scene, 0.52, 0.35, room.h, warm, 5.5, { shadow: true, angle: 0.85 });
+C.spot(scene, mx, 0.3, room.h, warm, 5, { shadow: true, angle: 0.85 });
+C.spot(scene, 1.6, 1.9, room.h, warm, 3.5, {});
+scene.add(new THREE.HemisphereLight('#f6efe2', '#6b5f50', 0.2));
+
+C.archCamera(camera, [2.8, 1.35, 3.45], [0.95, 0, 0.25], -0.035);
+await C.finish(renderer, scene, camera, 'bs-japandi-badkamer', { aoRadius: 0.4, aoIntensity: 1.2, envScale: 0.6 });
+</script>
+</body>
+</html>

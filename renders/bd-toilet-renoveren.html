@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · toilet renoveren</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bd-common.js';
+const { THREE, MAT } = C;
+C.pageStyle();
+
+// Toilet renoveren: apart toilet met hangtoilet in een voorzetwand, mat zwarte
+// bedieningsplaat, fonteintje met kraantje en een rond spiegeltje.
+const { renderer, scene, camera } = C.setup({ exposure: 0.95 });
+const W = 1.0, D = 1.95, H = 2.5;
+
+const paint = C.plasterMaterial('#4d6656', 6);
+const subway = C.tileMaterial({ tile: [0.15, 0.075], grout: 0.002, color: '#f3f1ec', groutColor: '#e0ddd6', surface: 'glossy', pattern: 'half', nx: 8, ny: 12, ppm: 1300, seed: 61, varL: 0.02, tilt: 0.004, clearcoat: 0.3 });
+const floor = C.tileMaterial({ tile: [0.3, 0.3], grout: 0.0025, color: '#cfc8bc', groutColor: '#bdb6aa', surface: 'terrazzo', nx: 4, ny: 4, ppm: 900, seed: 62, varL: 0.015, tilt: 0.002, rough: 0.32, chips: 0.3 });
+const plaster = C.plasterMaterial('#f3f1ed');
+
+const R = C.room(scene, { W, D, H, walls: { back: paint, left: paint, right: paint, front: paint }, floor, ceil: plaster });
+const th = 1.2;
+C.wainscot(scene, 'left', 0, D, 0, th, subway, R);
+C.wainscot(scene, 'right', 0, D, 0, th, subway, R);
+// afwerkprofiel bovenaan de tegels
+const black = MAT.black();
+scene.add(C.box(0.01, 0.01, D, black, 0.009, th + 0.003, D / 2, { worldUV: false }));
+scene.add(C.box(0.01, 0.01, D, black, W - 0.009, th + 0.003, D / 2, { worldUV: false }));
+
+// voorzetwand over de volle breedte, betegeld, met eiken plank
+const ledgeD = 0.22, ledgeH = 1.12;
+scene.add(C.box(W, ledgeH, ledgeD, subway, W / 2, ledgeH / 2, ledgeD / 2));
+const oak = C.woodMaterial({ light: '#cfab84', dark: '#a27c56', seed: 4, ring: 30, rough: 0.55 });
+scene.add(C.rbox(W, 0.03, ledgeD + 0.02, 0.003, oak, W / 2, ledgeH + 0.015, (ledgeD + 0.02) / 2, { worldUV: true }));
+// hangtoilet en bedieningsplaat
+const wc = C.hangingToilet({ seatH: 0.42 });
+wc.position.set(W / 2, 0, ledgeD);
+scene.add(wc);
+const plate = C.flushPlate({ style: 'black' });
+plate.position.set(W / 2, 0.98, ledgeD);
+scene.add(plate);
+// op de plank: vaasje en reservepapier
+scene.add(C.cyl(0.035, 0.14, MAT.ceramic('#e8e0d2'), 0.2, ledgeH + 0.03 + 0.07, 0.1, { rTop: 0.028 }));
+const stem = new THREE.MeshStandardMaterial({ color: '#58663f', roughness: 0.8 });
+scene.add(C.tube([[0.2, ledgeH + 0.2, 0.1], [0.18, ledgeH + 0.36, 0.11], [0.15, ledgeH + 0.5, 0.13]], 0.0025, stem));
+const leaf = new THREE.MeshStandardMaterial({ color: '#6c7c50', roughness: 0.7, side: THREE.DoubleSide });
+for (let i = 0; i < 9; i++) {
+  const t = i / 8;
+  const lf = new THREE.Mesh(new THREE.CircleGeometry(0.02, 10), leaf);
+  lf.scale.set(1, 0.55, 1);
+  lf.position.set(0.2 - 0.05 * t + (i % 2 ? 0.015 : -0.015), ledgeH + 0.22 + 0.27 * t, 0.1 + 0.03 * t);
+  lf.rotation.set(i * 1.1, i * 0.8, i * 0.5);
+  lf.castShadow = true;
+  scene.add(lf);
+}
+const roll = MAT.whiteMatte('#f8f7f3');
+scene.add(C.cyl(0.055, 0.1, roll, 0.78, ledgeH + 0.03 + 0.05, 0.1));
+scene.add(C.cyl(0.055, 0.1, roll, 0.78, ledgeH + 0.03 + 0.15, 0.1));
+
+// fonteintje op de linkerwand met spiegeltje
+const fon = C.fontein({ y: 0.86, tap: black, w: 0.38, d: 0.24 });
+C.place(fon, 'left', 1.12, R);
+scene.add(fon);
+const mir = C.mirror({ w: 0.38, shape: 'round', frameMat: black });
+C.place(mir, 'left', 1.12, R, 1.42);
+scene.add(mir);
+// rolhouder op de rechterwand
+scene.add(C.cyl(0.006, 0.12, black, W - 0.06, 0.72, 0.42, { axis: 'z' }));
+scene.add(C.cyl(0.006, 0.05, black, W - 0.025, 0.72, 0.36, { axis: 'x' }));
+scene.add(C.cyl(0.055, 0.1, roll, W - 0.07, 0.68, 0.43, { axis: 'z' }));
+
+// plafond: spot en ventiel
+C.downlight(scene, W / 2, 0.75, H, { intensity: 2.6 });
+C.downlight(scene, W / 2, 1.4, H, { intensity: 1.4 });
+C.ventValve(scene, W / 2, 1.1, H);
+C.autoLights(scene, R, { bounce: 6, count: 3, colors: { left: '#cfd6cf', right: '#cfd6cf', back: '#b9c6bc', front: '#b9c6bc' } });
+
+C.archCamera(camera, [0.6, 1.32, D - 0.04], [0.4, 0, 0], -0.2, 62);
+await C.finish(renderer, scene, camera, 'bd-toilet-renoveren', { envPos: [0.5, 1.4, 0.9], frames: 64, envBoost: 0.6, envAmbient: 1.0, hemi: 0.03 });
+</script>
+</body>
+</html>

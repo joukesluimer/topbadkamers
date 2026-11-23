@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · industriële badkamer</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bs-common.js';
+const { THREE } = C;
+C.pageStyle();
+
+// Industriële badkamer: grote tegels in betonlook op wand en vloer, douchewand met zwart
+// stalen profiel, opbouwregendouche in mat zwart, antraciet meubel met eiken blad en koel licht.
+const room = { w: 3.2, d: 3.6, h: 2.6 };
+const { renderer, scene, camera } = C.setup({ exposure: 0.95, fov: 56 });
+
+const betonWand = C.tileMaterial({ pattern: 'grid', tw: 0.6, th: 1.2, joint: 0.002, base: '#9c9a94', varL: 0.025, grout: '#8a8882', gloss: 0.7, seed: 31, surface: C.SURF.beton, periodX: 2.4, periodY: 2.4, speck: 0.05, normalScale: 0.6 });
+const betonVloer = C.tileMaterial({ pattern: 'half', tw: 1.2, th: 0.6, joint: 0.002, base: '#a6a49e', varL: 0.02, grout: '#94928c', gloss: 0.5, seed: 33, surface: C.SURF.beton, periodX: 2.4, periodY: 2.4, speck: 0.05, normalScale: 0.6 });
+const plafond = C.plasterMaterial('#e9e8e4', { cloud: 0.02 });
+const antraciet = C.matteMaterial('#36393c', 0.55);
+const eiken = C.woodMaterial({ base: '#a87a4e', seed: 41, size: 0.7, contrast: 0.22, roughness: 0.55 });
+const zwart = C.metalMaterial('zwart');
+
+C.floorCeil(scene, room, betonVloer, plafond);
+const raam = { u0: 1.55, u1: 2.45, v0: 1.25, v1: 2.3 };
+C.wall(scene, room, 'back', betonWand, betonWand, room.h, []);
+C.wall(scene, room, 'left', betonWand, betonWand, room.h, [raam]);
+C.wall(scene, room, 'right', betonWand, betonWand, room.h, []);
+C.windowLight(scene, room, 'left', raam, { frame: '#1d1d1e', mullion: true, reveal: betonWand, sunDir: [-1.0, 0.95, 0.5], sun: 5.0, fill: 1.2, glowI: 1.45, glow: '#eef3fa', sunColor: '#fff6ea' });
+
+// inloopdouche met zwart stalen profiel
+scene.add(C.shower('zwart', 0.52, room.h, { armY: 2.1, reach: 0.38, headR: 0.15, mixY: 1.05, exposed: true, hand: false, mixW: 0.3 }));
+scene.add(C.drain(0.52, 0.1, 0.8, 'zwart'));
+const glas = C.glassPanel({ len: 1.05, h: 2.05, profileMat: zwart, profileW: 0.024, bars: [0.33, 0.66], vbars: [0.5], stab: zwart, stabLen: 1.02 });
+glas.position.set(1.02, 0, 0); scene.add(glas);
+// houten plankje met flessen in de douche
+scene.add(C.box(0.5, 0.025, 0.12, eiken, 0.52, 1.35, 0.06));
+scene.add(C.bottle(C.matteMaterial('#2c2c2c', 0.4), 0.4, 1.3625, 0.06, 0.16, 0.027, zwart));
+scene.add(C.bottle(C.matteMaterial('#b9a58a', 0.4), 0.5, 1.3625, 0.06, 0.14, 0.025, zwart));
+
+// antraciet meubel met eiken blad en opzetkom
+const mx = 1.98;
+const meubel = C.vanity({ type: 'zwevend', w: 1.2, d: 0.46, h: 0.4, top: 0.86, mat: antraciet, blad: eiken, bladT: 0.04, sink: 'opzet', bowlR: 0.21, bowlShape: 'rond', bowlScale: [1.0, 0.85], bowlMat: C.matteMaterial('#8e8c87', 0.6), drawers: 2, handle: zwart });
+meubel.position.set(mx, 0, 0); scene.add(meubel);
+scene.add(C.tap('wand', 'zwart', mx, 0.98, 0, 0.2));
+const sp = C.mirror(0.9, 0.7, 'rect', zwart, 0.02); sp.position.set(mx, 1.65, 0); scene.add(sp);
+// zwart wandlampje boven de spiegel
+C.sconce(scene, 'zwart', mx - 0.62, 1.7, 0, '#fff1df', 0.9);
+C.sconce(scene, 'zwart', mx + 0.62, 1.7, 0, '#fff1df', 0.9);
+scene.add(C.towelStack([C.fabricMaterial('#d8d4cc'), C.fabricMaterial('#5c5e60')], mx + 0.38, 0.86, 0.22, 0.26, 0.2));
+
+// hangtoilet onder het raam
+const wc = C.toilet(); wc.rotation.y = Math.PI / 2; wc.position.set(0, 0, 2.0); scene.add(wc);
+const plate = C.flushPlate('zwart', 0, 1.05, 0); plate.rotation.y = Math.PI / 2; plate.position.set(0, 0, 2.0); scene.add(plate);
+// plant en ladder-handdoekrek rechts
+scene.add(C.plant(2.9, 0.35, { potMat: C.matteMaterial('#6f6d68', 0.9), h: 0.75, seed: 6, potR: 0.15 }));
+const rail = C.towelRail('zwart', 0, 0.5, 0.5, 1.3, 5); rail.rotation.y = -Math.PI / 2; rail.position.set(room.w, 0, 1.25); scene.add(rail);
+const hd = C.towel(C.fabricMaterial('#cfcac1'), 0.42, 0.6, 0, 1.5, 0.06); hd.rotation.y = -Math.PI / 2; hd.position.set(room.w, 0, 1.25); scene.add(hd);
+
+const koel = C.KELVIN.koel;
+C.spot(scene, 0.52, 0.35, room.h, koel, 6, { shadow: true, angle: 0.85 });
+C.spot(scene, mx - 0.35, 0.3, room.h, koel, 4.5, { shadow: true, angle: 0.85 });
+C.spot(scene, mx + 0.35, 0.3, room.h, koel, 4.5, { shadow: true, angle: 0.85 });
+C.spot(scene, 1.6, 1.9, room.h, koel, 3.5, {});
+scene.add(new THREE.HemisphereLight('#eef1f4', '#5f5f5c', 0.2));
+
+C.archCamera(camera, [2.8, 1.35, 3.45], [0.95, 0, 0.25], -0.035);
+await C.finish(renderer, scene, camera, 'bs-industriele-badkamer', { aoRadius: 0.4, aoIntensity: 1.2, envScale: 0.6 });
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · badkamer installeren</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bd-common.js';
+const { THREE, MAT } = C;
+C.pageStyle();
+
+// Badkamer installeren: close-up van een wastafelmeubel tijdens de montage. De lade
+// is eruit, zodat sifon, hoekstopkranen en flexibele slangen in beeld zijn.
+const { renderer, scene, camera } = C.setup({ exposure: 0.85 });
+const W = 2.4, D = 2.4, H = 2.6;
+
+const wallTile = C.tileMaterial({ tile: [0.3, 0.6], grout: 0.002, color: '#f1f0ec', groutColor: '#d8d6d0', surface: 'glossy', nx: 6, ny: 3, ppm: 900, seed: 41, varL: 0.012, tilt: 0.004, clearcoat: 0.3 });
+const floor = C.tileMaterial({ tile: [0.6, 0.6], grout: 0.003, color: '#7d7a75', groutColor: '#6a6762', surface: 'concrete', nx: 3, ny: 3, ppm: 700, seed: 42, varL: 0.03, tilt: 0.002 });
+const plaster = C.plasterMaterial('#f2f0ec');
+
+const R = C.room(scene, {
+  W, D, H,
+  walls: { back: wallTile, left: wallTile, right: wallTile, front: wallTile },
+  floor, ceil: plaster,
+  windows: [{ wall: 'left', a0: 0.9, a1: 1.8, y0: 1.2, y1: 2.2, frame: '#f2f2f0', glow: 5 }],
+});
+
+const cx = 1.25, w = 0.8, d = 0.46, y0 = 0.46, h = 0.44;
+const oak = C.woodMaterial({ light: '#d2b08a', dark: '#a8835e', seed: 9, ring: 30, rough: 0.55 });
+const inner = MAT.whiteMatte('#eeece7');
+const topMat = new THREE.MeshPhysicalMaterial({ color: '#f5f4f0', roughness: 0.3, clearcoat: 0.3, clearcoatRoughness: 0.2, envMapIntensity: 0.7 });
+const t = 0.018;
+// open korpus: zijkanten, bodem, achterwand ontbreekt (leidingen in zicht)
+scene.add(C.rbox(t, h, d, 0.002, oak, cx - w / 2 + t / 2, y0 + h / 2, d / 2, { worldUV: true }));
+scene.add(C.rbox(t, h, d, 0.002, oak, cx + w / 2 - t / 2, y0 + h / 2, d / 2, { worldUV: true }));
+scene.add(C.box(w - 2 * t, t, d - 0.01, inner, cx, y0 + t / 2, d / 2));
+scene.add(C.box(w - 2 * t, 0.06, t, inner, cx, y0 + h - 0.03, d - t / 2 - 0.02));
+// blad
+const topT = 0.03;
+const topY = y0 + h + topT;
+scene.add(C.rbox(w + 0.004, topT, d, 0.003, topMat, cx, y0 + h + topT / 2, d / 2));
+// opbouwkom
+scene.add(C.rectBasin(MAT.ceramic(), cx, topY, 0.24, 0.48, 0.36));
+const chrome = MAT.chrome();
+scene.add(C.deckFaucet(chrome, cx, topY, 0.06, { tall: true, reach: 0.17 }));
+
+// hoekstopkranen in de wand met flexibele slangen naar de kraan
+for (const sgn of [-1, 1]) {
+  const vx = cx + sgn * 0.13, vy = 0.62;
+  scene.add(C.angleValve(chrome, vx, vy));
+  scene.add(C.hose([[vx, vy + 0.012, 0.075], [vx, vy + 0.08, 0.085], [vx - sgn * 0.04, vy + 0.2, 0.09], [cx + sgn * 0.012, topY - topT - 0.04, 0.08], [cx + sgn * 0.008, topY - topT - 0.002, 0.075]]));
+}
+// sifon onder de afvoer van de kom
+scene.add(C.bottleTrap(chrome, cx, topY - topT, 0.23));
+// afvoerplug onder het blad
+scene.add(C.cyl(0.03, 0.012, chrome, cx, topY - topT - 0.006, 0.23));
+// leidingdoorvoer: wandrozetten
+for (const sgn of [-1, 1]) scene.add(C.cyl(0.032, 0.006, chrome, cx + sgn * 0.13, 0.62, 0.003, { axis: 'z' }));
+
+// gereedschap op de bodem van het meubel
+const wr = C.wrench();
+wr.position.set(1.08, y0 + t, 0.3);
+wr.rotation.y = 0.35;
+scene.add(wr);
+const tape = new THREE.Mesh(new THREE.TorusGeometry(0.018, 0.009, 16, 32), MAT.plastic('#f6f6f4'));
+tape.rotation.x = Math.PI / 2;
+tape.position.set(1.43, y0 + t + 0.009, 0.3);
+tape.castShadow = true;
+scene.add(tape);
+
+C.downlight(scene, cx, 0.7, H, { intensity: 2.0 });
+C.downlight(scene, 0.8, 1.7, H, { intensity: 1.5 });
+C.autoLights(scene, R, { window: 13, bounce: 6, colors: { floor: '#a7a39c' } });
+
+C.lookCamera(camera, [0.66, 1.04, 1.55], [1.26, 0.73, 0.2], 47);
+await C.finish(renderer, scene, camera, 'bd-badkamer-installeren', { envPos: [1.2, 1.2, 1.2], frames: 64, envBoost: 0.6, envAmbient: 1.0, hemi: 0.03 });
+</script>
+</body>
+</html>

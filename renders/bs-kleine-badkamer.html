@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · kleine badkamer</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bs-common.js';
+const { THREE } = C;
+C.pageStyle();
+
+// Kleine badkamer van 1,8 x 2,2 m: inloopdouche met helder glas in de hoek, hangtoilet naast de douche,
+// smal zwevend meubel met grote spiegel aan de zijwand. Lichte grote tegels, dezelfde vloer in de douche,
+// chromen kranen en koel licht.
+const room = { w: 1.8, d: 2.2, h: 2.6 };
+const { renderer, scene, camera } = C.setup({ exposure: 0.86, fov: 60 });
+
+const wit = C.tileMaterial({ pattern: 'grid', tw: 0.3, th: 0.6, joint: 0.002, base: '#f3f2ef', varL: 0.008, grout: '#dcdad5', gloss: 0.12, seed: 81, periodX: 1.2, periodY: 1.2, bevel: 1.5, clearcoat: 0.5, normalScale: 0.5 });
+const vloer = C.tileMaterial({ pattern: 'grid', tw: 0.6, th: 0.6, joint: 0.002, base: '#a8a6a0', varL: 0.015, grout: '#96948e', gloss: 0.45, seed: 83, surface: C.SURF.betonZacht, periodX: 1.2, periodY: 1.2, speck: 0.03, normalScale: 0.5 });
+const plafond = C.plasterMaterial('#f4f3f0', { cloud: 0.015 });
+const witMeubel = new THREE.MeshPhysicalMaterial({ color: '#f5f5f3', roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 0.9 });
+
+C.floorCeil(scene, room, vloer, plafond);
+const nis = { u0: 0.2, u1: 0.7, v0: 1.05, v1: 1.35 };
+const raam = { u0: 0.25, u1: 0.75, v0: 1.85, v1: 2.4 };
+C.wall(scene, room, 'back', wit, wit, room.h, [nis]);
+C.wall(scene, room, 'left', wit, wit, room.h, [raam]);
+C.wall(scene, room, 'right', wit, wit, room.h, []);
+C.niche(scene, nis, wit, 0.09);
+// klein bovenraam (matglas) boven de douche
+C.windowLight(scene, room, 'left', raam, { frame: '#f2f1ee', reveal: wit, sunDir: [-1.0, 1.2, 0.4], sun: 4.0, fill: 0.9, glowI: 1.45 });
+
+// inloopdouche in de hoek, 90 x 90 cm, met helder glas
+scene.add(C.shower('chroom', 0.45, room.h, { armY: 2.12, reach: 0.36, headR: 0.13, mixY: 1.0, handX: 0.27, mixW: 0.28 }));
+scene.add(C.drain(0.45, 0.08, 0.7, 'rvs'));
+const glas = C.glassPanel({ len: 0.85, h: 2.0, wallProfile: C.metalMaterial('chroom'), stab: C.metalMaterial('chroom'), stabLen: 0.92 });
+glas.position.set(0.92, 0, 0); scene.add(glas);
+scene.add(C.bottle(C.matteMaterial('#ffffff', 0.3), 0.35, 1.05, -0.045, 0.15, 0.026, C.metalMaterial('chroom')));
+scene.add(C.bottle(C.matteMaterial('#9fb7c4', 0.3), 0.45, 1.05, -0.045, 0.13, 0.024, C.metalMaterial('chroom')));
+
+// hangtoilet naast de douche, tegen de achterwand
+const wc = C.toilet(); wc.position.set(1.36, 0, 0); scene.add(wc);
+scene.add(C.flushPlate('chroom', 1.36, 1.05, 0));
+// smal zwevend meubel (60 x 40 cm) met grote spiegel aan de rechterwand
+const mz = 1.45;
+const meubel = C.vanity({ type: 'zwevend', w: 0.6, d: 0.4, h: 0.4, top: 0.86, mat: witMeubel, blad: C.CERAMIC(), sink: 'geintegreerd', drawers: 1, metal: 'chroom', bladT: 0.035, handle: null });
+meubel.rotation.y = -Math.PI / 2; meubel.position.set(room.w, 0, mz); scene.add(meubel);
+const kraan = C.tap('hoog', 'chroom', 0, 0.86, 0.06, 0.16); kraan.rotation.y = -Math.PI / 2; kraan.position.set(room.w, 0, mz); scene.add(kraan);
+const sp = C.mirror(0.6, 0.95, 'rect', null); sp.rotation.y = -Math.PI / 2; sp.position.set(room.w, 1.55, mz); scene.add(sp);
+// handdoekhaakjes en een handdoek naast de deur
+const haak = C.metalMaterial('chroom');
+// houten douchemat voor de douche en een handdoek op de rand van het meubel
+const teak = C.woodMaterial({ base: '#a7784c', seed: 91, size: 0.5, contrast: 0.2, roughness: 0.6 });
+for (let i = 0; i < 7; i++) scene.add(C.box(0.06, 0.02, 0.5, teak, 0.62 + i * 0.075, 0.025, 1.12));
+for (const zz of [0.92, 1.32]) scene.add(C.box(0.5, 0.015, 0.04, teak, 0.845, 0.0075, zz));
+
+const koel = C.KELVIN.koel;
+C.spot(scene, 0.45, 0.4, room.h, koel, 5, { shadow: true, angle: 0.85 });
+C.spot(scene, 1.4, 1.45, room.h, koel, 5, { shadow: true, angle: 0.9 });
+scene.add(new THREE.HemisphereLight('#f2f4f6', '#6a6a68', 0.25));
+
+C.archCamera(camera, [0.78, 1.4, 2.95], [1.05, 0, 0], -0.13);
+await C.finish(renderer, scene, camera, 'bs-kleine-badkamer', { aoRadius: 0.3, aoIntensity: 1.2, envScale: 0.6 });
+</script>
+</body>
+</html>

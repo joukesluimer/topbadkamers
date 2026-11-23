@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · badkamer renoveren</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bd-common.js';
+const { THREE, MAT } = C;
+C.pageStyle();
+
+// Badkamer renoveren: complete nieuwe badkamer in warme tinten, met vrijstaand bad,
+// dubbel wastafelmeubel in notenhout, messing kranen en een inloopdouche.
+const { renderer, scene, camera } = C.setup({ exposure: 0.85 });
+const W = 3.8, D = 3.3, H = 2.6;
+
+const wall = C.microcementMaterial('#d2b9a3', 4, 2.2);
+const zellige = C.tileMaterial({ tile: [0.1, 0.1], grout: 0.0025, color: '#efe6d8', groutColor: '#e2d9cb', surface: 'glossy', nx: 12, ny: 12, ppm: 1000, seed: 12, varL: 0.035, tilt: 0.005, clearcoat: 0.3 });
+const floor = C.tileMaterial({ tile: [0.6, 0.6], grout: 0.0025, color: '#e8e0d4', groutColor: '#d6cdbf', surface: 'terrazzo', nx: 3, ny: 3, ppm: 700, seed: 21, varL: 0.015, tilt: 0.002, rough: 0.3 });
+const plaster = C.plasterMaterial('#f3efe9');
+
+const R = C.room(scene, {
+  W, D, H,
+  walls: { back: wall, left: wall, right: wall, front: wall },
+  floor, ceil: plaster,
+  windows: [{ wall: 'left', a0: 1.25, a1: 2.35, y0: 1.05, y1: 2.25, frame: '#2b2b2b', glow: 5, mullion: true }],
+});
+
+// douchehoek rechtsachter met zellige-tegels
+const sx = 2.65, sz = 1.2;
+C.wainscot(scene, 'back', sx, W, 0, H, zellige, R);
+C.wainscot(scene, 'right', 0.006, sz, 0, H, zellige, R);
+const gold = MAT.gold();
+const panel = C.glassPanel({ w: sz, h: 2.0, frame: 'gold' });
+panel.rotation.y = -Math.PI / 2;
+panel.position.set(sx, 0, 0.006);
+scene.add(panel);
+scene.add(C.cyl(0.009, W - sx, gold, (sx + W) / 2, 1.97, sz - 0.03, { axis: 'x' }));
+const shower = C.showerSet(gold, { headH: 2.15, arm: 0.42, head: 0.3, round: true });
+shower.position.set((sx + W) / 2 + 0.03, 0, 0.006);
+scene.add(shower);
+const drain = C.linearDrain(W - sx - 0.14);
+drain.position.set((sx + W) / 2 + 0.02, 0, 0.07);
+scene.add(drain);
+
+// dubbel wastafelmeubel in notenhout met twee waskommen
+const walnut = C.woodMaterial({ light: '#8a6446', dark: '#5a3d29', seed: 7, ring: 26, rough: 0.5 });
+const stone = C.tileMaterial({ tile: [1.6, 0.6], grout: 0.0, color: '#ece6dc', surface: 'marble', nx: 1, ny: 1, ppm: 600, seed: 31, varL: 0, tilt: 0, rough: 0.2, bevel: 0 });
+const van = C.vanity({ w: 1.5, d: 0.5, h: 0.42, y0: 0.45, front: walnut, top: stone, topT: 0.025, basin: 'vessel', basins: 2, drawers: 2, handle: 'bar', handleMat: gold, basinMat: MAT.ceramic('#f6f3ee') });
+van.position.set(1.35, 0, 0.006);
+scene.add(van);
+const topY = van.userData.topY;
+for (const bx of [1.35 - 0.375, 1.35 + 0.375]) {
+  scene.add(C.deckFaucet(gold, bx, topY, 0.07 + 0.006, { tall: true, reach: 0.16 }));
+  const m = C.mirror({ w: 0.56, h: 0.86, shape: 'arch', frameMat: gold });
+  m.position.set(bx, 1.62, 0.006);
+  scene.add(m);
+}
+// wandlampjes tussen de spiegels
+const glowMat = new THREE.MeshStandardMaterial({ color: '#fff', emissive: '#ffd9a6', emissiveIntensity: 2.5 });
+scene.add(C.cyl(0.035, 0.004, gold, 1.35, 1.75, 0.008, { axis: 'z' }));
+scene.add(C.cyl(0.006, 0.08, gold, 1.35, 1.75, 0.045, { axis: 'z' }));
+const globe = new THREE.Mesh(new THREE.SphereGeometry(0.055, 32, 16), new THREE.MeshStandardMaterial({ color: '#fbf4ea', emissive: '#ffd9a6', emissiveIntensity: 1.6, roughness: 0.4 }));
+globe.position.set(1.35, 1.75, 0.13);
+scene.add(globe);
+{
+  const p = new THREE.PointLight('#ffcf94', 0.35, 0, 2);
+  p.position.set(1.35, 1.75, 0.13);
+  scene.add(p);
+}
+// accessoires
+scene.add(C.cyl(0.028, 0.12, MAT.ceramic('#3f3a35'), 1.35, topY + 0.06, 0.12));
+scene.add(C.rbox(0.18, 0.02, 0.12, 0.004, walnut, 1.35, topY + 0.01, 0.3));
+
+// vrijstaand bad onder het raam
+const bath = C.freestandingBath(MAT.ceramic('#f7f5f1'), { l: 1.7, w: 0.78, h: 0.58 });
+bath.rotation.y = Math.PI / 2;
+bath.position.set(0.55, 0, 1.8);
+scene.add(bath);
+// badkraan uit de wand
+const spout = C.wallFaucet(gold, 0, 0.82, { reach: 0.2 });
+spout.rotation.y = Math.PI / 2;
+spout.position.set(0, 0, 1.73 + 0.065);
+scene.add(spout);
+// plant in de hoek
+const pot = C.cyl(0.13, 0.32, MAT.whiteMatte('#c9b8a6'), 0.3, 0.16, 0.3, { rTop: 0.15 });
+scene.add(pot);
+const leafMat = new THREE.MeshStandardMaterial({ color: '#4f6a3e', roughness: 0.6, side: THREE.DoubleSide });
+const Rr = C.rng(5);
+for (let i = 0; i < 22; i++) {
+  const a = Rr() * Math.PI * 2, h = 0.45 + Rr() * 0.6, rr = 0.05 + Rr() * 0.22;
+  const tip = [0.3 + Math.cos(a) * rr * 1.6, 0.3 + h, 0.3 + Math.sin(a) * rr * 1.6];
+  scene.add(C.tube([[0.3, 0.3, 0.3], [0.3 + Math.cos(a) * rr * 0.6, 0.3 + h * 0.6, 0.3 + Math.sin(a) * rr * 0.6], tip], 0.003, leafMat));
+  const lf = new THREE.Mesh(new THREE.CircleGeometry(0.09, 16), leafMat);
+  lf.scale.set(0.45, 1, 1);
+  lf.position.set(...tip);
+  lf.lookAt(0.3, 0.3 + h + 0.3, 0.3);
+  lf.rotateX(-0.6);
+  lf.castShadow = true;
+  scene.add(lf);
+}
+
+// plafond
+C.downlight(scene, 1.35, 0.65, H, { intensity: 2.2 });
+C.downlight(scene, (sx + W) / 2, 0.85, H, { intensity: 2.2 });
+C.downlight(scene, 0.6, 1.8, H, { intensity: 1.8 });
+C.downlight(scene, 2.3, 2.3, H, { intensity: 1.8 });
+C.ventValve(scene, 2.9, 1.9, H);
+
+C.autoLights(scene, R, { window: 14, bounce: 7, avoid: [[-0.2, -1, 0.6, 1.3, 0.9, 3.0]], colors: { floor: '#efe7dc', left: '#e6d5c4', right: '#e6d5c4', back: '#e6d5c4', front: '#e6d5c4' } });
+
+C.archCamera(camera, [3.35, 1.42, 3.2], [1.15, 0, 0.55], -0.05, 64);
+await C.finish(renderer, scene, camera, 'bd-badkamer-renoveren', { envPos: [1.9, 1.4, 1.8], frames: 64, envBoost: 0.6, envAmbient: 1.0, hemi: 0.03 });
+</script>
+</body>
+</html>
