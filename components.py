@@ -111,8 +111,9 @@ def header():
   <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="hoofdmenu"><span></span><span></span><span></span></button>
   <nav class="nav" id="hoofdmenu" aria-label="Hoofdmenu">
     <a href="/diensten/"><span class="nav-ic">{icon('druppel', 20)}</span>Diensten</a>
-    <a href="/werkgebied/"><span class="nav-ic">{icon('house', 20)}</span>Werkgebied</a>
-    <a href="/prijzen/"><span class="nav-ic">{icon('euro', 20)}</span>Wat kost het?</a>
+    <a href="/kosten/"><span class="nav-ic">{icon('euro', 20)}</span>Wat kost het?</a>
+    <a href="/tools/"><span class="nav-ic">{icon('form', 20)}</span>Tools</a>
+    <a href="/kennisbank/"><span class="nav-ic">{icon('check', 20)}</span>Kennisbank</a>
     <a href="/voor-badkamerspecialisten/"><span class="nav-ic">{icon('users', 20)}</span>Voor badkamerspecialisten</a>
     <a class="btn btn-primary" href="/offerte-aanvragen/">Offertes aanvragen</a>
     <p class="nav-noot">Gratis en vrijblijvend · maximaal 3 specialisten</p>
@@ -148,6 +149,11 @@ def footer():
       <h2 class="fh">Handig</h2>
       <ul>
         <li><a href="/prijzen/">Prijzen &amp; tarieven</a></li>
+        <li><a href="/kosten/">Kosten per klus</a></li>
+        <li><a href="/badkamerspullen/">Badkamerspullen kiezen</a></li>
+        <li><a href="/kennisbank/">Kennisbank</a></li>
+        <li><a href="/tools/badkamercalculator/">Badkamercalculator</a></li>
+        <li><a href="/tools/">Alle gratis tools</a></li>
         <li><a href="/werkgebied/">Alle plaatsen</a></li>
         <li><a href="/over-ons/">Over Top Badkamers</a></li>
         <li><a href="/contact/">Contact</a></li>

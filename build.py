@@ -262,6 +262,46 @@ def build_diensten_index():
         "/diensten/", body, [cr_ld]), prio=0.8)
 
 
+# Verwijzingen per dienst naar kosten, kennisbank, kopersgidsen en tools (fase 2 en 3).
+MEER_WETEN = {
+    "badkamer-renoveren": [("/kosten/nieuwe-badkamer/", "Wat kost een nieuwe badkamer?"),
+                           ("/kennisbank/volgorde-badkamerrenovatie/", "De volgorde van een badkamerrenovatie"),
+                           ("/kennisbank/asbest-in-badkamer/", "Asbest in de badkamer"),
+                           ("/badkamerspullen/bad-of-douche/", "Bad of douche?"),
+                           ("/tools/badkamercalculator/", "Badkamercalculator")],
+    "badkamer-installeren": [("/kosten/uurtarief-loodgieter/", "Uurtarief van een loodgieter"),
+                             ("/badkamerspullen/kranen-kiezen/", "Kranen kiezen"),
+                             ("/badkamerspullen/wastafelmeubel-kiezen/", "Een wastafelmeubel kiezen"),
+                             ("/kennisbank/kleine-badkamer-indelen/", "Een kleine badkamer indelen")],
+    "tegelwerk-badkamer": [("/kosten/tegelzetter-per-m2/", "Wat kost een tegelzetter per m²?"),
+                           ("/kennisbank/badkamer-waterdicht-maken/", "Een badkamer waterdicht maken"),
+                           ("/kennisbank/tegels-kiezen/", "Tegels kiezen"),
+                           ("/badkamerspullen/badkamertegels-kopen/", "Badkamertegels kopen"),
+                           ("/tools/stijlkiezer/", "Stijlkiezer")],
+    "inloopdouche-plaatsen": [("/kosten/inloopdouche/", "Wat kost een inloopdouche?"),
+                              ("/kennisbank/inloopdouche-zonder-drempel/", "Een inloopdouche zonder drempel"),
+                              ("/badkamerspullen/inloopdouche-kopen/", "Een inloopdouche kopen"),
+                              ("/badkamerspullen/douchesysteem-kiezen/", "Een douchesysteem kiezen")],
+    "toilet-renoveren": [("/kosten/toilet-renoveren/", "Wat kost een toilet renoveren?"),
+                         ("/badkamerspullen/toilet-kiezen/", "Een toilet kiezen"),
+                         ("/kennisbank/badkamer-ventilatie/", "Ventilatie in badkamer en toilet")],
+    "badkamer-onderhoud": [("/kosten/kitwerk-voegen/", "Wat kost kitwerk en voegen?"),
+                           ("/tools/badkamercheck/", "Badkamercheck: is je badkamer aan vervanging toe?"),
+                           ("/kennisbank/badkamer-ventilatie/", "Ventilatie tegen schimmel")],
+    "zakelijk-badkamers": [("/kennisbank/verbouwen-in-vve/", "Verbouwen in een VvE"),
+                           ("/kennisbank/garantie-badkamerrenovatie/", "Garantie bij een badkamerrenovatie"),
+                           ("/tools/offertechecker/", "Offertechecker")],
+}
+
+
+def meer_weten(slug):
+    items = MEER_WETEN.get(slug)
+    if not items:
+        return ""
+    li = "".join(f'<li><a href="{u}">{t}</a></li>' for u, t in items)
+    return f"<h2>Meer weten?</h2><ul>{li}</ul>"
+
+
 def dienst_body(d, plaats=None):
     """Inhoud voor zowel /diensten/{dienst}/ als /badkamerspecialist/{plaats}/{dienst}/."""
     pn = plaats["naam"] if plaats else None
@@ -345,6 +385,8 @@ def dienst_body(d, plaats=None):
     <li>Een concrete start- en opleverdatum, en hoe lang je zonder badkamer of toilet zit</li>
     <li>De garantietermijn en wat daar wel en niet onder valt</li>
   </ul>
+  <p>Heb je al een offerte? Leg hem naast de richtprijzen met de gratis <a href="/tools/offertechecker/">offertechecker</a>.</p>
+  {meer_weten(d['slug'])}
 </div></section>"""
     return cr, cr_ld, hero + content
 
@@ -826,11 +868,13 @@ def build_prijzen():
     body = f"""{cr}
 <section class="section-sm"><div class="wrap narrow prose">
   <span class="badge">Bijgewerkt {TODAY[:7].replace('-', '/')}</span>
-  <h1>Wat kost een nieuwe badkamer in {TODAY[:4]}?</h1>
+  <h1>Badkamerprijzen {TODAY[:4]}: richtprijzen per klus</h1>
   <p class="lead">Het eerlijke antwoord: dat hangt ervan af. Maar met de richtprijzen hieronder weet je snel of een offerte in de goede orde van grootte zit, en welke vragen je moet stellen als dat niet zo is.</p>
 
   <h2>Richtprijzen per badkamerklus</h2>
   {prijstabel()}
+
+  <p>Wil je per klus de details, met rekenvoorbeelden? Kijk bij <a href="/kosten/">alle kostenpagina's</a> of reken het zelf uit met de <a href="/tools/badkamercalculator/">badkamercalculator</a>.</p>
 
   <h2>Per klus toegelicht</h2>
   {blokken}
@@ -1170,6 +1214,57 @@ Sitemap: {SITE['url']}/sitemap.xml
 
 
 # ===========================================================================
+# FASE 2 EN 3: CONTENT- EN TOOLMODULES
+# ===========================================================================
+# Elke module heeft LINKS = [(pad, titel, omschrijving), ...] en build(write).
+
+import importlib
+
+CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen"]
+TOOL_MODULES = ["badkamer_calculator", "badkamer_check", "badkamer_offertecheck",
+                "badkamer_stijl", "badkamer_planner"]
+
+
+def _laad(namen):
+    uit = []
+    for naam in namen:
+        try:
+            uit.append(importlib.import_module(naam))
+        except ModuleNotFoundError as e:
+            if e.name != naam:
+                raise
+            print(f"  ! module {naam} ontbreekt, overgeslagen")
+    return uit
+
+
+def build_modules():
+    for m in _laad(CONTENT_MODULES) + _laad(TOOL_MODULES):
+        m.build(write)
+
+
+def build_tools_index():
+    tools = [l for m in _laad(TOOL_MODULES) for l in m.LINKS]
+    if not tools:
+        return
+    cr, cr_ld = crumbs([("Home", "/"), ("Gratis tools", None)])
+    kaarten = "".join(
+        f'<a class="card" href="{pad}"><h2 style="font-size:1.15rem;margin:0 0 6px">{t}</h2><p>{o}</p>'
+        f'<span class="link">Open de tool →</span></a>' for pad, t, o in tools)
+    body = f"""{cr}
+<section class="section-sm"><div class="wrap narrow prose">
+  <h1>Gratis badkamertools</h1>
+  <p class="lead">Reken uit wat je badkamer ongeveer kost, plan de verbouwing, check een offerte of probeer een stijl uit. Alles werkt in je browser: je hoeft niets in te vullen over jezelf en er wordt niets opgeslagen.</p>
+</div></section>
+<section class="section-sm"><div class="wrap"><div class="grid g3">{kaarten}</div></div></section>
+{cta_blok("Liever meteen echte prijzen?", "Een tool geeft een indruk. Een badkamerspecialist die bij je langskomt, geeft een echte prijs. Vraag gratis tot drie offertes aan.")}"""
+    write("/tools/", page(
+        title("Gratis badkamertools: calculator, planner en meer"),
+        desc("Gratis badkamertools: bereken de kosten van een nieuwe badkamer, plan je renovatie, check je offerte en probeer stijlen uit.",
+             "Werkt in je browser, zonder gegevens."),
+        "/tools/", body, [cr_ld]), prio=0.8)
+
+
+# ===========================================================================
 
 def main():
     if os.path.isdir(OUT):
@@ -1186,6 +1281,8 @@ def main():
     build_voor_vakmensen()
     build_prijzen()
     build_static_pages()
+    build_modules()
+    build_tools_index()
     build_assets()
     build_sitemap()
 

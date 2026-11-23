@@ -20,7 +20,20 @@ Hetzelfde als Topschilder, maar dan voor badkamers:
 - [x] Eigen Supabase-project **TopBadkamers** (ref `zedqxocehypoioskzsfc`, EU-West, gratis plan). Het schema staat erin, met de tabel `monteurs` in plaats van `schilders`. Lezen met de publieke sleutel wordt geweigerd. `supabase_leadbeheer.sql` is nog niet uitgevoerd, want de leadprijzen daarin gaan nog over schilderwerk.
 - [x] GitHub-repo `joukesluimer/topbadkamers` (publiek), met alle code behalve `.github/workflows`. Die komt erbij zodra de site bouwt, zodat er geen mislukte deploys komen.
 - [x] De Make-webhook van Topschilder is losgekoppeld (`WEBHOOK_URL` is leeg).
-- [ ] Alle teksten gaan nog over schilderwerk. Er staan ongeveer 1.500 vermeldingen van "schilder" in de code.
+- [x] Fase 1 af en live op https://joukesluimer.github.io/topbadkamers/ (22 november 2026).
+- [x] Fase 2 en 3 af (23 november 2026), gemaakt met zes agents tegelijk. Elke module heeft `LINKS` en `build(write)`; `build.py` roept ze aan via `CONTENT_MODULES` en `TOOL_MODULES`.
+  - `badkamer_kosten.py`: `/kosten/` en 8 kostenpagina's.
+  - `badkamer_kennis.py` en `badkamer_kennis_artikelen.py`: `/kennisbank/` en 10 artikelen.
+  - `badkamer_spullen.py`: `/badkamerspullen/` en 7 kopersgidsen. Het is vorm (a): neutraal, zonder winkel en zonder affiliatelinks.
+  - Tools, met het overzicht `/tools/` in build.py:
+    - `badkamer_calculator.py`;
+    - `badkamer_planner.py`;
+    - `badkamer_check.py`;
+    - `badkamer_offertecheck.py`, met de parser `offerte_parser_badkamer.js` inline;
+    - `badkamer_stijl.py`.
+  - Het menu heeft nu Diensten, Wat kost het? (/kosten/), Tools, Kennisbank en Voor badkamerspecialisten. De dienstpagina's linken naar de passende kosten, artikelen, gidsen en tools ("Meer weten?").
+  - De oude Topschilder-modules (`kosten_data.py`, `kennisbank.py`, `huiscalculator.py` enz.) staan nog in de map maar worden niet gebouwd. Ze kunnen weg.
+  - Nog te doen: de richtprijzen jaarlijks nalopen, en de richtprijzen van offertechecker, calculator en kostenpagina's naast elkaar leggen zodat ze gelijk lopen.
 
 ## Hoe het concept vertaalt
 
@@ -44,7 +57,7 @@ Hetzelfde als Topschilder, maar dan voor badkamers:
 1. **Domeinnaam: top-badkamers.nl, later.** Jouke koopt het domein later. Tot die tijd draait de site op het gratis GitHub-adres `https://joukesluimer.github.io/topbadkamers/` (`SITE["domein"]` is leeg, dus er komt geen CNAME).
    - **Let op voor fase 1:** de site staat dan in een submap (`/topbadkamers/`), maar de code gebruikt links vanaf de root (`/assets/...`, `/kosten/...`). Bij het bouwen moeten die een voorvoegsel krijgen, of die links breken op het GitHub-adres.
    - Bij de overstap naar het domein: `domein` en `url` in `data.py` invullen, het voorvoegsel weer leeg maken en DNS bij de registrar op GitHub Pages zetten.
-2. **Hoe "spullen" werkt.** Kies een van deze vormen:
+2. **Hoe "spullen" werkt.** Voorlopig gekozen: (a). Wil je het anders, kies dan een van deze vormen:
    - (a) alleen neutrale kopersgidsen en richtprijzen, zonder winkel;
    - (b) doorverwijzen naar webwinkels, eventueel met affiliatelinks;
    - (c) materiaal meenemen in de offerte van de monteur.
