@@ -336,7 +336,7 @@ def build(write):
     parser_tag = "<script>\n" + PARSER_JS.replace("</script", "<\\/script") + "\n</script>"
 
     body = (hero + hoe + uitleg + faq_html
-            + cta_blok("Nog maar één offerte?", "Vergelijken werkt het best met twee of drie offertes. Vraag ze gratis en vrijblijvend aan bij maximaal drie badkamerspecialisten uit je regio.", "Vraag offertes aan")
+            + cta_blok("Nog maar één offerte?", "Vergelijken werkt het best met twee of drie offertes. Vraag ze gratis en vrijblijvend aan bij maximaal drie badkamerspecialisten uit je regio.", "Vraag offertes aan", alt=False)
             + PAGE_CSS + data_tag + parser_tag + PAGE_JS)
 
     write(PAD, page(

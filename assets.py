@@ -1333,6 +1333,45 @@ STYLE_CSS += r'''
 .cta-midden p:not(.cta-midden-titel){margin:0;font-size:.95rem}
 .cta-midden .btn{flex:0 0 auto;white-space:nowrap}
 @media(max-width:620px){.cta-midden{flex-direction:column;align-items:stretch;padding:20px}.cta-midden .btn{white-space:normal}}
+/* offertevergelijker: blok "heb je al een offerte?", link onder CTA, hero-paden en voorbeelduitslag */
+.ocb{display:flex;align-items:center;gap:18px;margin:30px 0;padding:20px 22px;border-radius:var(--radius-lg);background:#fff;border:1.5px solid #cfe0e2;border-left:5px solid var(--navy);box-shadow:0 8px 22px rgba(11,74,86,.07)}
+.ocb-ic{flex:0 0 auto;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#e8f1f2;color:var(--navy)}
+.ocb-tekst{flex:1;min-width:0}
+.ocb-titel{font-weight:750;font-size:1.08rem;margin:0 0 .2em;color:var(--navy)}
+.ocb-tekst p:not(.ocb-titel){margin:0;font-size:.95rem}
+.ocb .btn{flex:0 0 auto;white-space:nowrap}
+@media(max-width:620px){.ocb{flex-direction:column;align-items:stretch;text-align:left}.ocb-ic{display:none}.ocb .btn{white-space:normal}}
+.cta-alt{margin:16px 0 0;font-size:.95rem}
+.cta-alt a{color:inherit;font-weight:650;text-decoration:underline;text-underline-offset:3px}
+.nav a.nav-check{font-weight:700}
+.hero-paden{display:grid;gap:12px;margin:24px 0 8px}
+.hero-pad{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;text-decoration:none;color:#e9f0f1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);transition:background .2s,transform .2s}
+.hero-pad:hover{background:rgba(255,255,255,.12);transform:translateY(-1px)}
+.hero-pad strong{display:block;color:#fff;font-size:1.06rem}
+.hero-pad small{display:block;color:#bcd0d3;font-size:.92rem;margin-top:2px}
+.hero-pad .pijl{margin-left:auto;font-size:1.3rem;color:#fff}
+.hero-pad-ic{flex:0 0 auto;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.1);color:#fff}
+.hero-pad-hoofd{background:var(--accent,#c4511f);border-color:transparent}
+.hero-pad-hoofd:hover{background:var(--accent,#c4511f);filter:brightness(1.06)}
+.hero-pad-hoofd small{color:#ffe6da}
+.hero-pad-hoofd .hero-pad-ic{background:rgba(255,255,255,.18)}
+.ov-voorbeeld{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:22px;border:1px solid #e3ecee}
+.ov-voorbeeld-kop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;font-weight:700;color:var(--navy)}
+.ov-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7f83;background:#eef3f4;border-radius:99px;padding:4px 10px}
+.ov-rij{border-top:1px solid #e9eff0;padding:12px 0}
+.ov-rij:first-of-type{border-top:0}
+.ov-rij-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.ov-rij-top strong{font-size:.98rem}
+.ov-soort{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#48636a;margin-bottom:2px}
+.ov-rij p{margin:4px 0 0;font-size:.9rem;color:#4b5f63}
+.ov-tag{font-size:.8rem;font-weight:700;border-radius:99px;padding:3px 10px;white-space:nowrap}
+.ov-tag-binnen{background:#e3f4ea;color:#1d6b3e}
+.ov-tag-boven{background:#fdecdf;color:#9a3d12}
+.ov-tag-vaag{background:#fff4d6;color:#7a5800}
+.ov-noot{font-size:.82rem;color:#6b7f83;margin:12px 0 0}
+.ov-stappen{counter-reset:ov;list-style:none;padding:0;margin:22px 0 26px}
+.ov-stappen li{counter-increment:ov;position:relative;padding:0 0 14px 46px}
+.ov-stappen li::before{content:counter(ov);position:absolute;left:0;top:-2px;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);font-weight:800;display:grid;place-items:center}
 
 /* ---------- FAQ ---------- */
 .faq summary{transition:color .15s,background .15s}

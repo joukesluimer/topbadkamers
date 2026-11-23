@@ -25,7 +25,7 @@ from plaats_content import bouwperiode_zin
 from components import (
     page, crumbs, offerte_form, hoe_werkt_het, waarom_blok, dienst_cards,
     faq_blok, cta_blok, prijstabel, icon, eur, title, desc, werkgebied_kaart,
-    feiten_blok, stappen_blok, dienst_icoon, cta_midden,
+    feiten_blok, stappen_blok, dienst_icoon, cta_midden, offertecheck_blok,
 )
 import lastmod
 from components import render_beeld
@@ -80,32 +80,80 @@ def build_home():
     kern = [p for p in PLAATSEN if p["prio"] == 1]
     chips = "".join(f'<li><a href="/badkamerspecialist/{p["slug"]}/">Badkamer {p["naam"]}</a></li>' for p in kern)
 
+    # Voorbeelduitslag van de offertevergelijker (verzonnen offerte, echte banden uit de data)
+    try:
+        from producten_badkamer import PRODUCTDATA as _PD
+        n_art = len(_PD["artikelen"])
+        _gt = next((a for a in _PD["artikelen"] if "34558000" in a.get("codes", [])), None)
+    except Exception:
+        n_art, _gt = 0, None
+    from richtprijzen import RICHTPRIJZEN as _RP
+    _tg = _RP["tegelwerk"]
+    rij_product = ""
+    if _gt:
+        _prijs_incl = 165 * 1.21
+        _pct = round((_prijs_incl - _gt["tot"]) / _gt["tot"] * 100)
+        rij_product = f"""<div class="ov-rij"><span class="ov-soort">Product</span>
+      <div class="ov-rij-top"><strong>{_gt['merk']} {_gt['serie']} {_gt['codes'][0]}</strong><span class="ov-tag ov-tag-boven">{_pct}% boven de band</span></div>
+      <p>Op de offerte € 165 excl. btw. Marktband van dit artikel: {eur(_gt['van'])} – {eur(_gt['tot'])} incl. btw. Een opslag op materiaal is normaal; vraag wat erin zit.</p></div>"""
+    voorbeeld = f"""<div class="ov-voorbeeld" aria-label="Voorbeeld van een uitslag">
+    <div class="ov-voorbeeld-kop"><span>Uitslag per regel</span><span class="ov-label">Voorbeeld</span></div>
+    {rij_product}
+    <div class="ov-rij"><span class="ov-soort">Arbeid</span>
+      <div class="ov-rij-top"><strong>Tegelwerk wand en vloer, 28 m²</strong><span class="ov-tag ov-tag-binnen">binnen de richtprijs</span></div>
+      <p>€ 40 per m² excl. btw. Richtprijs voor het zetten: {eur(_tg['laag'])} – {eur(_tg['hoog'])} per m² incl. btw.</p></div>
+    <div class="ov-rij"><span class="ov-soort">Materiaal</span>
+      <div class="ov-rij-top"><strong>Sanitair compleet</strong><span class="ov-tag ov-tag-vaag">te vaag</span></div>
+      <p>Onvoldoende gespecificeerd: vraag merk en type per onderdeel.</p></div>
+    <p class="ov-noot">Verzonnen offerte, echte prijsbanden (november 2026).</p>
+  </div>"""
+
     hero = f"""<section class="hero hero-badkamer">
 <div class="wrap hero-in">
   <div>
-    <span class="badge badge-dark badge-live"><i></i>Gratis &amp; vrijblijvend</span>
-    <h1>Vergelijk badkamerspecialisten bij jou in de buurt</h1>
-    <p class="lead">Eén aanvraag, tot drie offertes van badkamerspecialisten uit jouw regio. Zo weet je wat je nieuwe badkamer, inloopdouche of toilet hoort te kosten voordat je ergens aan begint.</p>
+    <span class="badge badge-dark badge-live"><i></i>Gratis voor jou</span>
+    <h1>Badkamerofferte vergelijken: weet of je prijs klopt</h1>
+    <p class="lead">Heb je al een offerte? Check hem per regel: per product, m² en uur zie je hoe de prijs zich verhoudt tot de markt, wat ontbreekt en wat te vaag is. Nog geen offerte? Vraag er gratis tot drie aan bij badkamerspecialisten uit je regio.</p>
+    <div class="hero-paden">
+      <a class="hero-pad hero-pad-hoofd" href="/tools/offertechecker/"><span class="hero-pad-ic">{icon('form',24)}</span><span><strong>Ik heb al een offerte</strong><small>Upload je pdf of plak de tekst en check hem per regel</small></span><span class="pijl" aria-hidden="true">→</span></a>
+      <a class="hero-pad" href="#offerte"><span class="hero-pad-ic">{icon('users',24)}</span><span><strong>Ik heb nog geen offerte</strong><small>Vraag er gratis tot drie aan bij specialisten uit je regio</small></span><span class="pijl" aria-hidden="true">→</span></a>
+    </div>
     <ul class="hero-usps">
-      <li><span class="check">{icon('check',12)}</span><span>Maximaal 3 bedrijven nemen contact op, niet meer</span></li>
-      <li><span class="check">{icon('check',12)}</span><span>Alleen bedrijven met KvK-inschrijving en verzekering</span></li>
-      <li><span class="check">{icon('check',12)}</span><span>Je zit nergens aan vast en betaalt niets</span></li>
-    </ul>
-    <ul class="hero-tags">
-      <li>Complete badkamer</li>
-      <li>Inloopdouche &amp; toilet</li>
-      <li>Tegelwerk &amp; kitwerk</li>
+      <li><span class="check">{icon('check',12)}</span><span>Je offerte wordt in je browser gelezen; er gaat niets naar een server</span></li>
+      <li><span class="check">{icon('check',12)}</span><span>{f"{n_art} veelgebruikte producten met marktprijzen, plus richtprijzen voor het werk" if n_art else "Marktprijzen voor producten en richtprijzen voor het werk"}</span></li>
+      <li><span class="check">{icon('check',12)}</span><span>Offertes aanvragen: maximaal 3 bedrijven, en je betaalt niets</span></li>
     </ul>
   </div>
-  <div>{offerte_form()}</div>
+  <div>{offerte_form("Nog geen offerte? Vraag er 3 aan", "Gratis · vrijblijvend · maximaal 3 badkamerspecialisten")}</div>
 </div>
 </section>
 <div class="trustbar"><div class="wrap"><ul>
-  <li>{icon('euro',20)}<span><strong>Gratis</strong> en vrijblijvend</span></li>
-  <li>{icon('users',20)}<span><strong>Maximaal 3</strong> offertes</span></li>
-  <li>{icon('check',20)}<span>Jij kiest, <strong>zonder verplichting</strong></span></li>
-  <li>{icon('house',20)}<span>Actief in <strong>{len(PLAATSEN)} plaatsen</strong></span></li>
+  <li>{icon('form',20)}<span>Offerte <strong>per regel</strong> gecheckt</span></li>
+  <li>{icon('shield',20)}<span>Je offerte blijft <strong>in je browser</strong></span></li>
+  <li>{icon('users',20)}<span><strong>Maximaal 3</strong> offertes aanvragen</span></li>
+  <li>{icon('euro',20)}<span><strong>Gratis</strong> voor jou</span></li>
 </ul></div></div>"""
+
+    check_sec = f"""<section class="section">
+<div class="wrap">
+  <div class="grid g2" style="gap:48px;align-items:center">
+    <div>
+      <span class="badge">Offertevergelijker</span>
+      <h2>Zo check je een badkamerofferte per regel</h2>
+      <p class="lead">Een offerte van één bedrag zegt weinig. De offertevergelijker splitst je offerte op en legt elke regel naast een prijsband met bron.</p>
+      <ol class="ov-stappen">
+        <li><strong>Upload of plak je offerte.</strong> Een pdf met tekst of de tekst uit je mail. Hij wordt in je browser gelezen.</li>
+        <li><strong>Zie per regel waar je staat.</strong> Producten zoals kranen, toiletten en douchegoten naast de marktprijs van dat artikel of die serie. Werk en materiaal naast richtprijzen per m², meter of uur.</li>
+        <li><strong>Stel de juiste vragen.</strong> Je krijgt een lijst met wat ontbreekt en wat te vaag is, en een mailtje voor je aanbieder.</li>
+        <li><strong>Wil je een tegenofferte?</strong> Kies zelf of je de specificatie, zonder je naam en die van je aanbieder, meeneemt in een aanvraag bij maximaal drie specialisten.</li>
+      </ol>
+      <p><a class="btn btn-primary btn-lg" href="/tools/offertechecker/">Check je offerte</a> <a class="btn btn-ghost" href="/hoe-verdienen-wij-geld/">Hoe verdienen wij geld?</a></p>
+      <p style="font-size:.9rem;color:#5b6d71">Wij verkopen geen sanitair en verwijzen niet naar winkels. De check is gratis; een specialist betaalt ons alleen als je via ons een offerte aanvraagt.</p>
+    </div>
+    <div>{voorbeeld}</div>
+  </div>
+</div>
+</section>"""
 
     stijlen = [("moderne-badkamer", "Modern"), ("landelijke-badkamer", "Landelijk"), ("japandi-badkamer", "Japandi")]
     stijl_kaarten = "".join(
@@ -164,6 +212,7 @@ def build_home():
         <li>Sanitair als vast bedrag of als stelpost</li>
         <li>Leidingwerk, afvoer en elektra meegenomen</li>
       </ul>
+      <p><a class="btn btn-primary" href="/tools/offertechecker/">Laat de offertevergelijker meekijken</a></p>
     </div>
     <div>
       <div class="card" style="box-shadow:var(--shadow-lg);border:0">
@@ -199,6 +248,10 @@ def build_home():
 </section>"""
 
     faqs = [
+        ("Kan ik een badkamerofferte die ik al heb laten checken?",
+         "Ja. Upload de pdf of plak de tekst in de offertevergelijker. Je ziet per regel of het om een product, werk of materiaal gaat en hoe de prijs zich verhoudt tot marktprijzen en richtprijzen met bron. De offerte wordt in je browser gelezen: er gaat niets naar ons of naar anderen, tot je zelf kiest voor een tegenofferte."),
+        ("Wat is een tegenofferte via Top Badkamers?",
+         "Na de check kun je de specificatie van je offerte gebruiken voor een aanvraag bij maximaal drie badkamerspecialisten. Je naam, adres en de naam van je huidige aanbieder gaan niet mee, en je ziet en bewerkt de tekst voordat je iets verstuurt. De specialisten maken een eigen offerte op dezelfde specificatie. Voor jou is dat gratis; de specialist betaalt ons een vergoeding per aanvraag."),
         ("Wat kost het om via Top Badkamers offertes aan te vragen?",
          "Niets. Aanvragen is gratis en vrijblijvend. Wij worden betaald door de bedrijven die je aanvraag ontvangen."),
         ("Hoeveel bedrijven nemen er contact met mij op?",
@@ -223,7 +276,7 @@ def build_home():
         "email": SITE["email"],
         "areaServed": [{"@type": "AdministrativeArea", "name": x}
                        for x in ["Flevoland", "Gelderland", "Overijssel", "Utrecht", "Noord-Holland"]],
-        "description": "Top Badkamers koppelt particulieren en bedrijven aan badkamerspecialisten in hun regio en laat hen gratis offertes vergelijken.",
+        "description": "Top Badkamers laat je een badkamerofferte gratis per regel checken en koppelt je aan maximaal drie badkamerspecialisten in je regio voor vergelijkbare offertes.",
     }
     web_ld = {
         "@context": "https://schema.org",
@@ -235,12 +288,12 @@ def build_home():
         "publisher": {"@id": SITE["url"] + "/#organization"},
     }
 
-    body = (hero + hoe_werkt_het() + beeld_sec + waarom_blok() + diensten_sec + prijs_sec + tips_sec
+    body = (hero + check_sec + hoe_werkt_het() + beeld_sec + waarom_blok() + diensten_sec + prijs_sec + tips_sec
             + regio_sec + faq_html + vakmensen_sec + cta_blok())
 
     write("/", page(
-        "Nieuwe badkamer? Vergelijk gratis 3 offertes | Top Badkamers",
-        "Vergelijk vrijblijvend offertes van badkamerspecialisten bij jou in de buurt. Complete badkamer, inloopdouche, toilet en tegelwerk. Gratis, maximaal 3 bedrijven.",
+        "Badkamerofferte vergelijken en checken | Top Badkamers",
+        "Check je badkamerofferte gratis per regel tegen marktprijzen, of vraag vrijblijvend offertes aan bij maximaal 3 badkamerspecialisten. Je offerte blijft in je browser.",
         "/", body, [org_ld, web_ld, faq_ld]), prio=1.0, freq="weekly")
 
 
@@ -383,6 +436,7 @@ def dienst_body(d, plaats=None):
   <h2>Wat valt er onder {d['naam'].lower()}?</h2>
   <p>Onder andere {wat_kort}. De volledige lijst, hoe een badkamerspecialist te werk gaat, wat de prijs bepaalt en waar je op let in de offerte, lees je op onze pagina over <a href="/diensten/{d['slug']}/">{d['naam'].lower()}</a>. Hieronder staat wat specifiek voor {pn} geldt.</p>
   {feiten}
+  {offertecheck_blok(d['naam'].lower())}
 </div></section>"""
         return cr, cr_ld, hero + content
 
@@ -417,7 +471,7 @@ def dienst_body(d, plaats=None):
     <li>Een concrete start- en opleverdatum, en hoe lang je zonder badkamer of toilet zit</li>
     <li>De garantietermijn en wat daar wel en niet onder valt</li>
   </ul>
-  <p>Heb je al een offerte? Leg hem naast de richtprijzen met de gratis <a href="/tools/offertechecker/">offertechecker</a>.</p>
+  {offertecheck_blok(d['naam'].lower())}
   {meer_weten(d['slug'])}
 </div></section>"""
     return cr, cr_ld, hero + content
@@ -719,6 +773,7 @@ def build_offerte_aanvragen():
       <div class="callout">
         <p><strong>Tip:</strong> hoe concreter je omschrijving, hoe scherper de offertes. Noem de afmetingen van de badkamer, wat er weg moet en wat je ervoor terug wilt, en het bouwjaar van je huis. Foto's kun je na het eerste contact altijd nog sturen.</p>
       </div>
+      <p style="margin-top:18px">Heb je al een offerte? <a href="/tools/offertechecker/">Check hem eerst per regel</a>. Daarna kun je de specificatie, zonder je gegevens, meenemen in deze aanvraag.</p>
     </div>
     <div>{offerte_form("Start je aanvraag", "Klaar in ongeveer een minuut")}</div>
   </div>
@@ -919,6 +974,7 @@ def build_prijzen():
 
   <h2>Hoe je offertes eerlijk vergelijkt</h2>
   <p>Leg ze naast elkaar en check per offerte: wat er gesloopt en afgevoerd wordt, welk sanitair en welke tegels (of hoe hoog de stelposten zijn), het leidingwerk en de elektra, hoe de douche waterdicht wordt gemaakt, de btw, de garantie en de planning. Ontbreekt er iets, dan is dat geen detail maar een toekomstige meerprijs.</p>
+  {offertecheck_blok()}
 </div></section>
 {faq_html}
 {cta_blok("Benieuwd wat het bij jou kost?", "Richtprijzen zijn een startpunt. Een echte prijs krijg je pas als een badkamerspecialist naar jouw situatie kijkt. Vraag gratis drie offertes aan.")}"""
@@ -1262,7 +1318,7 @@ Sitemap: {SITE['url']}/sitemap.xml
 import importlib
 
 CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen", "badkamer_inspiratie", "badkamer_verdienmodel"]
-TOOL_MODULES = ["badkamer_calculator", "badkamer_check", "badkamer_offertecheck",
+TOOL_MODULES = ["badkamer_offertecheck", "badkamer_calculator", "badkamer_check",
                 "badkamer_stijl", "badkamer_planner"]
 
 

@@ -87,7 +87,7 @@ uurtarieven hierboven. Dat staat er op de pagina ook bij.
 
 import datetime
 
-from components import (page, title, desc, crumbs, faq_blok, cta_blok, cta_midden,
+from components import (page, title, desc, crumbs, faq_blok, cta_blok, cta_midden, offertecheck_blok,
                         prijs_balken, icon, eur, dienst_icoon)
 from data import DIENST_BY_SLUG
 import richtprijzen as RP
@@ -1145,6 +1145,7 @@ def kosten_body(k):
   <p>Wil je een schatting voor je eigen badkamer? Gebruik de <a href="{CALC}">badkamercalculator</a>.</p>
 
   {cta_midden("Weet wat het bij jou kost", "Vraag gratis offertes aan bij maximaal drie badkamerspecialisten uit jouw regio en vergelijk ze rustig.")}
+  {offertecheck_blok(k['kort'].lower())}
 
   <h2>Welke btw betaal je?</h2>
   <p>{BTW_BASIS} {k['btw_extra']}</p>

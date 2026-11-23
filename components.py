@@ -130,12 +130,12 @@ def header():
   <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="hoofdmenu"><span></span><span></span><span></span></button>
   <nav class="nav" id="hoofdmenu" aria-label="Hoofdmenu">
     <a href="/diensten/"><span class="nav-ic">{icon('druppel', 20)}</span>Diensten</a>
+    <a href="/tools/offertechecker/" class="nav-check"><span class="nav-ic">{icon('form', 20)}</span>Offerte checken</a>
     <a href="/kosten/"><span class="nav-ic">{icon('euro', 20)}</span>Wat kost het?</a>
-    <a href="/tools/"><span class="nav-ic">{icon('form', 20)}</span>Tools</a>
     <a href="/kennisbank/"><span class="nav-ic">{icon('check', 20)}</span>Kennisbank</a>
     <a href="/voor-badkamerspecialisten/"><span class="nav-ic">{icon('users', 20)}</span>Voor badkamerspecialisten</a>
     <a class="btn btn-primary" href="/offerte-aanvragen/">Offertes aanvragen</a>
-    <p class="nav-noot">Gratis en vrijblijvend · maximaal 3 specialisten</p>
+    <p class="nav-noot">Offerte checken of aanvragen: gratis voor jou</p>
   </nav>
 </div>
 </header>{diensten_nav}"""
@@ -172,6 +172,7 @@ def footer():
         <li><a href="/badkamerspullen/">Badkamerspullen kiezen</a></li>
         <li><a href="/kennisbank/">Kennisbank</a></li>
         <li><a href="/inspiratie/">Inspiratie: badkamerstijlen</a></li>
+        <li><a href="/tools/offertechecker/">Badkamerofferte checken</a></li>
         <li><a href="/tools/badkamercalculator/">Badkamercalculator</a></li>
         <li><a href="/tools/">Alle gratis tools</a></li>
         <li><a href="/werkgebied/">Alle plaatsen</a></li>
@@ -490,14 +491,17 @@ def faq_blok(faqs, titel="Veelgestelde vragen"):
     return html, ld
 
 
-def cta_blok(titel="Klaar om te vergelijken?", tekst=None, knop="Gratis offertes aanvragen"):
+def cta_blok(titel="Klaar om te vergelijken?", tekst=None, knop="Gratis offertes aanvragen", alt=True):
     tekst = tekst or "Vul in een minuut het formulier in en ontvang vrijblijvend offertes van maximaal drie badkamerspecialisten uit jouw regio."
+    alt_html = ('<p class="cta-alt">Heb je al een offerte? <a href="/tools/offertechecker/">Check hem gratis per regel →</a></p>'
+                if alt else "")
     return f"""<section class="section">
 <div class="wrap">
   <div class="cta">
     <h2>{titel}</h2>
     <p>{tekst}</p>
     <a class="btn btn-primary btn-lg" href="/offerte-aanvragen/">{knop}</a>
+    {alt_html}
   </div>
 </div>
 </section>"""
@@ -639,6 +643,19 @@ def prijskaart(van, tot, eenheid, noot, beeld="", knop="Vergelijk offertes", ext
     {extra}
   </div>
 </aside>"""
+
+
+def offertecheck_blok(klus=None):
+    """Blok 'Heb je al een offerte?' met een link naar de offertevergelijker."""
+    vraag = f"Heb je al een offerte voor {klus}?" if klus else "Heb je al een offerte?"
+    return f"""<div class="ocb reveal">
+  <span class="ocb-ic">{icon('form', 26)}</span>
+  <div class="ocb-tekst">
+    <p class="ocb-titel">{vraag}</p>
+    <p>Check hem in de offertevergelijker. Je ziet per regel hoe de prijs zich verhoudt tot de markt, wat ontbreekt en wat te vaag is. Gratis, en je offerte blijft in je browser.</p>
+  </div>
+  <a class="btn btn-ghost" href="/tools/offertechecker/">Check je offerte</a>
+</div>"""
 
 
 def cta_midden(titel, tekst, knop="Gratis offertes aanvragen", href="/offerte-aanvragen/"):
