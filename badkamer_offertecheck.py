@@ -15,6 +15,7 @@ import pathlib
 
 from components import page, crumbs, faq_blok, cta_blok, title, eur
 from data import DIENST_BY_SLUG
+import richtprijzen as RP
 
 PAD = "/tools/offertechecker/"
 
@@ -25,70 +26,61 @@ LINKS = [
 
 # ---------------------------------------------------------------------------
 # Richtprijzen per post. Bedragen inclusief 21% btw, tenzij excl_btw.
-# Tegelwerk, tegels, kitwerk en uurtarief komen uit data.DIENSTEN (zie de bronnen daar).
-# De andere posten komen uit deze bronnen, geraadpleegd in november 2026:
-# - Slimster, badkamer slopen kosten: gemiddeld €550, spreiding €250 – €850 incl. btw
-#   https://slimster.nl/sloopwerk/sloopkosten/badkamer-slopen-kosten/
-# - Trustoo, badkamer renovatie kosten 2026: sloopwerk en afvoer €1.200 – €1.800,
-#   afvoer bouw- en sloopafval €35 – €400, leidingwerk €1.250 – €2.200, elektra €300 – €1.000,
-#   sanitair en tegels samen €2.500 – €9.500
-#   https://trustoo.nl/kosten/badkamer-renovatie-kosten/
-# - Slimster, compleet nieuwe badkamer: leidingwerk op dezelfde plek €1.500 – €3.000, verplaatsen
-#   tot €5.000 of meer; elektra €500 – €1.500, verlichting €300 – €1.500; vloerverwarming €500 – €2.500
-#   https://slimster.nl/badkamer/compleet-nieuwe-badkamer-kosten/
-# - Slimster, bouwafval afvoeren: container 6 m³ bouwafval ca. €350 all-in
-#   https://slimster.nl/blog/bouwafval-afvoeren/
-# - Werkspot, puin afvoeren: container 6 m³ puin €180 – €220
-#   https://www.werkspot.nl/puin-afvoeren/prijzen-kosten
+# Alle bedragen en bronnen komen uit richtprijzen.py (gedeeld met de calculator en de
+# kostenpagina's). Hier staat alleen hoe de checker ze combineert:
+# - sloop: van alleen slopen (laag) tot slopen met dekvloer en afvoer (hoog), omdat offertes
+#   die twee vaak in één post zetten;
+# - leidingwerk: van op dezelfde plek (laag) tot verplaatsen (leidingwerk hoog + verplaatsen hoog);
+# - tegelwerk_incl: legloon plus tegels.
 # Bewust ruime bandbreedtes; de parser geeft pas "hoog" of "laag" bij meer dan 10% buiten de band.
 # ---------------------------------------------------------------------------
 
-_teg = DIENST_BY_SLUG["tegelwerk-badkamer"]
-_ins = DIENST_BY_SLUG["badkamer-installeren"]
-_ond = DIENST_BY_SLUG["badkamer-onderhoud"]
-_ren = DIENST_BY_SLUG["badkamer-renoveren"]
+def _band(van, tot, eenheid, excl_btw=False):
+    b = {"van": van, "tot": tot, "eenheid": eenheid}
+    if excl_btw:
+        b["excl_btw"] = True
+    return b
 
-# Tegels als materiaal: €20 – €60 per m² (Werkspot, badkamer betegelen; zie data.py).
-TEGELS_VAN, TEGELS_TOT = 20, 60
+
+_RP = RP.RICHTPRIJZEN
 
 BANDEN = {
-    "sloop":           {"van": 250, "tot": 1800, "eenheid": "post"},
-    "afval":           {"van": 150, "tot": 600, "eenheid": "post"},
-    "tegelwerk":       {"van": _teg["prijs_van"], "tot": _teg["prijs_tot"], "eenheid": "m2"},
-    "tegelwerk_incl":  {"van": _teg["prijs_van"] + TEGELS_VAN, "tot": _teg["prijs_tot"] + TEGELS_TOT, "eenheid": "m2"},
-    "tegels":          {"van": TEGELS_VAN, "tot": TEGELS_TOT, "eenheid": "m2"},
-    "leidingwerk":     {"van": 1250, "tot": 5000, "eenheid": "post"},
-    "elektra":         {"van": 300, "tot": 2500, "eenheid": "post"},
-    "vloerverwarming": {"van": 500, "tot": 2500, "eenheid": "post"},
-    "sanitair":        {"van": 1500, "tot": 9500, "eenheid": "post"},
-    "kitwerk":         {"van": _ond["prijs_van"], "tot": _ond["prijs_tot"], "eenheid": "m"},
-    "uur":             {"van": _ins["prijs_van"], "tot": _ins["prijs_tot"], "eenheid": "uur", "excl_btw": True},
+    "sloop":           _band(_RP["sloop"]["laag"], _RP["sloop_compleet"]["hoog"], "post"),
+    "afval":           _band(_RP["afval"]["laag"], _RP["afval"]["hoog"], "post"),
+    "tegelwerk":       _band(_RP["tegelwerk"]["laag"], _RP["tegelwerk"]["hoog"], "m2"),
+    "tegelwerk_incl":  _band(_RP["tegelwerk"]["laag"] + _RP["tegels"]["laag"], _RP["tegelwerk"]["hoog"] + _RP["tegels"]["hoog"], "m2"),
+    "tegels":          _band(_RP["tegels"]["laag"], _RP["tegels"]["hoog"], "m2"),
+    "leidingwerk":     _band(_RP["leidingwerk"]["laag"], _RP["leidingwerk"]["hoog"] + _RP["leidingwerk_verplaatsen"]["hoog"], "post"),
+    "elektra":         _band(_RP["elektra"]["laag"], _RP["elektra"]["hoog"], "post"),
+    "vloerverwarming": _band(_RP["vloerverwarming"]["laag"], _RP["vloerverwarming"]["hoog"], "post"),
+    "sanitair":        _band(_RP["sanitair"]["laag"], _RP["sanitair"]["hoog"], "post"),
+    "kitwerk":         _band(_RP["kitwerk"]["laag"], _RP["kitwerk"]["hoog"], "m"),
+    "uur":             _band(_RP["uurtarief"]["laag"], _RP["uurtarief"]["hoog"], "uur", _RP["uurtarief"]["btw"] == "excl"),
 }
 
-# Uitleg per band voor de tabel op de pagina: (naam, eenheid-tekst, toelichting, bron-sleutels)
+# Uitleg per band voor de tabel op de pagina: (naam, eenheid-tekst, toelichting, bron-sleutels uit richtprijzen.BRONNEN)
 RICHTPRIJS_RIJEN = [
-    ("sloop", "Sloopwerk", "per badkamer", "Alleen slopen kan vanaf zo'n €250; met afvoer van het afval erbij zit je eerder aan de bovenkant.", ["slimster_sloop", "trustoo"]),
-    ("afval", "Afvoer van afval", "per badkamer", "Een container van 6 m³ voor bouw- en sloopafval, inclusief storten.", ["slimster_afval", "werkspot_puin", "trustoo"]),
-    ("tegelwerk", "Tegelwerk (zetten)", "per m²", "Alleen het zetten (legloon). In kleine badkamers is de prijs per m² hoger.", ["data"]),
-    ("tegelwerk_incl", "Tegelwerk inclusief tegels", "per m²", "Legloon plus tegels uit het middensegment.", ["data"]),
-    ("tegels", "Tegels (materiaal)", "per m²", "Ook de maat voor een eerlijke stelpost tegels.", ["data"]),
-    ("leidingwerk", "Leidingwerk", "per badkamer", "Op dezelfde plek aan de onderkant; aansluitingen verplaatsen aan de bovenkant.", ["slimster_bad", "trustoo"]),
-    ("elektra", "Elektra", "per badkamer", "Stopcontacten, schakelaars, spots en spiegelverlichting.", ["slimster_bad", "trustoo"]),
-    ("vloerverwarming", "Vloerverwarming", "per badkamer", "Elektrisch of aangesloten op de cv.", ["slimster_bad"]),
-    ("sanitair", "Sanitair (levering)", "per badkamer", "Van een basisset tot luxe sanitair. Ook de maat voor een stelpost sanitair.", ["trustoo"]),
-    ("kitwerk", "Kitwerk", "per meter", "Oude kit verwijderen en nieuwe aanbrengen.", ["data"]),
-    ("uur", "Uurtarief vakman", "per uur, excl. btw", "Voor regiewerk en meerwerk.", ["data"]),
+    ("sloop", "Sloopwerk", "per badkamer", "Alleen slopen kan vanaf zo'n €250; met afvoer van het afval en de dekvloer erbij zit je eerder aan de bovenkant.", ["slimster_slopen", "werkspot_slopen", "trustoo_badkamer"]),
+    ("afval", "Afvoer van afval", "per badkamer", "Afvoer door het bedrijf, of een container van 3 tot 6 m³ inclusief storten.", ["werkspot_puin", "slimster_afval", "trustoo_badkamer"]),
+    ("tegelwerk", "Tegelwerk (zetten)", "per m²", "Alleen het zetten (legloon). In kleine badkamers is de prijs per m² hoger.", ["trustoo_tegel", "homedeal_tegel"]),
+    ("tegelwerk_incl", "Tegelwerk inclusief tegels", "per m²", "Legloon plus tegels.", ["trustoo_tegel", "werkspot_tegel"]),
+    ("tegels", "Tegels (materiaal)", "per m²", "Ook de maat voor een eerlijke stelpost tegels.", ["werkspot_tegel"]),
+    ("leidingwerk", "Leidingwerk", "per badkamer", "Op dezelfde plek aan de onderkant; aansluitingen verplaatsen aan de bovenkant.", ["trustoo_badkamer", "slimster_badkamer", "homedeal_toilet"]),
+    ("elektra", "Elektra", "per badkamer", "Stopcontacten, schakelaars, een aparte groep en spots. Uitgebreide verlichting kan er nog bij komen.", ["trustoo_badkamer", "slimster_badkamer"]),
+    ("vloerverwarming", "Vloerverwarming", "per badkamer", "Elektrisch of aangesloten op de cv.", ["slimster_badkamer", "trustoo_badkamer"]),
+    ("sanitair", "Sanitair (levering)", "per badkamer", "Van een basisset tot luxe sanitair. Ook de maat voor een stelpost sanitair.", ["trustoo_badkamer", "homedeal_badkamer"]),
+    ("kitwerk", "Kitwerk", "per meter", "Oude kit verwijderen en nieuwe aanbrengen.", ["werkspot_kit", "slimster_kit"]),
+    ("uur", "Uurtarief vakman", "per uur, excl. btw", "Voor regiewerk en meerwerk.", ["homedeal_lood", "knab_lood"]),
 ]
 
-BRONNEN = {
-    "data": ("Werkspot, Homedeal en Trustoo over tegelwerk, kitwerk en het uurtarief van een loodgieter (zoals op onze dienstpagina's)", "https://www.werkspot.nl/badkamer-betegelen/prijzen-kosten"),
-    "slimster_sloop": ("Slimster, Wat kost een badkamer slopen?", "https://slimster.nl/sloopwerk/sloopkosten/badkamer-slopen-kosten/"),
-    "slimster_bad": ("Slimster, Compleet nieuwe badkamer kosten", "https://slimster.nl/badkamer/compleet-nieuwe-badkamer-kosten/"),
-    "slimster_afval": ("Slimster, Wat doe ik met bouwafval?", "https://slimster.nl/blog/bouwafval-afvoeren/"),
-    "werkspot_puin": ("Werkspot, Wat kost puin afvoeren?", "https://www.werkspot.nl/puin-afvoeren/prijzen-kosten"),
-    "trustoo": ("Trustoo, Wat kost een nieuwe badkamer in 2026?", "https://trustoo.nl/kosten/badkamer-renovatie-kosten/"),
-    "btw": ("Belastingdienst, Diensten met 9% btw", "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/tarieven_en_vrijstellingen/diensten_9_btw"),
-}
+_ren = DIENST_BY_SLUG["badkamer-renoveren"]
+
+# Bronnen in volgorde van eerste gebruik, plus de Belastingdienst voor het btw-tarief.
+BRONNEN = {}
+for _r in RICHTPRIJS_RIJEN:
+    for _k in _r[4]:
+        BRONNEN.setdefault(_k, RP.BRONNEN[_k])
+BRONNEN["btw"] = ("Belastingdienst, Diensten met 9% btw", "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/tarieven_en_vrijstellingen/diensten_9_btw")
 _BRON_NR = {k: i + 1 for i, k in enumerate(BRONNEN)}
 
 PARSER_JS = (pathlib.Path(__file__).parent / "offerte_parser_badkamer.js").read_text(encoding="utf-8")

@@ -3,11 +3,13 @@
 
 Losse module met de interface LINKS + build(write). Rekent in de browser met
 de constante REKENWAARDEN hieronder; die gaat met json.dumps naar de JavaScript.
+De bedragen zelf komen uit richtprijzen.py, zodat de calculator, de offertechecker
+en de kostenpagina's dezelfde bandbreedtes gebruiken.
 
 Alle bedragen zijn richtprijzen INCLUSIEF 21% btw, net als data.DIENSTEN. De
 calculator laat het btw-deel apart zien (21/121 van het totaal).
 
-Bronnen, geraadpleegd in november 2026:
+Bronnen, geraadpleegd in november 2026 (de actuele waarden en bronnen staan in richtprijzen.py):
 - Sloopwerk badkamer €265 – €685 (Werkspot) en €250 – €850 excl. afvoer (Slimster):
   https://www.werkspot.nl/badkamer-sanitair/prijzen-kosten/kosten-badkamer-slopen
   https://slimster.nl/sloopwerk/sloopkosten/badkamer-slopen-kosten/
@@ -20,8 +22,11 @@ Bronnen, geraadpleegd in november 2026:
   €1.000 – €6.000 (Homedeal); douche plaatsen €600 – €1.900, bad plaatsen €850 – €2.800 (Werkspot):
   https://www.homedeal.nl/verbouwing/badkamer-verbouwen-kosten/
   https://www.werkspot.nl/badkamer-sanitair/prijzen-kosten/sanitair-plaatsen
-- Loodgieter €50 – €80 per uur incl. btw (Slimster), €45 – €85 excl. btw (Homedeal, data.DIENSTEN):
-  https://slimster.nl/loodgieter/kosten-leidingwerk-aanleggen/
+- Leidingwerk op dezelfde plek €1.250 – €2.200 (Trustoo), €1.500 – €3.000 (Slimster):
+  https://trustoo.nl/kosten/badkamer-renovatie-kosten/
+  https://slimster.nl/badkamer/compleet-nieuwe-badkamer-kosten/
+- Elektra €300 – €1.000 (Trustoo), €500 – €1.500 (Slimster); elektrische vloerverwarming
+  per badkamer €600 – €1.100 (Trustoo), ook de ondergrens van de calculator.
 - Elektrische vloerverwarming badkamer €40 – €110 per m² (Werkspot), €60 – €80 per m² (Slimster):
   https://www.werkspot.nl/verwarming/prijzen-kosten/vloerverwarming-badkamer
   https://slimster.nl/vloerverwarming/kosten/
@@ -38,6 +43,7 @@ Bronnen, geraadpleegd in november 2026:
 import json
 
 from data import PLAATSEN, PRIJSINDEX
+import richtprijzen as RP
 from components import page, crumbs, faq_blok, cta_blok, title, desc
 
 PAD = "/tools/badkamercalculator/"
@@ -49,46 +55,38 @@ LINKS = [
 
 # ---------------------------------------------------------------------------
 # Rekenwaarden (euro, inclusief 21% btw). [laag, hoog]
+# Alle bedragen komen uit richtprijzen.py; hier staat alleen hoe de calculator ze gebruikt.
 # ---------------------------------------------------------------------------
 REKENWAARDEN = {
     "btw": 0.21,
     "deur_m2": 1.6,             # aftrek voor de deur bij wandtegels
     "halfhoog_m": 1.2,          # hoogte van halfhoog wandtegelwerk
-    # Sloopwerk: vast deel + per m² vloer (Werkspot €265 – €685, Slimster €250 – €850)
-    "sloop_vast": [100, 200],
-    "sloop_m2": [40, 100],
+    # Sloopwerk: vast deel + per m² vloer (sluit aan op RP "sloop" €250 – €850)
+    "sloop_vast": RP.lh("sloop_vast"),
+    "sloop_m2": RP.lh("sloop_m2"),
     # Afval: met sloop door het bedrijf, of alleen een container als je zelf sloopt
-    "afval_sloop": [200, 450],
-    "afval_zelf": [125, 220],
-    # Tegels (materiaal) per m², per sanitairniveau (Werkspot €20 – €60, luxe hoger)
-    "tegel_materiaal": {"basis": [20, 30], "midden": [30, 50], "luxe": [50, 90]},
-    # Tegelzetten per m², inclusief lijm, voegsel en kit (legloon €25 – €55 + hulpmateriaal)
-    "tegel_arbeid": [35, 65],
+    "afval_sloop": RP.lh("afval"),
+    "afval_zelf": RP.lh("container"),
+    # Tegels (materiaal) per m², per sanitairniveau
+    "tegel_materiaal": RP.niveaus("tegels"),
+    # Tegelzetten per m²: legloon plus lijm, voegsel en kit
+    "tegel_arbeid": [RP.lh("tegelwerk")[0] + RP.lh("tegelwerk_hulpmateriaal")[0],
+                     RP.lh("tegelwerk")[1] + RP.lh("tegelwerk_hulpmateriaal")[1]],
     # Waterdicht maken en afschot in de douchehoek (vast bedrag)
-    "waterdicht": [300, 700],
+    "waterdicht": RP.lh("waterdicht"),
     # Sanitair (alleen het product), per niveau
-    "sanitair": {
-        "douche":    {"basis": [500, 900],  "midden": [1000, 2200], "luxe": [2200, 4000]},
-        "bad":       {"basis": [300, 600],  "midden": [600, 1300],  "luxe": [1300, 3000]},
-        "toilet":    {"basis": [300, 500],  "midden": [500, 900],   "luxe": [900, 1800]},
-        "meubel":    {"basis": [250, 500],  "midden": [500, 1100],  "luxe": [1100, 2500]},
-    },
+    "sanitair": {k: RP.niveaus("sanitair_" + k) for k in ("douche", "bad", "toilet", "meubel")},
     # Montage door de installateur per onderdeel
-    "montage": {
-        "douche": [400, 800],
-        "bad": [350, 700],
-        "toilet": [300, 600],
-        "meubel": [150, 350],
-    },
+    "montage": {k: RP.lh("montage_" + k) for k in ("douche", "bad", "toilet", "meubel")},
     # Leidingwerk vernieuwen op dezelfde plek (alleen bij een renovatie met sloopwerk)
-    "leidingwerk_basis": [500, 1200],
-    # Leidingen en afvoer verplaatsen: 1,5 – 3 dagen loodgieter plus materiaal, brede marge
-    "leiding_verplaatsen": [1000, 2500],
+    "leidingwerk_basis": RP.lh("leidingwerk"),
+    # Leidingen en afvoer verplaatsen: extra bovenop het leidingwerk
+    "leiding_verplaatsen": RP.lh("leidingwerk_verplaatsen"),
     # Elektra
-    "vloerverwarming_m2": [60, 110],
-    "vloerverwarming_min": [450, 700],
-    "ventilator": [150, 400],
-    "elektra_extra": [250, 700],   # paar stopcontacten plus verlichting (spots)
+    "vloerverwarming_m2": RP.lh("vloerverwarming_m2"),
+    "vloerverwarming_min": RP.lh("vloerverwarming_elektrisch"),
+    "ventilator": RP.lh("ventilator"),
+    "elektra_extra": RP.lh("elektra"),   # stopcontacten, schakelaars en spots
 }
 
 POSTEN = [
@@ -373,9 +371,9 @@ def _methode_html():
         ("Tegels (materiaal)", f"basis {_r(R['tegel_materiaal']['basis'])}, midden {_r(R['tegel_materiaal']['midden'])}, luxe {_r(R['tegel_materiaal']['luxe'])} per m²", "Werkspot"),
         ("Tegelzetten", f"{_r(R['tegel_arbeid'], ' per m²')} inclusief lijm, voeg en kit; plus {_r(R['waterdicht'])} voor waterdicht maken bij een douche of bad", "Trustoo, Homedeal"),
         ("Sanitair (midden)", f"douche {_r(s['douche']['midden'])}, bad {_r(s['bad']['midden'])}, hangtoilet {_r(s['toilet']['midden'])}, wastafelmeubel {_r(s['meubel']['midden'])}", "Homedeal, Werkspot"),
-        ("Installatie", f"montage per onderdeel {_eur(R['montage']['meubel'][0])} – {_eur(R['montage']['douche'][1])}; leidingwerk vernieuwen {_r(R['leidingwerk_basis'])}; verplaatsen {_r(R['leiding_verplaatsen'])}", "Slimster, Homedeal, Werkspot"),
-        ("Elektra", f"vloerverwarming {_r(R['vloerverwarming_m2'], ' per m²')} (minimaal {_eur(R['vloerverwarming_min'][0])}); ventilator {_r(R['ventilator'])}; stopcontacten en verlichting {_r(R['elektra_extra'])}", "Werkspot, Slimster"),
-        ("Afvoer van afval", f"met sloop {_r(R['afval_sloop'])}; zelf een container huren {_r(R['afval_zelf'])}", "Werkspot"),
+        ("Installatie", f"montage per onderdeel {_eur(min(v[0] for v in R['montage'].values()))} – {_eur(max(v[1] for v in R['montage'].values()))}; leidingwerk vernieuwen {_r(R['leidingwerk_basis'])}; verplaatsen {_r(R['leiding_verplaatsen'])}", "Trustoo, Slimster, Homedeal, Werkspot"),
+        ("Elektra", f"vloerverwarming {_r(R['vloerverwarming_m2'], ' per m²')} (minimaal {_eur(R['vloerverwarming_min'][0])}); ventilator {_r(R['ventilator'])}; stopcontacten en verlichting {_r(R['elektra_extra'])}", "Werkspot, Slimster, Trustoo"),
+        ("Afvoer van afval", f"met sloop {_r(R['afval_sloop'])}; zelf een container huren {_r(R['afval_zelf'])}", "Werkspot, Slimster, Trustoo"),
     ]
     tr = "".join(f"<tr><td>{a}</td><td>{b}</td><td>{c}</td></tr>" for a, b, c in rijen)
     return f"""<section class="section soft"><div class="wrap narrow prose">
@@ -400,7 +398,8 @@ def _methode_html():
     Trustoo (tegelzetter),
     Homedeal (badkamer verbouwen),
     Werkspot (sanitair plaatsen),
-    Slimster (leidingwerk),
+    Trustoo (nieuwe badkamer),
+    Slimster (nieuwe badkamer),
     Werkspot (vloerverwarming),
     Werkspot (stopcontacten).
     Het zijn richtprijzen, geen offerte.</p>

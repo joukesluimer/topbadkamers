@@ -1,4 +1,4 @@
-"""Kostenpagina's voor badkamerwerk: /kosten/ en acht pagina's per klus.
+"""Kostenpagina's voor badkamerwerk: /kosten/ en veertien pagina's per klus.
 
 Elke pagina heeft een snel antwoord, een prijstabel per variant, wat de prijs
 bepaalt, een rekenvoorbeeld, btw-uitleg, besparingstips, wanneer je een
@@ -51,6 +51,35 @@ hieronder bij de bron. Bronnen geraadpleegd in november 2026:
 - Rijksoverheid, asbest (verwijderen door gecertificeerd bedrijf, regels voor particulieren):
   https://www.rijksoverheid.nl/onderwerpen/asbest
 
+Ronde 2 (zes extra pagina's), bronnen geraadpleegd in november 2026:
+- Werkspot, bad plaatsen (ligbad €850 – €2.800, bad €750 – €3.000; aansluiten en plaatsen €300 – €1.000,
+  afwerking €200 – €500): https://www.werkspot.nl/badkamer-sanitair/prijzen-kosten/bad-plaatsen
+- Homedeal, bad plaatsen 2026 (gemiddeld €2.750, €800 – €10.000; plaatstaal vanaf €850, acryl vanaf €1.000,
+  gietijzer vanaf €1.500 – €2.000, incl. montage en btw): https://www.homedeal.nl/badkamerspecialist/bad-plaatsen-kosten/
+- Werkspot, sanitair plaatsen (meubel vrijstaand €200 – €500, hangend €250 – €600, dubbel €350 – €800,
+  spiegelkast €150 – €300; uurtarief €45 – €80): https://www.werkspot.nl/badkamer-sanitair/prijzen-kosten/sanitair-plaatsen
+- Slimster, badkamermeubel (vanaf €150 / €750 / €1.500 incl. btw, excl. montage):
+  https://slimster.nl/badkamer/badkamermeubel-plaatsen-kosten/
+- Homedeal, nieuwe douche 2026 (douchecabine gemiddeld €1.800, €430 – €5.200; inloopdouche €430 – €4.000;
+  douchebak €85 – €740; incl. montage en btw): https://www.homedeal.nl/badkamerspecialist/nieuwe-douche-kosten/
+- Slimster, douche (cabine vanaf €300 / €800 / €1.500, douchebak vanaf €75 / €200 / €500, excl. montage):
+  https://slimster.nl/badkamer/douche-plaatsen-kosten/
+- Trustoo, nieuwe badkamer 2026 (douchecabine plaatsen €275 – €435, verlaagde douchebak €300 – €550,
+  bak of cabine demonteren vanaf €125; leidingwerk €1.250 – €2.200; elektra €300 – €1.000;
+  elektrische vloerverwarming €600 – €1.100): https://trustoo.nl/kosten/badkamer-renovatie-kosten/
+- Homedeal, zolder verbouwen (badkamer op zolder €20.000 – €35.000 incl. constructie, leidingen, ventilatie
+  en sanitair; dakisolatie binnen €20 – €50 per m²; gipswand €40 – €50 per m²; elektra €500 – €2.000;
+  dakkapel €7.000 – €9.800): https://www.homedeal.nl/verbouwing/zolder-verbouwen-kosten/
+- Slimster, zolder verbouwen tot badkamer (€2.000 – €18.000): https://slimster.nl/zolder/voorbeelden/badkamer/
+- Werkspot, zolder verbouwen (tussenwand €600 – €1.000, isolatie €2.000 – €5.000, dakraam €1.000 – €3.000):
+  https://www.werkspot.nl/uitbouw-renovatie/prijzen-kosten/zolder-verbouwen
+- Homedeal en Werkspot, toilet verbouwen (leidingen of toilet verplaatsen €700 – €1.500 extra; kleine
+  leidingaanpassing €300 – €600): zie de toilet-bronnen hierboven.
+
+Gedeelde posten (sloop, afvoer, leidingwerk, elektra, tegels, legloon, waterdicht maken, kitwerk,
+montage en sanitair per onderdeel, vloerverwarming, uurtarief) komen uit richtprijzen.py. Daar staan
+ook hun bronnen. Zo rekenen de kostenpagina's, de calculator en de offertechecker met dezelfde bedragen.
+
 Voegen vernieuwen per m² (€20 – €40) en de bedragen per post in de
 rekenvoorbeelden zijn een eigen inschatting, afgeleid van het legloon en de
 uurtarieven hierboven. Dat staat er op de pagina ook bij.
@@ -61,6 +90,7 @@ import datetime
 from components import (page, title, desc, crumbs, faq_blok, cta_blok, cta_midden,
                         prijs_balken, icon, eur, dienst_icoon)
 from data import DIENST_BY_SLUG
+import richtprijzen as RP
 
 JAAR = datetime.date.today().year
 MAAND = datetime.date.today().strftime("%m/%Y")
@@ -92,7 +122,48 @@ B = {
     "knab_lood": ("Knab, uurtarief loodgieter zzp 2026", "https://bieb.knab.nl/ondernemen/wat-verdient-een-loodgieter-zzp-bekijk-uurtarief-en-winst"),
     "btw": ("Belastingdienst, 9% btw op werkzaamheden aan woningen", BTW_BRON),
     "asbest": ("Rijksoverheid, asbest", "https://www.rijksoverheid.nl/onderwerpen/asbest"),
+    "slimster_meubel": ("Slimster, badkamermeubel plaatsen", "https://slimster.nl/badkamer/badkamermeubel-plaatsen-kosten/"),
+    "slimster_douche": ("Slimster, kosten douche", "https://slimster.nl/badkamer/douche-plaatsen-kosten/"),
+    "homedeal_zolder": ("Homedeal, zolder verbouwen kosten", "https://www.homedeal.nl/verbouwing/zolder-verbouwen-kosten/"),
+    "slimster_zolder": ("Slimster, zolder verbouwen tot badkamer", "https://slimster.nl/zolder/voorbeelden/badkamer/"),
+    "werkspot_zolder": ("Werkspot, zolder verbouwen kosten", "https://www.werkspot.nl/uitbouw-renovatie/prijzen-kosten/zolder-verbouwen"),
 }
+# Bronnen uit richtprijzen.py aanvullen (sleutels die hier nog niet staan).
+for _k, _v in RP.BRONNEN.items():
+    if _v[1]:
+        B.setdefault(_k, _v)
+
+
+def rp(sleutel, factor=1):
+    """(laag, hoog) uit richtprijzen.py, eventueel maal een aantal, afgerond op hele euro's."""
+    lo, hi = RP.lh(sleutel, factor)
+    return (int(round(lo)), int(round(hi)))
+
+
+def rp_niveau(sleutel, niveau):
+    lo, hi = RP.RICHTPRIJZEN[sleutel]["niveaus"][niveau]
+    return (lo, hi)
+
+
+def som(*paren):
+    """Telt (laag, hoog)-paren op."""
+    return (sum(p[0] for p in paren), sum(p[1] for p in paren))
+
+
+def rb(sleutel, factor=1):
+    """Bandbreedte als tekst, bv. '€25 – €55'."""
+    lo, hi = rp(sleutel, factor)
+    return f"{eur(lo)} – {eur(hi)}"
+
+
+def bedrag(van, tot, eenheid=""):
+    """Bedrag van–tot; kleine bedragen (zoals per meter) zonder afronding."""
+    if van == tot:
+        return eur(van)
+    return f"{eur(van)} – {eur(tot)}"
+
+
+TOTAAL = None  # markeert in een rekenvoorbeeld de totaalregel, die wordt opgeteld
 
 CALC = "/tools/badkamercalculator/"
 
@@ -149,24 +220,27 @@ KOSTEN = [
         "factoren": [
             ("De grootte van de badkamer", "Meer vierkante meters betekent meer tegels, meer legloon en meer kitwerk. Een kleine badkamer is per m² wel duurder, omdat sloop, leidingwerk en sanitair grotendeels vaste kosten zijn."),
             ("Of de indeling verandert", "Blijven toilet, douche en wastafel op hun plek, dan kan het leidingwerk grotendeels blijven. Verplaats je de afvoer van het toilet, dan moet de vloer vaak open en loopt de prijs snel op."),
-            ("Het sanitair", "Een wastafelmeubel, toilet, douchewand en kranen kunnen samen €1.500 kosten, maar ook €8.000. Inbouwkranen en een hangtoilet vragen ook meer werk in de muur."),
-            ("De tegels", "Tegels kosten grofweg €20 tot €60 per m², en meer voor natuursteen. Grote formaten en mozaïek kosten ook meer legloon."),
+            ("Het sanitair", f"Een wastafelmeubel, toilet, douche en kranen kunnen samen {eur(rp('sanitair')[0])} kosten, maar ook {eur(rp('sanitair')[1])}. Inbouwkranen en een hangtoilet vragen ook meer werk in de muur."),
+            ("De tegels", f"Tegels kosten grofweg {rb('tegels')} per m², en meer voor natuursteen. Grote formaten en mozaïek kosten ook meer legloon."),
             ("De staat van de bestaande badkamer", "Oude leidingen, een slechte vloer of een muur die niet recht is, kosten extra werk. Bij huizen van vóór 1994 kan er asbest zitten, bijvoorbeeld in oude kit, vloerzeil of een plaat achter de tegels."),
             ("Extra's", "Vloerverwarming, een designradiator, extra stopcontacten, verlichting en mechanische ventilatie tellen allemaal op."),
         ],
         "voorbeeld": (
             "Stel: een badkamer van 2 bij 3 meter (6 m²) in een tussenwoning. Alles blijft op dezelfde plek. Er komt een inloopdouche, een hangtoilet en een wastafelmeubel. Wanden tot het plafond betegeld: samen met de vloer zo'n 25 m² tegelwerk.",
             [
-                ("Slopen en afvoeren van de oude badkamer", "€400 – €700"),
-                ("Leidingwerk, afvoer en elektra aanpassen", "€1.000 – €2.500"),
-                ("Tegels, 25 m² × €20 – €60", "€500 – €1.500"),
-                ("Legloon tegelwerk, 25 m² × €25 – €55", "€625 – €1.375"),
-                ("Sanitair: douche, toilet, wastafelmeubel, kranen", "€2.000 – €5.000"),
-                ("Montage sanitair", "€800 – €1.500"),
-                ("Waterdicht maken, kitwerk en afwerking", "€300 – €600"),
-                ("<strong>Totaal, inclusief btw</strong>", "<strong>€5.625 – €13.175</strong>"),
+                ("Slopen van de oude badkamer (6 m²)", som(rp("sloop_vast"), rp("sloop_m2", 6))),
+                ("Afvoer van het sloopafval", rp("afval")),
+                ("Leidingwerk water en afvoer, op dezelfde plek", rp("leidingwerk")),
+                ("Elektra: stopcontacten, schakelaars en spots", rp("elektra")),
+                (f"Tegels, 25 m² × {rb('tegels')}", rp("tegels", 25)),
+                (f"Legloon tegelwerk, 25 m² × {rb('tegelwerk')}", rp("tegelwerk", 25)),
+                ("Waterdicht maken van de douchehoek", rp("waterdicht")),
+                ("Sanitair (midden): douche, hangtoilet, wastafelmeubel", som(*(rp_niveau("sanitair_" + x, "midden") for x in ("douche", "toilet", "meubel")))),
+                ("Montage van douche, toilet en meubel", som(rp("montage_douche"), rp("montage_toilet"), rp("montage_meubel"))),
+                ("Kitwerk en afwerking", rp("kitwerk_badkamer")),
+                ("Totaal, inclusief btw", TOTAAL),
             ],
-            "Dit is een eigen rekenvoorbeeld op basis van de bronnen hieronder. Het laat zien waar het geld heen gaat. Je eigen badkamer kan hoger of lager uitkomen.",
+            "Dit is een eigen rekenvoorbeeld op basis van de bronnen hieronder, met dezelfde richtprijzen als de badkamercalculator. Het laat zien waar het geld heen gaat. Je eigen badkamer kan hoger of lager uitkomen.",
         ),
         "btw_extra": "Laat je in dezelfde verbouwing ook het plafond stukadoren of verven, dan kan dat deel onder 9% vallen als de woning ouder is dan twee jaar. Het bedrijf hoort die posten dan apart op de offerte te zetten.",
         "besparen": [
@@ -184,7 +258,7 @@ KOSTEN = [
             ("Kan ik een badkamer in delen laten doen?", "Dat kan, maar het is meestal duurder. Tegels, leidingen en afvoer hangen met elkaar samen. Wie eerst de tegels laat doen en later de douche verplaatst, betaalt twee keer voor sloop en tegelwerk."),
             ("Is een nieuwe badkamer aftrekbaar of te financieren?", "Een badkamer is niet aftrekbaar van de belasting. Je kunt hem wel meefinancieren bij een hypotheek of verbouwing; vraag daarvoor je hypotheekadviseur."),
         ],
-        "bronnen": ["homedeal_badkamer", "trustoo_badkamer", "slimster_badkamer", "werkspot_badkamer", "werkspot_tegel", "btw"],
+        "bronnen": ["homedeal_badkamer", "trustoo_badkamer", "slimster_badkamer", "werkspot_badkamer", "werkspot_tegel", "slimster_slopen", "werkspot_puin", "btw"],
         "verwant": ["badkamer-slopen", "tegelzetter-per-m2", "inloopdouche"],
         "kennis": [("/kennisbank/volgorde-badkamerrenovatie/", "In welke volgorde gaat een badkamerrenovatie?"),
                    ("/kennisbank/garantie-badkamerrenovatie/", "Welke garantie mag je verwachten?")],
@@ -217,13 +291,13 @@ KOSTEN = [
         "voorbeeld": (
             "Stel: je vervangt een oude douchebak van 90 × 90 cm door een inloopdouche van 120 × 90 cm met een douchegoot. De douchevloer en de wanden in de douchehoek worden opnieuw betegeld (zo'n 8 m²).",
             [
-                ("Oude douchebak en tegels in de douchehoek slopen", "€200 – €400"),
-                ("Afvoer aanpassen en douchegoot plaatsen", "€400 – €800"),
-                ("Douchevloer op afschot en waterdicht maken", "€300 – €600"),
-                ("Tegels en legloon, 8 m²", "€400 – €900"),
-                ("Glazen wand 120 cm met montage", "€400 – €900"),
-                ("Opbouwthermostaat met handdouche", "€150 – €400"),
-                ("<strong>Totaal, inclusief btw</strong>", "<strong>€1.850 – €4.000</strong>"),
+                ("Oude douchebak en tegels in de douchehoek slopen", (200, 400)),
+                ("Afvoer aanpassen en douchegoot plaatsen", (400, 800)),
+                ("Douchevloer op afschot en waterdicht maken", rp("waterdicht")),
+                ("Tegels en legloon, 8 m²", som(rp("tegels", 8), rp("tegelwerk", 8))),
+                ("Glazen wand 120 cm met montage", (400, 900)),
+                ("Opbouwthermostaat met handdouche", (150, 400)),
+                ("Totaal, inclusief btw", TOTAAL),
             ],
             "Dit is een eigen rekenvoorbeeld. Het komt mooi binnen de bandbreedte, maar laat zien dat de vloer en het tegelwerk meer kosten dan de glazen wand.",
         ),
@@ -258,7 +332,7 @@ KOSTEN = [
         "van": 2500, "tot": 6500, "eenheid": "per toiletruimte, inclusief btw",
         "snel": "Een complete toiletruimte met nieuwe tegels, toilet en fontein kost meestal <strong>€2.500 tot €6.500</strong>, inclusief 21% btw. Wil je alleen een nieuw staand toilet, dan kost de montage zo'n €300 tot €700, het toilet zelf niet meegerekend.",
         "varianten": [
-            ("Alleen toilet vervangen (montage)", 300, 700, "Staand toilet op dezelfde plek, zonder ander werk. Het toilet zelf komt erbij."),
+            ("Alleen toilet vervangen (montage)", *rp("montage_toilet"), "Staand toilet op dezelfde plek, zonder ander werk. Het toilet zelf komt erbij."),
             ("Basis renovatie", 2500, 4000, "Nieuwe tegels, staand of hangend toilet en een eenvoudige fontein."),
             ("Compleet met voorzetwand", 4000, 6500, "Hangtoilet met inbouwreservoir, voorzetwand, nieuwe fontein en tegels tot het plafond."),
         ],
@@ -311,8 +385,8 @@ KOSTEN = [
         "title": f"Tegelzetter kosten per m² {JAAR}: legloon badkamer",
         "description": "Een tegelzetter rekent in de badkamer meestal €25 tot €55 per m² legloon, exclusief tegels. Lees wat het verschil maakt en wat een badkamer betegelen in totaal kost.",
         "dienst": "tegelwerk-badkamer",
-        "van": 25, "tot": 55, "eenheid": "per m² legloon, inclusief btw, zonder tegels",
-        "snel": "Een tegelzetter rekent in de badkamer meestal <strong>€25 tot €55 per m²</strong> aan legloon. De tegels zelf kosten daarnaast grofweg €20 tot €60 per m². Een tegelzetter legt in een badkamer zo'n 8 tot 10 m² per dag. Voor een badkamer van 6 m² met wanden tot het plafond (zo'n 25 m²) zit je aan legloon op ongeveer €625 tot €1.375.",
+        "van": rp("tegelwerk")[0], "tot": rp("tegelwerk")[1], "eenheid": "per m² legloon, inclusief btw, zonder tegels",
+        "snel": f"Een tegelzetter rekent in de badkamer meestal <strong>{eur(rp('tegelwerk')[0])} tot {eur(rp('tegelwerk')[1])} per m²</strong> aan legloon. De tegels zelf kosten daarnaast grofweg {eur(rp('tegels')[0])} tot {eur(rp('tegels')[1])} per m². Een tegelzetter legt in een badkamer zo'n 8 tot 10 m² per dag. Voor een badkamer van 6 m² met wanden tot het plafond (zo'n 25 m²) zit je aan legloon op ongeveer {eur(rp('tegelwerk', 25)[0])} tot {eur(rp('tegelwerk', 25)[1])}.",
         "varianten": [
             ("Wandtegels, standaard formaat", 25, 40, "Bijvoorbeeld 30 × 60 cm, recht gelegd op een vlakke wand."),
             ("Vloertegels", 25, 45, "Inclusief het meenemen van afschot naar de afvoer."),
@@ -332,12 +406,12 @@ KOSTEN = [
         "voorbeeld": (
             "Stel: een badkamer van 2 × 3 meter (6 m² vloer). De wanden worden tot 2,4 meter betegeld. Na aftrek van de deur en het raam is dat zo'n 19 m² wand. Samen met de vloer is het 25 m² tegelwerk, met tegels van 30 × 60 cm.",
             [
-                ("Legloon wand en vloer, 25 m² × €25 – €55", "€625 – €1.375"),
-                ("Tegels, 25 m² + 10% snijverlies × €20 – €60", "€550 – €1.650"),
-                ("Lijm, voegsel en kimband", "€150 – €350"),
-                ("Waterdicht maken van de douchehoek", "€150 – €350"),
-                ("Tegelprofielen en kitwerk", "€100 – €250"),
-                ("<strong>Totaal tegelwerk, inclusief btw</strong>", "<strong>€1.575 – €3.975</strong>"),
+                (f"Legloon wand en vloer, 25 m² × {rb('tegelwerk')}", rp("tegelwerk", 25)),
+                (f"Tegels, 25 m² + 10% snijverlies × {rb('tegels')}", rp("tegels", 27.5)),
+                (f"Lijm en voegsel, 25 m² × {eur(rp('tegelwerk_hulpmateriaal')[0])}", rp("tegelwerk_hulpmateriaal", 25)),
+                ("Waterdicht maken van de douchehoek, met kimband en afschot", rp("waterdicht")),
+                ("Tegelprofielen en kitwerk", (100, 250)),
+                ("Totaal tegelwerk, inclusief btw", TOTAAL),
             ],
             "Dit is een eigen rekenvoorbeeld. Een tegelzetter is met 25 m² zo'n drie werkdagen bezig, plus droogtijd.",
         ),
@@ -369,13 +443,13 @@ KOSTEN = [
         "title": f"Badkamer slopen kosten {JAAR}: prijs en afvoer",
         "description": "Een badkamer laten slopen kost meestal €250 tot €850, inclusief btw. Afvoer van puin en asbest kosten soms extra. Lees wat het verschil maakt en wanneer je zelf kunt slopen.",
         "dienst": "badkamer-renoveren",
-        "van": 250, "tot": 850, "eenheid": "per badkamer, inclusief btw",
-        "snel": "Een badkamer laten slopen kost meestal <strong>€250 tot €850</strong>, inclusief 21% btw. Gemiddeld is het zo'n €550. Komen het afvoeren van puin, een container en het verwijderen van een dekvloer erbij, dan kan het oplopen tot €1.200 à €1.800. Zit er asbest in, dan moet een gecertificeerd bedrijf dat eerst weghalen.",
+        "van": rp("sloop")[0], "tot": rp("sloop")[1], "eenheid": "per badkamer, inclusief btw",
+        "snel": f"Een badkamer laten slopen kost meestal <strong>{eur(rp('sloop')[0])} tot {eur(rp('sloop')[1])}</strong>, inclusief 21% btw. Gemiddeld is het zo'n €550. Het afvoeren van het afval kost daarnaast zo'n {rb('afval')}. Komt ook het verwijderen van een dekvloer erbij, dan kan het oplopen tot {eur(rp('sloop_compleet')[0])} à {eur(rp('sloop_compleet')[1])}. Zit er asbest in, dan moet een gecertificeerd bedrijf dat eerst weghalen.",
         "varianten": [
             ("Kleine badkamer (tot ca. 4 m²)", 265, 400, "Douche, toilet, wastafel en tegels eruit."),
             ("Standaard badkamer (5 – 8 m²)", 400, 550, "Ook bad of douchebak en meer tegelwerk."),
             ("Grote badkamer (vanaf 9 m²)", 550, 685, "Meer tegels en vaak een bad en een tweede wastafel."),
-            ("Inclusief afvoer en dekvloer", 1200, 1800, "Als de vloer tot op het beton open moet en alles wordt afgevoerd."),
+            ("Inclusief afvoer en dekvloer", *rp("sloop_compleet"), "Als de vloer tot op het beton open moet en alles wordt afgevoerd."),
         ],
         "varianten_eenheid": "Per badkamer, inclusief btw",
         "varianten_noot": "De eerste drie rijen volgen Werkspot. De onderste rij volgt Trustoo, dat een ruimere opdracht meeneemt. Daardoor lopen de bronnen zo ver uiteen.",
@@ -389,11 +463,11 @@ KOSTEN = [
         "voorbeeld": (
             "Stel: een badkamer van 6 m² op de eerste verdieping. Douchebak, toilet, wastafel en alle wand- en vloertegels gaan eruit. De dekvloer blijft liggen.",
             [
-                ("Sanitair demonteren en leidingen afdoppen", "€100 – €200"),
-                ("Wandtegels verwijderen (ca. 19 m²)", "€150 – €300"),
-                ("Vloertegels verwijderen, 6 m² × €19 – €40", "€115 – €240"),
-                ("Puin afvoeren", "€100 – €300"),
-                ("<strong>Totaal, inclusief btw</strong>", "<strong>€465 – €1.040</strong>"),
+                ("Sanitair demonteren en leidingen afdoppen", rp("sloop_vast")),
+                ("Wandtegels verwijderen (ca. 19 m²)", (150, 300)),
+                ("Vloertegels verwijderen, 6 m² × €19 – €40", (115, 240)),
+                ("Puin afvoeren", rp("afval")),
+                ("Totaal, inclusief btw", TOTAAL),
             ],
             "Dit is een eigen rekenvoorbeeld. De sloper rekent €30 tot €60 per uur; een badkamer van deze maat is meestal in één tot twee dagen leeg.",
         ),
@@ -411,7 +485,7 @@ KOSTEN = [
             ("Hoe weet ik of er asbest in mijn badkamer zit?", "Zeker weten doe je het alleen met een onderzoek door een gecertificeerd bedrijf. Bij woningen van vóór 1994 is de kans groter. Twijfel je, laat het dan eerst onderzoeken voordat je gaat slopen."),
             ("Zit het afvoeren van puin in de prijs?", "Niet altijd. Vraag het na. Een offerte zonder afvoer lijkt goedkoper, maar dan blijf je met een paar kuub puin zitten."),
         ],
-        "bronnen": ["slimster_slopen", "werkspot_slopen", "trustoo_badkamer", "asbest", "btw"],
+        "bronnen": ["slimster_slopen", "werkspot_slopen", "trustoo_badkamer", "werkspot_puin", "slimster_afval", "asbest", "btw"],
         "verwant": ["nieuwe-badkamer", "uurtarief-loodgieter", "tegelzetter-per-m2"],
         "kennis": [("/kennisbank/asbest-in-badkamer/", "Asbest in de badkamer: wat nu?"),
                    ("/kennisbank/volgorde-badkamerrenovatie/", "De volgorde van een badkamerrenovatie")],
@@ -428,12 +502,12 @@ KOSTEN = [
         "van": 50, "tot": 120, "eenheid": "per m², inclusief installatie en btw",
         "snel": "Vloerverwarming in de badkamer kost meestal <strong>€50 tot €120 per m²</strong>, inclusief installatie en 21% btw. Voor een kleine badkamer met elektrische matten als bijverwarming zit je op zo'n €850 tot €1.600. Watergedragen vloerverwarming is per m² niet duurder, maar daar komt de aansluiting op de cv-ketel of warmtepomp bij: €800 tot €2.000.",
         "varianten": [
-            ("Elektrische matten", 60, 100, "Dunne matten onder de tegels. Snel aan te leggen, wel stroomverbruik."),
+            ("Elektrische matten", *rp("vloerverwarming_m2"), "Dunne matten onder de tegels. Snel aan te leggen, wel stroomverbruik."),
             ("Watergedragen, nieuwe vloer", 50, 65, "Leidingen in de dekvloer, aangesloten op de cv of warmtepomp."),
             ("Watergedragen, infrezen in bestaande vloer", 35, 80, "Sleuven in de bestaande dekvloer. Daarna komen er nieuwe tegels op."),
         ],
         "varianten_eenheid": "Per m², inclusief installatie en btw",
-        "varianten_noot": "Volgens Werkspot (elektrisch en watergedragen) en Homedeal en Slimster (infrezen). Bij watergedragen komt de verdeler en de aansluiting erbij, €800 – €2.000 volgens Werkspot.",
+        "varianten_noot": f"Elektrisch volgens Werkspot, Slimster en Homedeal; watergedragen volgens Werkspot; infrezen volgens Homedeal en Slimster. Bij watergedragen komt de verdeler en de aansluiting erbij, €800 – €2.000 volgens Werkspot. Trustoo noemt voor elektrische vloerverwarming in een hele badkamer {rb('vloerverwarming_elektrisch')}.",
         "factoren": [
             ("Elektrisch of watergedragen", "Elektrisch is goedkoop aan te leggen, maar verbruikt stroom. Watergedragen is zuiniger in gebruik, maar de aansluiting op de verwarming kost meer."),
             ("Bijverwarming of hoofdverwarming", "Wil je alleen warme voeten, dan is een kleinere mat genoeg. Moet de vloer de hele badkamer verwarmen, dan heb je meer vermogen of meer leidingen nodig, en vaak nog een radiator voor de handdoeken."),
@@ -444,11 +518,11 @@ KOSTEN = [
         "voorbeeld": (
             "Stel: een badkamer van 6 m², waarvan 4 m² vrije vloer (onder de douche, het toilet en het meubel komt geen verwarming). Je kiest elektrische matten als bijverwarming bij een nieuwe tegelvloer.",
             [
-                ("Elektrische mat, 4 m² × €60 – €100 met installatie", "€240 – €400"),
-                ("Thermostaat met klok en vloervoeler", "€100 – €250"),
-                ("Aansluiting door elektricien, eigen groep", "€150 – €400"),
-                ("Isolatieplaten onder de mat", "€60 – €150"),
-                ("<strong>Totaal, inclusief btw</strong>", "<strong>€550 – €1.200</strong>"),
+                (f"Elektrische mat, 4 m² × {rb('vloerverwarming_m2')} met installatie", rp("vloerverwarming_m2", 4)),
+                ("Thermostaat met klok en vloervoeler", (100, 250)),
+                ("Aansluiting door elektricien, eigen groep", (150, 400)),
+                ("Isolatieplaten onder de mat", (60, 150)),
+                ("Totaal, inclusief btw", TOTAAL),
             ],
             "Dit is een eigen rekenvoorbeeld. <strong>Stroomverbruik:</strong> een mat van 4 m² heeft zo'n 400 tot 600 watt. Staat hij gemiddeld twee uur per dag aan, dan is dat 290 tot 440 kWh per jaar. Bij €0,25 tot €0,35 per kWh is dat ongeveer €75 tot €155 per jaar. Met een klokthermostaat kun je dat beperken.",
         ),
@@ -466,7 +540,7 @@ KOSTEN = [
             ("Is vloerverwarming genoeg als enige verwarming in de badkamer?", "In een goed geïsoleerd huis soms wel. Vaak wordt er nog een handdoekradiator bij geplaatst, voor droge handdoeken en extra warmte."),
             ("Hoe lang duurt het aanleggen?", "Elektrische matten liggen vaak in een halve dag. Daarna moeten de tegels erop. Watergedragen vloerverwarming in een nieuwe dekvloer vraagt weken droogtijd voordat er getegeld kan worden."),
         ],
-        "bronnen": ["werkspot_vv", "homedeal_vv", "slimster_vv", "slimster_frezen", "btw"],
+        "bronnen": ["werkspot_vv", "homedeal_vv", "slimster_vv", "slimster_frezen", "trustoo_badkamer", "btw"],
         "verwant": ["nieuwe-badkamer", "tegelzetter-per-m2", "uurtarief-loodgieter"],
         "kennis": [("/kennisbank/badkamer-ventilatie/", "Ventilatie in de badkamer")],
     },
@@ -479,11 +553,11 @@ KOSTEN = [
         "title": f"Kitwerk en voegen badkamer kosten {JAAR}",
         "description": "Nieuwe kit in de badkamer kost €6 tot €11 per meter, plus vaak een starttarief. Een hele badkamer opnieuw afkitten kost €95 tot €325. Ook de prijs van voegen vernieuwen.",
         "dienst": "badkamer-onderhoud",
-        "van": 6, "tot": 11, "eenheid": "per meter kitwerk, inclusief btw",
-        "snel": "Oude kit verwijderen en nieuwe kit aanbrengen kost <strong>€6 tot €11 per meter</strong>, inclusief 21% btw. Veel vakmensen rekenen daarnaast een starttarief van €100 tot €200. Een hele badkamer opnieuw afkitten kost daarom meestal <strong>€95 tot €325</strong>. Voegen vernieuwen kost grofweg €20 tot €40 per m².",
+        "van": rp("kitwerk")[0], "tot": rp("kitwerk")[1], "eenheid": "per meter kitwerk, inclusief btw",
+        "snel": f"Oude kit verwijderen en nieuwe kit aanbrengen kost <strong>{eur(rp('kitwerk')[0])} tot {eur(rp('kitwerk')[1])} per meter</strong>, inclusief 21% btw. Veel vakmensen rekenen daarnaast een starttarief van €100 tot €200. Een hele badkamer opnieuw afkitten kost daarom meestal <strong>{eur(rp('kitwerk_badkamer')[0])} tot {eur(rp('kitwerk_badkamer')[1])}</strong>. Voegen vernieuwen kost grofweg €20 tot €40 per m².",
         "varianten": [
-            ("Kitwerk per meter", 6, 11, "Oude kit eruit, schoonmaken en nieuwe sanitairkit erin."),
-            ("Hele badkamer afkitten", 95, 325, "Douche, bad, wastafel, toilet en vloerranden samen."),
+            ("Kitwerk per meter", *rp("kitwerk"), "Oude kit eruit, schoonmaken en nieuwe sanitairkit erin."),
+            ("Hele badkamer afkitten", *rp("kitwerk_badkamer"), "Douche, bad, wastafel, toilet en vloerranden samen."),
             ("Starttarief (los)", 100, 200, "Voor voorrijden en opstarten, bij kleine klussen."),
             ("Voegen vernieuwen per m²", 20, 40, "Oude voeg eruit frezen en nieuwe voeg aanbrengen. Eigen inschatting."),
         ],
@@ -500,9 +574,9 @@ KOSTEN = [
         "voorbeeld": (
             "Stel: de kit in je badkamer is zwart van de schimmel. Er moet nieuwe kit in de douchehoek, langs het bad, rond de wastafel en het toilet en langs de vloer: samen zo'n 20 meter.",
             [
-                ("Oude kit verwijderen en nieuwe aanbrengen, 20 m × €6 – €11", "€120 – €220"),
-                ("Starttarief (als de vakman het rekent)", "€0 – €200"),
-                ("<strong>Totaal, inclusief btw</strong>", "<strong>€120 – €420</strong>"),
+                (f"Oude kit verwijderen en nieuwe aanbrengen, 20 m × {rb('kitwerk')}", rp("kitwerk", 20)),
+                ("Starttarief (als de vakman het rekent)", (0, 200)),
+                ("Totaal, inclusief btw", TOTAAL),
             ],
             "Dit is een eigen rekenvoorbeeld. Komen er ook nieuwe voegen in de douche, reken dan op €20 tot €40 per m² extra. Voor 6 m² douchewand is dat €120 tot €240.",
         ),
@@ -534,11 +608,11 @@ KOSTEN = [
         "title": f"Uurtarief loodgieter {JAAR}: prijs per uur",
         "description": "Een loodgieter rekent meestal €45 tot €85 per uur excl. btw, plus voorrijkosten van €20 tot €50. Lees wat spoed, avond en weekend kosten en wat kleine klussen kosten.",
         "dienst": "badkamer-installeren",
-        "van": 45, "tot": 85, "eenheid": "per uur, exclusief btw",
-        "snel": "Een loodgieter rekent meestal <strong>€45 tot €85 per uur, exclusief btw</strong>. Met 21% btw is dat €54 tot €103 per uur. Daar komen vaak voorrijkosten van €20 tot €50 bij. Voor spoed, 's avonds of in het weekend betaal je meer: vaak 50 tot 100% toeslag op het uurtarief.",
+        "van": rp("uurtarief")[0], "tot": rp("uurtarief")[1], "eenheid": "per uur, exclusief btw",
+        "snel": f"Een loodgieter rekent meestal <strong>{eur(rp('uurtarief')[0])} tot {eur(rp('uurtarief')[1])} per uur, exclusief btw</strong>. Met 21% btw is dat {eur(round(rp('uurtarief')[0] * 1.21))} tot {eur(round(rp('uurtarief')[1] * 1.21))} per uur. Daar komen vaak voorrijkosten van {rb('voorrijkosten')} bij. Voor spoed, 's avonds of in het weekend betaal je meer: vaak 50 tot 100% toeslag op het uurtarief.",
         "varianten": [
-            ("Uurtarief, werkdag", 45, 85, "Gewoon werk overdag, op afspraak."),
-            ("Voorrijkosten", 20, 50, "Per bezoek. Soms vervalt dit bij een grotere klus."),
+            ("Uurtarief, werkdag", *rp("uurtarief"), "Gewoon werk overdag, op afspraak."),
+            ("Voorrijkosten", *rp("voorrijkosten"), "Per bezoek. Soms vervalt dit bij een grotere klus."),
             ("Uurtarief, avond en weekend", 70, 170, "Met 50 tot 100% toeslag. Eigen inschatting op basis van het gewone uurtarief."),
             ("Spoed voorrijden", 50, 150, "Bij spoed, buiten werktijd, komt er een hoger voorrijtarief."),
         ],
@@ -582,11 +656,389 @@ KOSTEN = [
         "verwant": ["toilet-renoveren", "kitwerk-voegen", "badkamer-slopen"],
         "kennis": [("/badkamerspullen/kranen-kiezen/", "Waar let je op bij een nieuwe kraan?")],
     },
+    # ==================================================================
+    # Ronde 2: zes extra pagina's
+    # ==================================================================
+    {
+        # Bronnen: Werkspot bad plaatsen (ligbad €850 – €2.800; aansluiten €300 – €1.000, afwerking €200 – €500),
+        # Homedeal bad plaatsen (gemiddeld €2.750, €800 – €10.000; plaatstaal vanaf €850, acryl vanaf €1.000).
+        "slug": "bad-plaatsen",
+        "kort": "Bad plaatsen",
+        "omschrijving": "Wat een nieuw ligbad met plaatsing kost, van inbouwbad tot vrijstaand bad.",
+        "h1": "Wat kost een bad laten plaatsen?",
+        "title": f"Bad laten plaatsen kosten {JAAR}: prijs met montage",
+        "description": "Een nieuw ligbad laten plaatsen kost meestal €850 tot €3.000, inclusief bad, montage en btw. Lees wat een vrijstaand bad kost en wat de prijs bepaalt.",
+        "dienst": "badkamer-installeren",
+        "van": 850, "tot": 3000, "eenheid": "per ligbad, inclusief montage en btw",
+        "snel": f"Een nieuw ligbad laten plaatsen kost meestal <strong>€850 tot €3.000</strong>, inclusief het bad, de montage en 21% btw. Homedeal noemt een gemiddelde van zo'n €2.750. Heb je het bad al, dan kost alleen het plaatsen en aansluiten {rb('montage_bad')}. Een vrijstaand bad met een vloer- of wandkraan is duurder: reken op €2.500 tot €6.000, en soms meer.",
+        "varianten": [
+            ("Inbouwbad op dezelfde plek", 850, 2000, "Plaatstaal of acryl, op de plek van het oude bad, met de bestaande ombouw of een badpaneel."),
+            ("Inbouwbad met nieuwe ombouw en tegels", 1500, 3500, "Het oude bad en de ombouw gaan eruit. Er komt een nieuwe ombouw die wordt betegeld."),
+            ("Vrijstaand bad", 2500, 6000, "Bad met een vloer- of wandkraan. De afvoer en de waterleiding moeten vaak naar een nieuwe plek."),
+            ("Alleen plaatsen en aansluiten", *rp("montage_bad"), "Je hebt het bad al. Zonder ombouw, tegelwerk en afvoer van het oude bad."),
+        ],
+        "varianten_eenheid": "Per bad, inclusief btw",
+        "varianten_noot": "De eerste rij volgt Homedeal (plaatstaal vanaf €850, acryl vanaf €1.000) en Werkspot (ligbad €850 – €2.800). De rijen met ombouw en vrijstaand bad zijn een eigen inschatting; Homedeal noemt als bovengrens €10.000. Alleen plaatsen volgt Werkspot.",
+        "factoren": [
+            ("Het soort bad", "Plaatstaal is het goedkoopst en stevig. Acryl is licht en warm aan je huid. Gietijzer en solid surface zijn zwaar en duur. Een bad met bubbels of verlichting kost honderden euro's meer."),
+            ("Inbouw of vrijstaand", "Een inbouwbad staat in een ombouw tegen de muur. Een vrijstaand bad staat los in de ruimte. Dan moeten de afvoer en vaak ook de waterleiding naar het midden van de vloer, en heb je een vloerkraan of wandkraan nodig."),
+            ("De ombouw en het tegelwerk", "Een nieuwe ombouw van gasbeton of een badpaneel moet worden betegeld of afgewerkt. Vaak gaan er dan ook tegels op de wand rond het bad mee."),
+            ("De afvoer en de kraan", "Staat het nieuwe bad op de plek van het oude, dan kan de afvoer vaak blijven. Een inbouwkraan of thermostaat in de muur betekent hakken en weer dichtmaken."),
+            ("De vloer", "Een gevuld bad weegt al snel enkele honderden kilo's, met een zwaar bad of een vrijstaand bad meer. Op een houten vloer moet iemand kijken of die dat aankan."),
+            ("Het oude bad", "Een oud gietijzeren bad is zwaar om weg te halen. Vraag of het slopen en afvoeren in de prijs zit."),
+        ],
+        "voorbeeld": (
+            "Stel: je vervangt een oud inbouwbad van 170 × 75 cm door een nieuw acryl bad van dezelfde maat. Het komt op dezelfde plek, met een nieuwe ombouw die wordt betegeld (zo'n 2 m²).",
+            [
+                ("Oud bad en ombouw slopen", (150, 350)),
+                ("Afvoer van het oude bad en het puin", (75, 200)),
+                ("Acryl bad met badkraan (midden)", rp_niveau("sanitair_bad", "midden")),
+                ("Bad plaatsen en aansluiten", rp("montage_bad")),
+                ("Nieuwe ombouw maken", (150, 300)),
+                ("Tegels en legloon ombouw, 2 m²", som(rp("tegels", 2), rp("tegelwerk", 2))),
+                ("Kitwerk rond het bad, 4 meter", rp("kitwerk", 4)),
+                ("Totaal, inclusief btw", TOTAAL),
+            ],
+            "Dit is een eigen rekenvoorbeeld op basis van de bronnen hieronder en dezelfde richtprijzen als de badkamercalculator. Kies je een vrijstaand bad of moet de wand rond het bad ook opnieuw betegeld worden, dan kom je hoger uit.",
+        ),
+        "btw_extra": "Ook als je alleen het plaatsen laat doen, betaal je 21% over het arbeidsloon.",
+        "besparen": [
+            "Zet het nieuwe bad op de plek van het oude. Dan kunnen de afvoer en de waterleiding blijven.",
+            "Kies een standaardmaat, zoals 170 × 75 of 180 × 80 cm. Dan past het in de bestaande ombouw.",
+            "Een badpaneel is sneller geplaatst dan een betegelde ombouw.",
+            "Kies een opbouwkraan op de rand of de muur in plaats van een inbouwkraan.",
+            "Laat het bad meenemen in een grotere klus, zoals nieuwe tegels. Dan betaal je één keer voorrijden en opstarten.",
+        ],
+        "specialist": "Een bad aansluiten op de afvoer en de waterleiding kan een handige doe-het-zelver, maar het kitwerk en de waterdichte aansluiting op de muur luisteren nauw. Lekt het langs de rand van het bad, dan zie je dat vaak pas als het plafond eronder vlekken krijgt. Laat een vrijstaand bad, een bad op een houten vloer of een bad met een inbouwkraan door een badkamerspecialist of loodgieter plaatsen.",
+        "faqs": [
+            ("Hoe lang duurt het plaatsen van een bad?", "Een bad op dezelfde plek is vaak in één tot twee dagen geplaatst. Met een nieuwe ombouw en tegelwerk duurt het langer, omdat de lijm en de voegen moeten drogen."),
+            ("Kan een bad op een houten vloer?", "Vaak wel, maar een gevuld bad is zwaar. Laat iemand kijken naar de balken en de vloer. Soms moet de vloer worden verstevigd, vooral bij een gietijzeren of vrijstaand bad."),
+            ("Wat is goedkoper: een bad of een douche?", "Een eenvoudig inbouwbad is niet veel duurder dan een douche met glazen wand. Een vrijstaand bad of een inloopdouche zonder drempel is wel duurder. Lees ook <a href=\"/badkamerspullen/bad-of-douche/\">bad of douche</a>."),
+            ("Kan ik mijn bad vervangen zonder de tegels te slopen?", "Soms. Als het nieuwe bad precies dezelfde maat heeft, kan het oude eruit zonder dat de wandtegels sneuvelen. Vaak gaat er toch een rij tegels kapot. Houd daarom een paar reservetegels achter de hand."),
+        ],
+        "bronnen": ["werkspot_bad", "homedeal_bad", "trustoo_badkamer", "werkspot_tegel", "btw"],
+        "verwant": ["bad-vervangen-door-douche", "nieuwe-badkamer", "tegelzetter-per-m2"],
+        "kennis": [("/badkamerspullen/bad-of-douche/", "Bad of douche: wat past bij jou?"),
+                   ("/kennisbank/badkamer-waterdicht-maken/", "Zo wordt een badkamer waterdicht gemaakt")],
+    },
+    # ------------------------------------------------------------------
+    {
+        # Bronnen: Homedeal nieuwe douche (inloopdouche €430 – €4.000 incl. montage en btw), Werkspot
+        # inloopdouche €1.500 – €5.000, Trustoo (verlaagde douchebak €300 – €550, demonteren vanaf €125).
+        # De bandbreedte €2.000 – €6.000 is een eigen inschatting op basis van die bronnen.
+        "slug": "bad-vervangen-door-douche",
+        "kort": "Bad vervangen door douche",
+        "omschrijving": "Wat het kost om een bad eruit te halen en er een douche voor in de plaats te zetten.",
+        "h1": "Wat kost het om een bad te vervangen door een douche?",
+        "title": f"Bad vervangen door douche: kosten {JAAR}",
+        "description": "Een bad vervangen door een douche kost meestal €2.000 tot €6.000, inclusief sloop, tegelwerk en btw. Met prijzen per variant, een rekenvoorbeeld en tips.",
+        "dienst": "inloopdouche-plaatsen",
+        "van": 2000, "tot": 6000, "eenheid": "per douche op de plek van het bad, inclusief btw",
+        "snel": "Een bad eruit en een douche erin kost meestal <strong>€2.000 tot €6.000</strong>, inclusief slopen, afvoer aanpassen, tegelwerk, de douche zelf en 21% btw. Een douchebak met een glazen wand op de plek van het bad zit aan de onderkant. Een inloopdouche met een betegelde vloer en nieuwe wandtegels zit aan de bovenkant. Moet de hele badkamer anders worden ingedeeld, dan kom je hoger uit.",
+        "varianten": [
+            ("Douchebak met wand op de plek van het bad", 1500, 3000, "Een lage douchebak en een glazen wand. Alleen de tegels rond het bad worden aangepast."),
+            ("Inloopdouche met tegelvloer", 2500, 5000, "Douchevloer op afschot met een goot, waterdicht gemaakt en opnieuw betegeld."),
+            ("Met nieuwe indeling of verplaatste afvoer", 4000, 8000, "De douche komt op een andere plek of de vloer moet omlaag. Vaak samen met meer tegelwerk."),
+        ],
+        "varianten_eenheid": "Per douche, inclusief materiaal, plaatsing en btw",
+        "varianten_noot": "Eigen inschatting op basis van Homedeal (inloopdouche €430 – €4.000), Werkspot (inloopdouche €1.500 – €5.000) en Trustoo (losse posten). De bovenste rij kan lager uitvallen als de wandtegels kunnen blijven.",
+        "factoren": [
+            ("Wat er met de tegels gebeurt", "Onder en achter een bad zitten vaak geen tegels. Haal je het bad weg, dan moeten de vloer en de muur daar opnieuw worden betegeld. Zijn de oude tegels niet meer te krijgen, dan worden het al snel alle wanden."),
+            ("Douchebak of inloopdouche", "Een douchebak is snel geplaatst. Een inloopdouche met een tegelvloer vraagt afschot, een goot en waterdicht maken, en kost dus meer."),
+            ("De afvoer", "Een bad heeft een afvoer laag bij de vloer. Een douche heeft vaak meer afschot nodig. Ligt de afvoer niet goed, dan moet de vloer open of omhoog."),
+            ("De kraan", "De badkraan zit vaak lager dan een douchekraan. De leidingen moeten dan omhoog in de muur, en die moet daarna weer dicht en betegeld."),
+            ("De maat", "Een bad is meestal 170 of 180 cm lang. Daar past een ruime douche van 120 tot 160 cm met ruimte voor een plank of een nis."),
+        ],
+        "voorbeeld": (
+            "Stel: je vervangt een inbouwbad van 170 × 75 cm door een inloopdouche van 160 × 80 cm met een douchegoot en een glazen wand. De douchevloer en de twee wanden in de douchehoek worden opnieuw betegeld (zo'n 7 m²).",
+            [
+                ("Bad, ombouw en tegels rond het bad slopen", (300, 600)),
+                ("Afvoer van het bad en het puin", (100, 250)),
+                ("Afvoer aanpassen en douchegoot plaatsen", (400, 800)),
+                ("Kraanleidingen omhoog in de muur", (150, 400)),
+                ("Douchevloer op afschot en waterdicht maken", rp("waterdicht")),
+                ("Tegels en legloon, 7 m²", som(rp("tegels", 7), rp("tegelwerk", 7))),
+                ("Glazen wand met montage", (400, 900)),
+                ("Opbouwthermostaat met handdouche", (150, 400)),
+                ("Kitwerk, 6 meter", rp("kitwerk", 6)),
+                ("Totaal, inclusief btw", TOTAAL),
+            ],
+            "Dit is een eigen rekenvoorbeeld. Het tegelwerk en de afvoer zijn samen het grootste deel. Kunnen de bestaande wandtegels blijven en kies je een lage douchebak, dan kom je lager uit.",
+        ),
+        "btw_extra": "",
+        "besparen": [
+            "Zet de douche op de plek van het bad. De afvoer ligt daar al, ook al moet hij soms iets worden aangepast.",
+            "Kies een lage douchebak in plaats van een betegelde douchevloer.",
+            "Vraag of de wandtegels kunnen blijven. Dan hoeft alleen de plek van het bad te worden betegeld.",
+            "Een vaste glazen wand zonder deur is goedkoper en makkelijker schoon te houden.",
+            "Heb je de douche nodig vanwege een beperking? Vraag dan vóór de start bij je gemeente of je in aanmerking komt voor steun via de Wmo.",
+        ],
+        "specialist": "Een bad weghalen kan een handige doe-het-zelver, maar een douche op die plek vraagt waterdicht werk. Onder een bad is de vloer vaak niet waterdicht gemaakt, terwijl dat onder een douche wel moet. Laat het afschot, de goot en het waterdicht maken door een badkamerspecialist doen. Woon je in een appartement, overleg dan ook met de VvE.",
+        "faqs": [
+            ("Is het slim om je bad weg te halen?", "Gebruik je het bad bijna nooit, dan geeft een ruime douche vaak meer gemak, zeker als je ouder wordt. Heb je jonge kinderen, dan is een bad juist handig. Lees ook <a href=\"/badkamerspullen/bad-of-douche/\">bad of douche</a>."),
+            ("Hoe lang duurt het?", "Meestal drie tot vijf werkdagen, inclusief droogtijd van de vloer, de lijm en de voegen. Je kunt die dagen niet douchen in die badkamer."),
+            ("Kan de douche precies op de plek van het bad?", "Meestal wel. Een bad van 170 cm is lang genoeg voor een ruime inloopdouche. Soms past er zelfs een nis of een plank bij."),
+            ("Is een huis zonder bad minder waard?", "Daar is geen eenduidig antwoord op. Voor veel kopers is een goede douche belangrijker. Heb je een tweede badkamer of genoeg ruimte, dan kan een bad een plus zijn."),
+        ],
+        "bronnen": ["homedeal_douche", "werkspot_badkamer", "trustoo_badkamer", "werkspot_tegel", "btw"],
+        "verwant": ["inloopdouche", "bad-plaatsen", "douchecabine-plaatsen"],
+        "kennis": [("/kennisbank/inloopdouche-zonder-drempel/", "Inloopdouche zonder drempel: kan dat bij jou?"),
+                   ("/badkamerspullen/bad-of-douche/", "Bad of douche: wat past bij jou?")],
+    },
+    # ------------------------------------------------------------------
+    {
+        # Bronnen: Werkspot sanitair plaatsen (vrijstaand €200 – €500, hangend €250 – €600, dubbel €350 – €800,
+        # spiegelkast €150 – €300), Slimster badkamermeubel (vanaf €150 / €750 / €1.500, excl. montage).
+        "slug": "badkamermeubel-plaatsen",
+        "kort": "Badkamermeubel plaatsen",
+        "omschrijving": "Wat het ophangen en aansluiten van een wastafelmeubel kost, met of zonder meubel.",
+        "h1": "Wat kost een badkamermeubel laten plaatsen?",
+        "title": f"Badkamermeubel plaatsen kosten {JAAR}",
+        "description": "Een badkamermeubel laten plaatsen kost €200 tot €600 aan montage, inclusief btw. Met prijzen voor een hangend, staand of dubbel meubel en een rekenvoorbeeld.",
+        "dienst": "badkamer-installeren",
+        "van": rp("montage_meubel")[0], "tot": rp("montage_meubel")[1], "eenheid": "per meubel, alleen montage, inclusief btw",
+        "snel": f"Een wastafelmeubel laten ophangen en aansluiten kost meestal <strong>{eur(rp('montage_meubel')[0])} tot {eur(rp('montage_meubel')[1])}</strong> aan werk, inclusief 21% btw. Het meubel zelf komt erbij: van zo'n {eur(rp_niveau('sanitair_meubel', 'basis')[0])} voor een eenvoudig meubel tot {eur(rp_niveau('sanitair_meubel', 'luxe')[1])} of meer voor een groot of luxe meubel. Een dubbel meubel of een meubel op een nieuwe plek kost meer werk.",
+        "varianten": [
+            ("Staand meubel", 200, 500, "Meubel op pootjes of op de vloer, op de plek van het oude."),
+            ("Hangend meubel", 250, 600, "Aan de muur, met stevige bevestiging. De muur moet het gewicht kunnen dragen."),
+            ("Dubbel meubel", 350, 800, "Twee wastafels: meer aansluitingen en vaak een extra afvoer."),
+            ("Spiegelkast ophangen", 150, 300, "Met aansluiten van de verlichting, als er al een aansluitpunt is."),
+        ],
+        "varianten_eenheid": "Alleen montage, inclusief btw",
+        "varianten_noot": "Volgens Werkspot. Het meubel, de kraan en de spiegel komen erbij. Moeten de aansluitingen naar een andere plek, dan rekent de vakman ook het leidingwerk.",
+        "factoren": [
+            ("Het meubel zelf", f"Een eenvoudig meubel met wastafel kost {bedrag(*rp_niveau('sanitair_meubel', 'basis'))}, een gewoon meubel {bedrag(*rp_niveau('sanitair_meubel', 'midden'))} en een luxe of groot meubel {bedrag(*rp_niveau('sanitair_meubel', 'luxe'))}. Slimster noemt vanafprijzen van €150, €750 en €1.500."),
+            ("Hangend of staand", "Een hangend meubel moet stevig in de muur. In een lichte wand zijn soms extra plaatjes of een frame nodig."),
+            ("De aansluitingen", "Passen de afvoer en de kranen bij het nieuwe meubel, dan is het vooral ophangen en aansluiten. Zit de afvoer te hoog, te laag of te ver opzij, dan moet de muur open."),
+            ("De breedte", "Een breed meubel of een dubbele wastafel vraagt meer werk en soms een tweede afvoer."),
+            ("Spiegel en verlichting", "Een spiegel met verlichting of een spiegelkast heeft stroom nodig. Is er geen aansluitpunt, dan komt er een elektricien bij."),
+            ("Het oude meubel", "Het oude meubel losmaken en afvoeren kost ook tijd. Vraag of dat in de prijs zit."),
+        ],
+        "voorbeeld": (
+            "Stel: je vervangt een oud wastafelmeubel van 60 cm door een hangend meubel van 80 cm met een nieuwe kraan en een spiegel met verlichting. De afvoer en de kranen blijven op dezelfde plek.",
+            [
+                ("Oud meubel losmaken en afvoeren", (50, 150)),
+                ("Wastafelmeubel 80 cm met kraan en spiegel (midden)", rp_niveau("sanitair_meubel", "midden")),
+                ("Meubel ophangen en aansluiten", rp("montage_meubel")),
+                ("Spiegelverlichting aansluiten", (75, 200)),
+                ("Kitwerk langs de wastafel, 2 meter", rp("kitwerk", 2)),
+                ("Totaal, inclusief btw", TOTAAL),
+            ],
+            "Dit is een eigen rekenvoorbeeld, met dezelfde richtprijzen als de badkamercalculator. Zijn er tegels kapot gegaan achter het oude meubel, of moet de afvoer worden verlegd, dan komt dat erbij.",
+        ),
+        "btw_extra": "",
+        "besparen": [
+            "Kies een meubel dat past bij de afvoer en de kranen die er al zitten. Meet de hoogte van de afvoer voordat je koopt.",
+            "Neem een meubel dat even breed of breder is dan het oude. Dan zie je geen gaten in het tegelwerk.",
+            "Laat het meubel plaatsen samen met ander klein werk, zoals een nieuwe kraan of nieuwe kit.",
+            "Haal het oude meubel zelf weg, als je weet hoe je het water afsluit.",
+        ],
+        "specialist": "Een staand meubel op dezelfde plek kan een handige doe-het-zelver plaatsen. Bij een hangend meubel moet je zeker weten dat de muur sterk genoeg is en dat je geen leidingen raakt bij het boren. Laat het doen door een loodgieter of badkamerspecialist als de afvoer moet worden verlegd, als het een dubbel meubel is of als er stroom voor de spiegel moet komen.",
+        "faqs": [
+            ("Hoe lang duurt het plaatsen van een badkamermeubel?", "Een meubel op dezelfde plek is vaak in twee tot vier uur geplaatst. Moet de afvoer worden verlegd of komt er een stopcontact bij, dan duurt het langer."),
+            ("Kan een hangend meubel aan elke muur?", "Niet altijd. Aan een stenen muur gaat het meestal goed. Aan een lichte wand van gips of hout is extra versteviging nodig."),
+            ("Moet de kraan apart worden betaald?", "Vaak wel. Bij veel meubels zit de kraan er niet bij. Vraag het na, en ook of de sifon en de afvoerplug erbij zitten."),
+            ("Wat kost een badkamermeubel inclusief plaatsen?", f"Voor een gewoon meubel ben je samen zo'n {bedrag(*som(rp_niveau('sanitair_meubel', 'midden'), rp('montage_meubel')))} kwijt, volgens onze rekensom. Een eenvoudig meubel kan voor minder, een luxe of dubbel meubel kost meer."),
+        ],
+        "bronnen": ["werkspot_sanitair", "slimster_meubel", "trustoo_badkamer", "btw"],
+        "verwant": ["uurtarief-loodgieter", "kitwerk-voegen", "nieuwe-badkamer"],
+        "kennis": [("/badkamerspullen/wastafelmeubel-kiezen/", "Waar let je op bij een wastafelmeubel?"),
+                   ("/badkamerspullen/kranen-kiezen/", "Waar let je op bij een nieuwe kraan?")],
+    },
+    # ------------------------------------------------------------------
+    {
+        # Bronnen: Homedeal nieuwe douche (douchecabine gemiddeld €1.800, €430 – €5.200 incl. montage en btw),
+        # Slimster douche (cabine vanaf €300 / €800 / €1.500 excl. montage), Trustoo (cabine plaatsen
+        # €275 – €435, verlaagde douchebak €300 – €550, bak of cabine demonteren vanaf €125).
+        "slug": "douchecabine-plaatsen",
+        "kort": "Douchecabine plaatsen",
+        "omschrijving": "Wat een douchecabine met plaatsing kost, en wat alleen de montage kost.",
+        "h1": "Wat kost een douchecabine laten plaatsen?",
+        "title": f"Douchecabine plaatsen kosten {JAAR}: prijs en montage",
+        "description": "Een douchecabine met plaatsing kost meestal €700 tot €2.500, inclusief btw. Alleen de montage kost €275 tot €450. Lees wat de prijs bepaalt en wat je kunt besparen.",
+        "dienst": "inloopdouche-plaatsen",
+        "van": 700, "tot": 2500, "eenheid": "per douchecabine met plaatsing, inclusief btw",
+        "snel": "Een douchecabine laten plaatsen kost meestal <strong>€700 tot €2.500</strong>, inclusief de cabine, de montage en 21% btw. Homedeal noemt een gemiddelde van €1.800 en een spreiding van €430 tot €5.200. Heb je de cabine al en is de douchebak goed, dan kost alleen het monteren zo'n €275 tot €450.",
+        "varianten": [
+            ("Alleen cabine monteren", 275, 450, "Op een bestaande douchebak, met afkitten. De cabine heb je zelf gekocht."),
+            ("Eenvoudige cabine met plaatsing", 700, 1300, "Standaardmaat 80 of 90 cm, op de bestaande bak of met een nieuwe lage bak."),
+            ("Cabine met nieuwe lage douchebak", 1200, 2500, "Oude bak eruit, een verlaagde bak erin en een nieuwe cabine."),
+            ("Luxe of maatwerk", 2500, 5200, "Dik glas, maatwerk of een cabine met extra functies."),
+        ],
+        "varianten_eenheid": "Inclusief btw",
+        "varianten_noot": "Alleen monteren volgens Trustoo (€275 – €435). De bovengrens van €5.200 is van Homedeal. De rijen daartussen zijn een eigen inschatting op basis van Slimster (cabine vanaf €300, €800 of €1.500) en Trustoo.",
+        "factoren": [
+            ("De cabine", "Een eenvoudige kwartronde cabine van 80 of 90 cm is het goedkoopst. Dikker glas, een zwart profiel, een rechthoekige maat of maatwerk kost meer."),
+            ("De douchebak", "Kan de oude bak blijven, dan gaat het snel. Een nieuwe verlaagde bak moet vaak in de vloer worden ingehakt en op de afvoer worden aangesloten."),
+            ("Het tegelwerk", "De cabine komt tegen de tegels aan. Zijn de wanden niet recht of moeten er nieuwe tegels komen, dan moet dat eerst klaar zijn."),
+            ("De kraan", "Een cabine met een kraan in het paneel is snel aangesloten. Een thermostaat in de muur vraagt meer werk."),
+            ("Het oude werk", "De oude cabine en bak demonteren en afvoeren kost apart geld. Trustoo noemt vanaf €125."),
+        ],
+        "voorbeeld": (
+            "Stel: je vervangt een oude douchecabine van 90 × 90 cm met een hoge bak door een nieuwe kwartronde cabine met een lage douchebak. De wandtegels blijven.",
+            [
+                ("Oude cabine en douchebak demonteren en afvoeren", (125, 250)),
+                ("Nieuwe lage douchebak inhakken en aansluiten", (300, 550)),
+                ("Douchebak 90 × 90 cm", (100, 400)),
+                ("Kwartronde douchecabine 90 × 90 cm", (300, 800)),
+                ("Cabine monteren", (275, 435)),
+                ("Kitwerk, 6 meter", rp("kitwerk", 6)),
+                ("Totaal, inclusief btw", TOTAAL),
+            ],
+            "Dit is een eigen rekenvoorbeeld op basis van Trustoo, Slimster en Homedeal. Moeten er nieuwe tegels komen of verandert de kraan, dan komt dat erbij.",
+        ),
+        "btw_extra": "",
+        "besparen": [
+            "Laat de bestaande douchebak liggen als die nog goed is en de afvoer niet lekt.",
+            "Kies een standaardmaat. Maatwerk glas is veel duurder.",
+            "Haal de oude cabine zelf weg, als je het water hebt afgesloten.",
+            "Vergelijk ook met een vaste glazen wand op een lage bak of een tegelvloer. Zie de kosten van een <a href=\"/kosten/inloopdouche/\">inloopdouche</a>.",
+        ],
+        "specialist": "Een cabine op een bestaande bak monteren kan een handige doe-het-zelver met de handleiding erbij. Het afkitten moet wel goed gebeuren, anders loopt er water achter de bak. Laat een nieuwe douchebak, een verlaagde bak of een aanpassing aan de afvoer door een loodgieter of badkamerspecialist doen. Zorg dat het tegelwerk klaar is voordat de cabine komt.",
+        "faqs": [
+            ("Is een douchecabine goedkoper dan een inloopdouche?", "Vaak wel, als de bestaande bak en tegels kunnen blijven. Een inloopdouche met een tegelvloer en een goot is meer werk. Een luxe cabine kan wel net zo duur zijn als een eenvoudige inloopdouche."),
+            ("Hoe lang duurt het plaatsen van een douchecabine?", "Alleen een cabine monteren duurt een paar uur. Met een nieuwe douchebak ben je één tot twee dagen bezig, plus een dag om de kit te laten drogen."),
+            ("Moet het tegelwerk eerst klaar zijn?", "Ja. De cabine wordt tegen de tegels gemonteerd en afgekit. Komen er nog nieuwe tegels, dan moeten die eerst gezet en gevoegd zijn."),
+            ("Hoe houd ik een douchecabine schoon?", "Trek het glas na het douchen droog met een trekker. Dan blijft er minder kalk achter. Lees ook over <a href=\"/badkamerspullen/douchesysteem-kiezen/\">douchesystemen kiezen</a>."),
+        ],
+        "bronnen": ["homedeal_douche", "slimster_douche", "trustoo_badkamer", "btw"],
+        "verwant": ["inloopdouche", "bad-vervangen-door-douche", "kitwerk-voegen"],
+        "kennis": [("/badkamerspullen/inloopdouche-kopen/", "Waar let je op bij het kopen van een douche?"),
+                   ("/badkamerspullen/douchesysteem-kiezen/", "Welk douchesysteem past bij jou?")],
+    },
+    # ------------------------------------------------------------------
+    {
+        # Bronnen: Homedeal zolder verbouwen (badkamer op zolder €20.000 – €35.000; dakisolatie binnen
+        # €20 – €50 per m²; elektra €500 – €2.000; dakkapel €7.000 – €9.800), Slimster (€2.000 – €18.000),
+        # Werkspot zolder verbouwen (tussenwand €600 – €1.000). Varianten zijn een eigen inschatting.
+        "slug": "badkamer-op-zolder",
+        "kort": "Badkamer op zolder",
+        "omschrijving": "Wat een nieuwe badkamer op zolder kost, met leidingen, isolatie en ventilatie.",
+        "h1": "Wat kost een badkamer op zolder?",
+        "title": f"Badkamer op zolder kosten {JAAR}: richtprijzen",
+        "description": "Een badkamer op zolder kost meestal €8.000 tot €35.000, inclusief btw. Lees wat leidingen, isolatie, ventilatie en een dakkapel kosten, met een rekenvoorbeeld.",
+        "dienst": "badkamer-renoveren",
+        "van": 8000, "tot": 35000, "eenheid": "per badkamer op zolder, inclusief btw",
+        "snel": "Een badkamer op zolder kost meestal <strong>€8.000 tot €35.000</strong>, inclusief 21% btw. Homedeal noemt gemiddeld €20.000 tot €35.000, inclusief constructie, leidingen, ventilatie en sanitair. Liggen de leidingen dichtbij en hoeft er weinig verbouwd te worden, dan kan het voor minder. Komt er een dakkapel bij, dan kost die volgens Homedeal nog eens €7.000 tot €9.800.",
+        "varianten": [
+            ("Eenvoudig: leidingen dichtbij", 8000, 15000, "Douche, toilet en meubel in een deel van de zolder dat al stahoogte heeft. Weinig bouwkundig werk."),
+            ("Gemiddeld: nieuwe wand, isolatie en ventilatie", 15000, 25000, "Een aparte ruimte met een tussenwand, extra isolatie, nieuwe leidingen en mechanische ventilatie."),
+            ("Compleet, met constructief werk", 20000, 35000, "Inclusief vloer verstevigen, dakraam of andere aanpassingen aan het dak. Een dakkapel komt er nog bij."),
+        ],
+        "varianten_eenheid": "Per badkamer, inclusief btw",
+        "varianten_noot": "De onderste rij volgt Homedeal (€20.000 – €35.000). De andere rijen zijn een eigen inschatting op basis van het rekenvoorbeeld hieronder; Slimster noemt een bandbreedte van €2.000 tot €18.000.",
+        "factoren": [
+            ("De afvoer", "Water en afvoer moeten van de zolder naar de standleiding. De afvoer heeft afschot nodig. Ligt de standleiding ver weg, dan moet de vloer omhoog of de leiding door een kast of een lagere verdieping. Een toiletpomp (vermaler) is soms een uitweg, maar maakt geluid en vraagt onderhoud."),
+            ("Warm water", "Hoe verder de zolder van de cv-ketel of warmtepomp, hoe langer je op warm water wacht. Soms is een eigen boiler of een extra leiding nodig."),
+            ("De vloer", "Een zoldervloer is vaak van hout. Een tegelvloer en zeker een bad zijn zwaar. Laat de draagkracht beoordelen; soms moet de vloer worden verstevigd."),
+            ("Stahoogte en het schuine dak", "Onder een schuin dak is weinig plek om te staan. De douche hoort op de hoogste plek. Een dakraam of dakkapel geeft meer ruimte en licht, maar kost veel."),
+            ("Isolatie en ventilatie", "Een warme, natte ruimte onder het dak moet goed geïsoleerd en geventileerd zijn. Anders krijg je condens en schimmel. Mechanische ventilatie met een afvoer naar buiten is eigenlijk altijd nodig."),
+            ("Vergunning", "Een badkamer binnen de bestaande zolder heeft meestal geen vergunning nodig. Een dakkapel aan de voorkant of een nokverhoging meestal wel. Vraag het na bij je gemeente."),
+        ],
+        "voorbeeld": (
+            "Stel: je maakt op de zolder van een tussenwoning een badkamer van 2,5 × 2,5 meter tegen de achtergevel, met een douche, een hangtoilet en een wastafelmeubel. Er komt een tussenwand met deur. De standleiding ligt een paar meter verderop.",
+            [
+                ("Tussenwand met deur", (600, 1000)),
+                ("Extra dakisolatie, 10 m² × €20 – €50", (200, 500)),
+                ("Vloer vlak en geschikt maken voor tegels", (500, 1500)),
+                ("Leidingwerk in de badkamer", rp("leidingwerk")),
+                ("Nieuwe aanvoer en afvoer naar de zolder", rp("leidingwerk_verplaatsen")),
+                ("Elektra: groep, stopcontacten en spots", rp("elektra")),
+                ("Ventilator met afvoer door het dak", (300, 800)),
+                ("Tegels en legloon, 20 m²", som(rp("tegels", 20), rp("tegelwerk", 20))),
+                ("Waterdicht maken van de douchehoek", rp("waterdicht")),
+                ("Sanitair (midden): douche, hangtoilet, wastafelmeubel", som(*(rp_niveau("sanitair_" + x, "midden") for x in ("douche", "toilet", "meubel")))),
+                ("Montage van douche, toilet en meubel", som(rp("montage_douche"), rp("montage_toilet"), rp("montage_meubel"))),
+                ("Kitwerk en afwerking", rp("kitwerk_badkamer")),
+                ("Totaal, inclusief btw", TOTAAL),
+            ],
+            "Dit is een eigen rekenvoorbeeld zonder dakraam, dakkapel, verwarming of stucwerk. De posten voor leidingwerk, tegels en sanitair zijn dezelfde richtprijzen als in de badkamercalculator. Moet de vloer worden verstevigd of komt er een dakkapel bij, dan zit je eerder in de bandbreedte van Homedeal.",
+        ),
+        "btw_extra": "Op een zolder kan een deel van het werk wel onder 9% vallen als de woning ouder is dan twee jaar: het arbeidsloon voor isolatie en het stukadoren of verven van wanden en plafond. Het bedrijf hoort die posten dan apart op de offerte te zetten.",
+        "besparen": [
+            "Zet de badkamer zo dicht mogelijk boven de bestaande badkamer of de standleiding. Dat scheelt veel leidingwerk.",
+            "Plaats de douche op de hoogste plek en het toilet of de wastafel onder het schuine dak.",
+            "Kies een douche in plaats van een bad. Dat scheelt gewicht, ruimte en vaak het verstevigen van de vloer.",
+            "Laat isolatie en ventilatie in één keer goed doen. Vochtschade achteraf is veel duurder.",
+            "Vraag offertes waarin elke post apart staat, zodat je ziet wat de verbouwing kost en wat de badkamer.",
+        ],
+        "specialist": "Een badkamer op zolder is werk voor een badkamerspecialist of aannemer die ook het bouwkundige deel kan doen of aansturen. Er komen veel vakken bij elkaar: loodgieter, elektricien, tegelzetter en soms een timmerman of constructeur. Laat vooraf de vloer, de afvoer en de ventilatie beoordelen. Woon je in een appartement, overleg dan met de VvE.",
+        "faqs": [
+            ("Heb ik een vergunning nodig voor een badkamer op zolder?", "Meestal niet, zolang je binnen de bestaande zolder blijft en niets aan de constructie of het dak verandert. Een dakkapel aan de voorkant of een nokverhoging heeft meestal wel een vergunning nodig. Check het bij je gemeente."),
+            ("Kan een badkamer op elke zolder?", "Niet altijd. Er moet genoeg stahoogte zijn, de vloer moet sterk genoeg zijn en de afvoer moet naar de standleiding kunnen. Een specialist kan dat bij een bezoek beoordelen."),
+            ("Hoe lang duurt het?", "Reken op twee tot vier weken voor de badkamer zelf. Met isolatie, een tussenwand of een dakraam erbij duurt het langer."),
+            ("Wat als de afvoer niet onder afschot kan?", "Dan kan de vloer omhoog, kan de leiding een andere route krijgen of kan een toiletpomp een oplossing zijn. Een pomp maakt geluid en heeft onderhoud nodig. Bespreek de mogelijkheden met de specialist."),
+        ],
+        "bronnen": ["homedeal_zolder", "slimster_zolder", "werkspot_zolder", "trustoo_badkamer", "slimster_badkamer", "btw"],
+        "verwant": ["nieuwe-badkamer", "toilet-verplaatsen", "vloerverwarming-badkamer"],
+        "kennis": [("/kennisbank/badkamer-op-zolder/", "Een badkamer op zolder: waar let je op?"),
+                   ("/kennisbank/badkamer-ventilatie/", "Ventilatie in de badkamer")],
+    },
+    # ------------------------------------------------------------------
+    {
+        # Bronnen: Homedeal toilet verbouwen (leidingen verplaatsen gemiddeld €700 – €1.500 extra; hangtoilet
+        # met inbouwreservoir €400 – €1.200 excl. montage), Werkspot toiletruimte verbouwen (toilet of afvoer
+        # verplaatsen €700 – €1.500, kleine leidingaanpassing €300 – €600).
+        "slug": "toilet-verplaatsen",
+        "kort": "Toilet verplaatsen",
+        "omschrijving": "Wat het verleggen van de afvoer en de waterleiding voor een toilet kost.",
+        "h1": "Wat kost een toilet verplaatsen?",
+        "title": f"Toilet verplaatsen kosten {JAAR}: afvoer verleggen",
+        "description": "Een toilet verplaatsen kost meestal €700 tot €1.500 extra aan leidingwerk, inclusief btw. Lees wat het verschil maakt en wat het in totaal kost met nieuw tegelwerk.",
+        "dienst": "toilet-renoveren",
+        "van": rp("leidingwerk_toilet_verplaatsen")[0], "tot": rp("leidingwerk_toilet_verplaatsen")[1], "eenheid": "extra aan leidingwerk, inclusief btw",
+        "snel": f"Een toilet naar een andere plek verplaatsen kost meestal <strong>{eur(rp('leidingwerk_toilet_verplaatsen')[0])} tot {eur(rp('leidingwerk_toilet_verplaatsen')[1])} extra</strong> aan leidingwerk, inclusief 21% btw. Daar komen het toilet, de montage en het herstellen van de vloer en de tegels bij. Een kleine verschuiving op dezelfde wand kost zo'n €300 tot €600. Moet de afvoer door een andere ruimte of de vloer helemaal open, dan wordt het duurder.",
+        "varianten": [
+            ("Kleine verschuiving", 300, 600, "Een stukje opzij op dezelfde wand. De afvoer hoeft nauwelijks om."),
+            ("Toilet verplaatsen in dezelfde ruimte", *rp("leidingwerk_toilet_verplaatsen"), "Afvoer en waterleiding naar een andere wand, vloer of muur open."),
+            ("Naar een andere ruimte", 1500, 3500, "Een nieuwe route naar de standleiding, vaak door vloer of muur. Eigen inschatting."),
+        ],
+        "varianten_eenheid": "Alleen het leidingwerk, inclusief btw",
+        "varianten_noot": "De eerste twee rijen volgen Werkspot en Homedeal. De onderste rij is een eigen inschatting. Het toilet, de montage en het tegelwerk komen er nog bij.",
+        "factoren": [
+            ("De afstand tot de standleiding", "Een toiletafvoer is dik en moet onder afschot naar de standleiding lopen. Hoe verder weg, hoe meer hoogte je nodig hebt en hoe meer de vloer open moet."),
+            ("De vloer", "In een houten vloer kan de leiding vaak tussen de balken. In een betonvloer moet er worden gehakt of gefreesd, of moet de vloer omhoog."),
+            ("Staand of hangend toilet", "Bij een hangtoilet komt de afvoer uit de muur. Met een voorzetwand kun je de leidingen daarachter wegwerken. Dat maakt verplaatsen soms makkelijker."),
+            ("Tegels en afwerking", "Waar de leiding komt, moeten de vloer en de muur weer dicht en opnieuw worden betegeld. Zijn de oude tegels niet meer te krijgen, dan wordt het meer tegelwerk."),
+            ("Appartement of eengezinswoning", "In een appartement ligt de standleiding vast en loopt die door het gebouw. Verplaatsen kan dan beperkt zijn en de VvE moet soms toestemming geven."),
+        ],
+        "voorbeeld": (
+            "Stel: in je badkamer gaat een staand toilet een meter opzij naar de andere wand, en het wordt een hangtoilet met een voorzetwand. De vloer gaat daarvoor deels open en wordt daarna opnieuw betegeld (zo'n 4 m²).",
+            [
+                ("Vloer openmaken en afvoer en waterleiding verleggen", rp("leidingwerk_toilet_verplaatsen")),
+                ("Inbouwreservoir met frame en voorzetwand", (400, 900)),
+                ("Hangtoilet met zitting (midden)", rp_niveau("sanitair_toilet", "midden")),
+                ("Toilet plaatsen en aansluiten", rp("montage_toilet")),
+                ("Tegels en legloon vloer en voorzetwand, 4 m²", som(rp("tegels", 4), rp("tegelwerk", 4))),
+                ("Kitwerk, 3 meter", rp("kitwerk", 3)),
+                ("Totaal, inclusief btw", TOTAAL),
+            ],
+            "Dit is een eigen rekenvoorbeeld met dezelfde richtprijzen als de badkamercalculator. Gaat het toilet naar een andere ruimte of moet de hele vloer opnieuw betegeld worden, dan kom je hoger uit.",
+        ),
+        "btw_extra": "",
+        "besparen": [
+            "Laat het toilet staan als het kan. Verplaatsen is vooral leidingwerk en tegelwerk, en dat zie je niet terug.",
+            "Een kleine verschuiving op dezelfde wand is veel goedkoper dan naar een andere wand.",
+            "Combineer het verplaatsen met een complete renovatie. Dan gaan de tegels toch al opnieuw.",
+            "Vraag of een voorzetwand de leidingen kan verbergen, zodat de vloer minder open hoeft.",
+        ],
+        "specialist": "Een toilet verplaatsen is werk voor een loodgieter of badkamerspecialist. De afvoer moet goed onder afschot liggen en luchtdicht aansluiten, anders krijg je verstoppingen of stank. Woon je in een appartement, overleg dan eerst met de VvE over de standleiding.",
+        "faqs": [
+            ("Kan een toilet overal worden geplaatst?", "Niet overal. De afvoer moet onder afschot naar de standleiding kunnen. Is dat niet mogelijk, dan kan een toiletpomp een uitweg zijn, maar die maakt geluid en heeft onderhoud nodig."),
+            ("Hoe lang duurt het verplaatsen van een toilet?", "Het leidingwerk is vaak in één tot twee dagen klaar. Met een voorzetwand, nieuwe tegels en droogtijd ben je meestal drie tot vijf werkdagen bezig."),
+            ("Is een hangtoilet makkelijker te verplaatsen?", "Soms. Met een voorzetwand kunnen de leidingen erachter lopen. De afvoer moet wel nog steeds op de goede hoogte uitkomen."),
+            ("Mag ik in een appartement mijn toilet verplaatsen?", "Dat hangt af van de regels van de VvE en van waar de standleiding loopt. Vraag het eerst na. Lees ook <a href=\"/kennisbank/verbouwen-in-vve/\">verbouwen in een VvE</a>."),
+        ],
+        "bronnen": ["homedeal_toilet", "werkspot_toilet", "werkspot_tegel", "btw"],
+        "verwant": ["toilet-renoveren", "uurtarief-loodgieter", "badkamer-op-zolder"],
+        "kennis": [("/badkamerspullen/toilet-kiezen/", "Welk toilet past bij jou?"),
+                   ("/kennisbank/verbouwen-in-vve/", "Verbouwen in een VvE: waar let je op?")],
+    },
 ]
 
 KOSTEN_BY_SLUG = {k["slug"]: k for k in KOSTEN}
 
-LINKS = [("/kosten/", "Kosten badkamerwerk", "Richtprijzen voor een nieuwe badkamer, inloopdouche, tegelwerk en meer.")] + [
+LINKS = [("/kosten/", "Kosten badkamerwerk", "Richtprijzen voor een nieuwe badkamer, inloopdouche, bad, tegelwerk en meer.")] + [
     (f"/kosten/{k['slug']}/", k["kort"], k["omschrijving"]) for k in KOSTEN
 ]
 
@@ -620,9 +1072,20 @@ STYLE = """<style>
 </style>"""
 
 
-def bedrag(van, tot, eenheid=""):
-    """Bedrag van–tot; kleine bedragen (zoals per meter) zonder afronding."""
-    return f"{eur(van)} – {eur(tot)}"
+def voorbeeld_rijen(rijen):
+    """Rijen van een rekenvoorbeeld. Een waarde (laag, hoog) wordt opgemaakt en opgeteld;
+    een rij met waarde TOTAAL krijgt de som. Tekst blijft tekst."""
+    uit, lo, hi = [], 0, 0
+    for label, waarde in rijen:
+        if waarde is TOTAAL:
+            uit.append((f"<strong>{label}</strong>", f"<strong>{bedrag(lo, hi)}</strong>"))
+        elif isinstance(waarde, tuple):
+            lo += waarde[0]
+            hi += waarde[1]
+            uit.append((label, bedrag(*waarde)))
+        else:
+            uit.append((label, waarde))
+    return uit
 
 
 def bronnen_html(sleutels):
@@ -645,7 +1108,7 @@ def kosten_body(k):
                       [(f"<strong>{lbl}</strong>", bedrag(v, t), uitleg) for lbl, v, t, uitleg in k["varianten"]])
     factoren = "".join(f"<li><strong>{kop}</strong>{tekst}</li>" for kop, tekst in k["factoren"])
     intro, rijen, slot = k["voorbeeld"]
-    voorbeeld = tabel(["Post", "Richtprijs"], rijen)
+    voorbeeld = tabel(["Post", "Richtprijs"], voorbeeld_rijen(rijen))
     tips = "".join(f"<li>{icon('check', 20)}{t}</li>" for t in k["besparen"])
     verwant = "".join(
         f'<a href="/kosten/{s}/">{KOSTEN_BY_SLUG[s]["kort"]}<small>{KOSTEN_BY_SLUG[s]["omschrijving"]}</small></a>'
@@ -725,8 +1188,8 @@ def overzicht_body():
 <section class="section-sm"><div class="wrap narrow prose">
   <span class="badge">Richtprijzen {JAAR}</span>
   <h1>Kosten van badkamerwerk</h1>
-  <p class="lead">Wat kost een nieuwe badkamer, een inloopdouche of een tegelzetter? Per klus vind je hier de richtprijs, een rekenvoorbeeld, de btw en tips om te besparen. Zo zie je snel of een offerte in de buurt zit.</p>
-  <p>Alle bedragen zijn richtprijzen inclusief materiaal en 21% btw, tenzij er iets anders bij staat. Ze komen uit openbare prijsoverzichten; de bronnen staan op elke pagina. Wil je een schatting voor je eigen badkamer, gebruik dan de <a href="{CALC}">badkamercalculator</a>.</p>
+  <p class="lead">Wat kost een nieuwe badkamer, een inloopdouche, een nieuw bad of een tegelzetter? Per klus vind je hier de richtprijs, een rekenvoorbeeld, de btw en tips om te besparen. Zo zie je snel of een offerte in de buurt zit.</p>
+  <p>Alle bedragen zijn richtprijzen inclusief materiaal en 21% btw, tenzij er iets anders bij staat. Ze komen uit openbare prijsoverzichten; de bronnen staan op elke pagina. De kostenpagina's, de <a href="{CALC}">badkamercalculator</a> en de <a href="/tools/offertechecker/">offertechecker</a> rekenen met dezelfde richtprijzen per post, zoals sloopwerk, leidingwerk en tegelwerk.</p>
 </div></section>
 <section class="section-sm"><div class="wrap">
   <h2>Kies een klus</h2>

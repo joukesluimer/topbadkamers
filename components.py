@@ -56,6 +56,25 @@ def foto(f, sizes, boven_vouw=False):
             f'sizes="{sizes}" width="{f["w"]}" height="{f["h"]}" alt="{alt}" {laden} decoding="async"></figure>')
 
 
+def render_beeld(r, sizes, boven_vouw=False, klasse="render"):
+    """Responsieve <img> voor een eigen 3D-render (fotos/renders/), altijd met de vermelding 'Illustratie'."""
+    import os
+    n = r["naam"]
+    map_ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fotos", "renders")
+    if not os.path.exists(os.path.join(map_, f"{n}-800.webp")):
+        return ""
+    klein = f"/assets/fotos/renders/{n}-400.webp 400w, " if os.path.exists(os.path.join(map_, f"{n}-400.webp")) else ""
+    laden = 'loading="eager" fetchpriority="high"' if boven_vouw else 'loading="lazy"'
+    alt = r["alt"].replace("&", "&amp;").replace('"', "&quot;")
+    return (f'<figure class="foto {klasse}" style="position:relative;margin:0">'
+            f'<img src="/assets/fotos/renders/{n}-800.webp" '
+            f'srcset="{klein}/assets/fotos/renders/{n}-800.webp 800w, /assets/fotos/renders/{n}-1600.webp 1600w" '
+            f'sizes="{sizes}" width="{r["w"]}" height="{r["h"]}" alt="{alt}" {laden} decoding="async" '
+            f'style="width:100%;height:auto;border-radius:var(--radius);display:block">'
+            f'<figcaption style="position:absolute;left:10px;bottom:10px;background:rgba(255,255,255,.88);'
+            f'color:#334;font-size:.72rem;padding:3px 8px;border-radius:999px">Illustratie (3D-render)</figcaption></figure>')
+
+
 def icon(name, size=23):
     p = ICONS.get(name, ICONS["check"])
     return (
@@ -152,6 +171,7 @@ def footer():
         <li><a href="/kosten/">Kosten per klus</a></li>
         <li><a href="/badkamerspullen/">Badkamerspullen kiezen</a></li>
         <li><a href="/kennisbank/">Kennisbank</a></li>
+        <li><a href="/inspiratie/">Inspiratie: badkamerstijlen</a></li>
         <li><a href="/tools/badkamercalculator/">Badkamercalculator</a></li>
         <li><a href="/tools/">Alle gratis tools</a></li>
         <li><a href="/werkgebied/">Alle plaatsen</a></li>

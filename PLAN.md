@@ -33,7 +33,16 @@ Hetzelfde als Topschilder, maar dan voor badkamers:
     - `badkamer_stijl.py`.
   - Het menu heeft nu Diensten, Wat kost het? (/kosten/), Tools, Kennisbank en Voor badkamerspecialisten. De dienstpagina's linken naar de passende kosten, artikelen, gidsen en tools ("Meer weten?").
   - De oude Topschilder-modules (`kosten_data.py`, `kennisbank.py`, `huiscalculator.py` enz.) staan nog in de map maar worden niet gebouwd. Ze kunnen weg.
-  - Nog te doen: de richtprijzen jaarlijks nalopen, en de richtprijzen van offertechecker, calculator en kostenpagina's naast elkaar leggen zodat ze gelijk lopen.
+  - Nog te doen: de richtprijzen jaarlijks nalopen.
+- [x] Ronde 2 (23 november 2026), gemaakt met vier agents tegelijk:
+  - **Richtprijzen uit één bron:** `richtprijzen.py`. Calculator, offertechecker en kostenpagina's lezen daaruit (`python3 richtprijzen.py` vergelijkt met `data.DIENSTEN`).
+  - **Kosten:** 6 pagina's erbij, nu 14 in totaal.
+  - **Kennisbank:** 8 artikelen erbij in `badkamer_kennis_artikelen2.py`, nu 18 in totaal.
+  - **Eigen 3D-renders** (three.js, `renders/`; de webp-bestanden staan in `fotos/renders/`):
+    - `bd-*`: de home en de 7 diensten, metadata in `render_data.py`. Pipeline: `python3 renders/bd-server.py`, dan `renders/bd-<scene>.html` openen;
+    - `bs-*`: 6 stijlen, metadata in `render_stijl_data.py`;
+    - op de site staat bij elke render "Illustratie (3D-render)".
+  - **Inspiratie:** `/inspiratie/` met 6 stijlpagina's (`badkamer_inspiratie.py`). De homepage heeft een beeldsectie en elke dienstpagina een render.
 
 ## Hoe het concept vertaalt
 
@@ -78,7 +87,7 @@ Hetzelfde als Topschilder, maar dan voor badkamers:
    - de sectie badkamerspullen;
    - plaatspagina's met badkameradvies per bouwjaar.
 3. **Tools:** badkamercalculator, stijlkiezer, badkamercheck, offertechecker en renovatieplanner.
-4. **Beeld:**
+4. **Beeld (eigen renders af; foto's nog niet):**
    - 3D-renders van badkamers (three.js, zoals de tools-renders van Topschilder);
    - echte foto's alleen met een vrije licentie.
 5. **Live zetten:** GitHub Pages, domein, Search Console, sitemap.

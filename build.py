@@ -28,6 +28,9 @@ from components import (
     feiten_blok, stappen_blok, dienst_icoon, cta_midden,
 )
 import lastmod
+from components import render_beeld
+from render_data import RENDERS
+from render_stijl_data import RENDERS_STIJL
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "site")
@@ -103,6 +106,27 @@ def build_home():
   <li>{icon('check',20)}<span>Jij kiest, <strong>zonder verplichting</strong></span></li>
   <li>{icon('house',20)}<span>Actief in <strong>{len(PLAATSEN)} plaatsen</strong></span></li>
 </ul></div></div>"""
+
+    stijlen = [("moderne-badkamer", "Modern"), ("landelijke-badkamer", "Landelijk"), ("japandi-badkamer", "Japandi")]
+    stijl_kaarten = "".join(
+        f'<a href="/inspiratie/{sl}/" style="display:block;text-decoration:none">'
+        f'{render_beeld(RENDERS_STIJL[sl], "(max-width: 900px) 100vw, 360px")}'
+        f'<span style="display:block;margin-top:8px;font-weight:600">{naam} →</span></a>'
+        for sl, naam in stijlen if sl in RENDERS_STIJL)
+    beeld_sec = f"""<section class="section">
+<div class="wrap">
+  <div class="grid g2" style="gap:44px;align-items:center">
+    <div>{render_beeld(RENDERS["home"], "(max-width: 900px) 100vw, 600px")}</div>
+    <div>
+      <span class="badge">Inspiratie</span>
+      <h2>Hoe ziet jouw nieuwe badkamer eruit?</h2>
+      <p class="lead">Een inloopdouche met een glazen wand, een zwevend meubel en een hangtoilet: zo ziet een moderne badkamer er vaak uit. Maar er is meer. Bekijk zes stijlen in beeld, of stel er zelf een samen.</p>
+      <p><a class="btn btn-ghost" href="/inspiratie/">Bekijk de badkamerstijlen</a> <a class="btn btn-ghost" href="/tools/stijlkiezer/">Probeer de stijlkiezer</a></p>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-top:36px">{stijl_kaarten}</div>
+</div>
+</section>"""
 
     diensten_sec = f"""<section class="section soft">
 <div class="wrap">
@@ -211,7 +235,7 @@ def build_home():
         "publisher": {"@id": SITE["url"] + "/#organization"},
     }
 
-    body = (hero + hoe_werkt_het() + waarom_blok() + diensten_sec + prijs_sec + tips_sec
+    body = (hero + hoe_werkt_het() + beeld_sec + waarom_blok() + diensten_sec + prijs_sec + tips_sec
             + regio_sec + faq_html + vakmensen_sec + cta_blok())
 
     write("/", page(
@@ -272,7 +296,9 @@ MEER_WETEN = {
     "badkamer-installeren": [("/kosten/uurtarief-loodgieter/", "Uurtarief van een loodgieter"),
                              ("/badkamerspullen/kranen-kiezen/", "Kranen kiezen"),
                              ("/badkamerspullen/wastafelmeubel-kiezen/", "Een wastafelmeubel kiezen"),
-                             ("/kennisbank/kleine-badkamer-indelen/", "Een kleine badkamer indelen")],
+                             ("/kennisbank/kleine-badkamer-indelen/", "Een kleine badkamer indelen"),
+                             ("/kennisbank/badkamer-op-zolder/", "Een badkamer op zolder"),
+                             ("/kennisbank/vloerverwarming-of-radiator/", "Vloerverwarming of radiator?")],
     "tegelwerk-badkamer": [("/kosten/tegelzetter-per-m2/", "Wat kost een tegelzetter per m²?"),
                            ("/kennisbank/badkamer-waterdicht-maken/", "Een badkamer waterdicht maken"),
                            ("/kennisbank/tegels-kiezen/", "Tegels kiezen"),
@@ -281,13 +307,17 @@ MEER_WETEN = {
     "inloopdouche-plaatsen": [("/kosten/inloopdouche/", "Wat kost een inloopdouche?"),
                               ("/kennisbank/inloopdouche-zonder-drempel/", "Een inloopdouche zonder drempel"),
                               ("/badkamerspullen/inloopdouche-kopen/", "Een inloopdouche kopen"),
-                              ("/badkamerspullen/douchesysteem-kiezen/", "Een douchesysteem kiezen")],
+                              ("/badkamerspullen/douchesysteem-kiezen/", "Een douchesysteem kiezen"),
+                              ("/kennisbank/levensloopbestendige-badkamer/", "Een levensloopbestendige badkamer")],
     "toilet-renoveren": [("/kosten/toilet-renoveren/", "Wat kost een toilet renoveren?"),
                          ("/badkamerspullen/toilet-kiezen/", "Een toilet kiezen"),
                          ("/kennisbank/badkamer-ventilatie/", "Ventilatie in badkamer en toilet")],
     "badkamer-onderhoud": [("/kosten/kitwerk-voegen/", "Wat kost kitwerk en voegen?"),
                            ("/tools/badkamercheck/", "Badkamercheck: is je badkamer aan vervanging toe?"),
-                           ("/kennisbank/badkamer-ventilatie/", "Ventilatie tegen schimmel")],
+                           ("/kennisbank/badkamer-ventilatie/", "Ventilatie tegen schimmel"),
+                           ("/kennisbank/schimmel-in-badkamer/", "Schimmel in de badkamer"),
+                           ("/kennisbank/lekkage-badkamer/", "Lekkage in de badkamer"),
+                           ("/kennisbank/kalk-en-waterhardheid/", "Kalk en waterhardheid")],
     "zakelijk-badkamers": [("/kennisbank/verbouwen-in-vve/", "Verbouwen in een VvE"),
                            ("/kennisbank/garantie-badkamerrenovatie/", "Garantie bij een badkamerrenovatie"),
                            ("/tools/offertechecker/", "Offertechecker")],
@@ -359,7 +389,9 @@ def dienst_body(d, plaats=None):
     wat = "".join(f"<li>{x}</li>" for x in d["wat"])
     fact = "".join(f"<li>{x}</li>" for x in d["prijsfactoren"])
     tips = "".join(f"<li>{x}</li>" for x in d["tips"])
+    beeld = render_beeld(RENDERS[d["slug"]], "(max-width: 900px) 100vw, 760px") if d["slug"] in RENDERS else ""
     content = f"""<section class="section soft"><div class="wrap narrow prose reveal">
+  {f'<div style="margin-bottom:28px">{beeld}</div>' if beeld else ''}
   <h2>Wat valt er onder {d['naam'].lower()}?</h2>
   <ul class="checklist">{wat}</ul>
   {feiten}
@@ -1113,12 +1145,16 @@ def build_static_pages():
                                  "waarvoor we campagneparameters bewaren en hoe je cookies in je browser weigert of verwijdert."),
                             "/cookies/", body, [cr_ld]), prio=0.2)
 
-    # --- Fotoverantwoording (nog geen foto's in fase 1) ---
+    # --- Fotoverantwoording: nog geen foto's van derden, wel eigen renders ---
     cr, cr_ld = crumbs([("Home", "/"), ("Fotoverantwoording", None)])
+    render_lijst = "".join(f"<li>{r['alt']}</li>" for r in list(RENDERS.values()) + list(RENDERS_STIJL.values()))
     body = f"""{cr}
 <section class="section-sm"><div class="wrap narrow prose">
   <h1>Fotoverantwoording</h1>
-  <p class="lead">Op deze site staan nog geen foto's van derden. Komen die er, dan staat hier per foto wie hem maakte, onder welke licentie en wat wij eraan veranderden. Illustraties en renders die we zelf maken, noemen we ook zo.</p>
+  <p class="lead">Op deze site staan nog geen foto's van derden. Komen die er, dan staat hier per foto wie hem maakte, onder welke licentie en wat wij eraan veranderden.</p>
+  <h2>Eigen 3D-renders</h2>
+  <p>De badkamerbeelden op deze site zijn geen foto's maar illustraties: 3D-renders die Top Badkamers zelf maakte met de opensource-software three.js. Er staan geen bestaande badkamers, producten of merken in. Op de site staat bij elke render "Illustratie (3D-render)".</p>
+  <ul>{render_lijst}</ul>
 </div></section>"""
     write("/fotoverantwoording/", page(f"Fotoverantwoording | {naam}",
                                        desc(f"Per foto op {naam}: de maker, de licentie en de bron.",
@@ -1220,7 +1256,7 @@ Sitemap: {SITE['url']}/sitemap.xml
 
 import importlib
 
-CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen"]
+CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen", "badkamer_inspiratie"]
 TOOL_MODULES = ["badkamer_calculator", "badkamer_check", "badkamer_offertecheck",
                 "badkamer_stijl", "badkamer_planner"]
 

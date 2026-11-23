@@ -740,6 +740,7 @@ def build(write):
     }
 
     links = [
+        ("/inspiratie/", "Inspiratie: zes stijlen in beeld", "3D-illustraties van zes badkamerstijlen, met materialen en kleuren."),
         ("/kennisbank/badkamerstijlen/", "Badkamerstijlen uitgelegd", "Meer over elke stijl, met voorbeelden en valkuilen."),
         ("/badkamerspullen/badkamertegels-kopen/", "Badkamertegels kopen", "Formaat, antislip, glazuur en hoeveel tegels je nodig hebt."),
         ("/badkamerspullen/kranen-kiezen/", "Kranen kiezen", "Thermostaat of mengkraan, inbouw of opbouw, en welke afwerking."),

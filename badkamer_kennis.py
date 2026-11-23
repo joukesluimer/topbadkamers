@@ -13,15 +13,19 @@ import html as htmllib
 
 from data import SITE, DIENSTEN
 from components import page, crumbs, faq_blok, cta_blok, cta_midden, stappen_blok, title, icon
-from badkamer_kennis_artikelen import ARTIKELEN
+from badkamer_kennis_artikelen import ARTIKELEN as _ARTIKELEN1
+from badkamer_kennis_artikelen2 import ARTIKELEN2
+
+ARTIKELEN = _ARTIKELEN1 + ARTIKELEN2
 
 GEPUBLICEERD = "2026-11-23"
 
 # Thema's in de volgorde van het overzicht, met een icoon uit components.ICONS
 THEMAS = [
     ("Plannen en regels", "form", "Wat je regelt voordat de sloop begint: volgorde, VvE, asbest en garantie."),
-    ("Techniek en vocht", "druppel", "Waterdicht maken, ventileren en een inloopdouche zonder drempel."),
-    ("Ontwerp en materialen", "tegels", "Tegels, indeling en stijl: keuzes die je elke dag ziet."),
+    ("Wonen en situatie", "house", "Je woonsituatie telt mee: huren, ouder worden in je huis of een badkamer op zolder."),
+    ("Techniek en vocht", "druppel", "Waterdicht maken, ventileren, schimmel, lekkage, kalk en verwarming."),
+    ("Ontwerp en materialen", "tegels", "Tegels, microcement, indeling en stijl: keuzes die je elke dag ziet."),
 ]
 
 # Titels van de kostenpagina's (module badkamer_kosten.py van een andere agent; alleen de URL's)
@@ -34,6 +38,12 @@ KOSTEN_TITELS = {
     "vloerverwarming-badkamer": "Wat kost vloerverwarming in de badkamer?",
     "kitwerk-voegen": "Wat kost kitwerk en voegen vernieuwen?",
     "uurtarief-loodgieter": "Wat kost een loodgieter per uur?",
+}
+
+# Kostenpagina's uit ronde 2 (module van agent kosten-2). Alleen in de kaartjes van een artikel,
+# niet in de lijst op het overzicht.
+KOSTEN_TITELS_EXTRA = {
+    "badkamer-op-zolder": "Wat kost een badkamer op zolder?",
 }
 
 TOOLS = {
@@ -87,7 +97,8 @@ def _verder_blok(a):
         kaarten.append((f"/diensten/{d['slug']}/", "Dienst", d["naam"],
                         "Wat een specialist doet, de werkwijze en een richtprijs."))
     for ks in a["kosten"]:
-        kaarten.append((f"/kosten/{ks}/", "Kosten", KOSTEN_TITELS[ks], "Richtprijzen met rekenvoorbeelden en bronnen."))
+        naam_k = KOSTEN_TITELS.get(ks) or KOSTEN_TITELS_EXTRA[ks]
+        kaarten.append((f"/kosten/{ks}/", "Kosten", naam_k, "Richtprijzen met rekenvoorbeelden en bronnen."))
     naam, oms = TOOLS[a["tool"]]
     kaarten.append((a["tool"], "Tool", naam, oms))
     for href, naam_, oms_ in a.get("extra", []):
@@ -184,7 +195,7 @@ def _overzicht(write):
   <div class="narrow prose">
     <span class="badge">Kennisbank</span>
     <h1>Kennisbank badkamers</h1>
-    <p class="lead">Praktische uitleg over je badkamer: van de volgorde van een renovatie en de regels in een VvE tot waterdicht tegelen, ventileren en het kiezen van tegels en een stijl. Elk artikel heeft een stappenplan, veelgestelde vragen en bronnen.</p>
+    <p class="lead">Praktische uitleg over je badkamer: van de volgorde van een renovatie en de regels in een VvE of huurwoning tot waterdicht tegelen, schimmel, lekkage, kalk en het kiezen van tegels en een stijl. Elk artikel heeft een stappenplan, veelgestelde vragen en bronnen.</p>
     <p>Wij zijn een vergelijkingsplatform. We voeren zelf geen werk uit, maar brengen je in contact met maximaal drie badkamerspecialisten uit je regio. Deze artikelen helpen je om goede vragen te stellen en offertes te beoordelen.</p>
   </div>
   {blokken}
@@ -204,7 +215,7 @@ def _overzicht(write):
                 "name": "Kennisbank badkamers", "inLanguage": "nl-NL",
                 "mainEntity": {"@type": "ItemList", "itemListElement": items}}
     write("/kennisbank/", page(title("Kennisbank badkamers: renovatie, regels en ontwerp"),
-          "Praktische uitleg over je badkamer: volgorde van een renovatie, VvE en asbest, waterdicht maken, ventileren, inloopdouche, tegels kiezen en badkamerstijlen.",
+          "Praktische uitleg over je badkamer: renovatie, VvE, huur en asbest, waterdicht maken, schimmel, lekkage, kalk, verwarming, tegels, microcement en badkamerstijlen.",
           "/kennisbank/", body, [cr_ld, lijst_ld]), prio=0.8)
 
 
