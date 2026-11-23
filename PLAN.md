@@ -66,11 +66,7 @@ Hetzelfde als Topschilder, maar dan voor badkamers:
 1. **Domeinnaam: top-badkamers.nl, later.** Jouke koopt het domein later. Tot die tijd draait de site op het gratis GitHub-adres `https://joukesluimer.github.io/topbadkamers/` (`SITE["domein"]` is leeg, dus er komt geen CNAME).
    - **Let op voor fase 1:** de site staat dan in een submap (`/topbadkamers/`), maar de code gebruikt links vanaf de root (`/assets/...`, `/kosten/...`). Bij het bouwen moeten die een voorvoegsel krijgen, of die links breken op het GitHub-adres.
    - Bij de overstap naar het domein: `domein` en `url` in `data.py` invullen, het voorvoegsel weer leeg maken en DNS bij de registrar op GitHub Pages zetten.
-2. **Hoe "spullen" werkt.** Voorlopig gekozen: (a). Wil je het anders, kies dan een van deze vormen:
-   - (a) alleen neutrale kopersgidsen en richtprijzen, zonder winkel;
-   - (b) doorverwijzen naar webwinkels, eventueel met affiliatelinks;
-   - (c) materiaal meenemen in de offerte van de monteur.
-   - Als je een eigen winkel wilt koppelen, moet de site daar eerlijk over zijn.
+2. **Hoe "spullen" werkt. BESLOTEN (23-11-2026):** (a) neutrale kopersgidsen, zonder winkel en zonder affiliate. De klant betaalt niets; wij verdienen alleen aan leads van badkamerspecialisten. De offertevergelijker (check per regel + tegenofferte via specialisten) staat in `CONCEPT_OFFERTEVERGELIJKER.md`.
 3. **Werkgebied.** Hetzelfde als Topschilder (Flevoland, het Gooi, de Veluwe, Zwolle/Kampen, Amersfoort), of groter?
 4. **Bedrijfsgegevens.** Hetzelfde KvK-nummer en e-mailadres als Topschilder, of nieuwe?
 

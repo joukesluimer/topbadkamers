@@ -953,7 +953,11 @@ APP_JS = r'''/* Top Badkamers: formulierlogica, tracking en Supabase-verzending.
     }
     if (url.get("via") === "offertecheck") {
       var o = f.querySelector("textarea[name=omschrijving]");
-      if (o && !o.value) o.value = "Ik heb al een offerte en zoek een vergelijkende offerte. ";
+      var spec = null;
+      try { spec = sessionStorage.getItem("tb_offertespec"); } catch (e) {}
+      if (o && !o.value) o.value = spec
+        ? "Ik heb al een offerte en zoek een tegenofferte op dezelfde specificatie (zonder mijn gegevens of die van de huidige aanbieder):\n\n" + spec.slice(0, 3000)
+        : "Ik heb al een offerte en zoek een vergelijkende offerte. ";
     }
   });
 })();

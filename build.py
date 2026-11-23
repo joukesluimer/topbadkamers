@@ -1208,6 +1208,11 @@ def build_assets():
         with open(full, "w", encoding="utf-8") as f:
             f.write(inhoud)
 
+    # pdf.js voor de offertevergelijker (pdf wordt in de browser gelezen)
+    pdfjs = os.path.join(ROOT, "vendor", "pdfjs")
+    if os.path.isdir(pdfjs):
+        shutil.copytree(pdfjs, os.path.join(OUT, "assets", "vendor", "pdfjs"))
+
     fotos = os.path.join(ROOT, "fotos")
     if os.path.isdir(fotos) and os.listdir(fotos):
         shutil.copytree(fotos, os.path.join(OUT, "assets", "fotos"))
@@ -1256,7 +1261,7 @@ Sitemap: {SITE['url']}/sitemap.xml
 
 import importlib
 
-CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen", "badkamer_inspiratie"]
+CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen", "badkamer_inspiratie", "badkamer_verdienmodel"]
 TOOL_MODULES = ["badkamer_calculator", "badkamer_check", "badkamer_offertecheck",
                 "badkamer_stijl", "badkamer_planner"]
 

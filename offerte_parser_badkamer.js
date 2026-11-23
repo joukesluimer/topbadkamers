@@ -2,7 +2,8 @@
    Gemaakt op basis van offerte_parser.js; dat bestand blijft ongewijzigd.
    Leest de geplakte tekst van een badkamerofferte uit: posten (sloopwerk, tegelwerk,
    leidingwerk, elektra, sanitair, stelposten, afvoer van afval, uren), totalen, btw
-   en afspraken. Draait in de browser (window.TBOfferte) en in Node (voor tests).
+   en afspraken. Met productdata (opties.producten) herkent hij ook merk, serie,
+   artikelnummer en EAN per regel en legt de prijs naast een marktprijsband. Draait in de browser (window.TBOfferte) en in Node (voor tests).
    Alles gebeurt lokaal; er wordt niets verstuurd. */
 (function (root, maak) {
   var api = maak();
@@ -184,7 +185,13 @@
   var RE_UUR = /per\s+uur|\/\s*uur|uurloon|uurtarief|\bp\/u\b|regie(tarief)?|manuur/i;
 
   /* ------------------------------------------------------------ hoofdfunctie */
-  function leesOfferte(tekst) {
+  function leesOfferte(tekst, opties) {
+    var uit = leesOfferteBasis(tekst);
+    voegProductenToe(uit, opties && opties.producten);
+    return uit;
+  }
+
+  function leesOfferteBasis(tekst) {
     tekst = String(tekst || "").replace(/ /g, " ").replace(/\r/g, "");
     var ruw = tekst.split("\n");
     var regels = [];
@@ -538,6 +545,9 @@
     if (p.stelpost) uit.vragen.push("Dit is een stelpost. Wat gebeurt er als het meer of minder wordt, en krijg je het verschil terug?");
     if (p.btw === 9 && p.type !== "vloer") uit.vragen.push("Waarom staat hier 9% btw op? Voor badkamerwerk geldt meestal 21%.");
     if (p.type === "tegelwerk" && /tegels/.test(p.omschrijving.toLowerCase()) && /lever|incl/.test(p.omschrijving.toLowerCase())) band = banden && banden.tegelwerk_incl;
+    // Een herkend product (bijv. een wastafelmeubel zonder merk) hoort nooit naast de band voor
+    // complete sanitair; dat oordeel komt van beoordeelProduct.
+    if (band && type.band === "sanitair" && p.soort === "product") { uit.reden = "product"; return uit; }
     if (!band) { uit.reden = p.type === "korting" ? "korting" : "geen richtprijs"; return uit; }
     var tarief = (p.btw != null ? p.btw : (standaardBtw || 21)) / 100;
     function naarVergelijk(bedrag) {
@@ -600,9 +610,437 @@
     return v;
   }
 
+  /* ------------------------------------------------------------ producten herkennen */
+  // Werkt met de productdata (PD) uit producten_badkamer.py: { peildatum, merken, categorieen,
+  // artikelen, bronnen }. Herkenning in deze volgorde: 1) EAN of artikelnummer van de fabrikant,
+  // 2) merk + serie, 3) categorie op trefwoorden. Prijsbanden zijn inclusief 21% btw, voor het
+  // product zelf, zonder montage.
+  var MAANDEN = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"];
+  var VAAG_TEKST = "onvoldoende gespecificeerd: vraag merk en type per onderdeel";
+  // Merknamen voor soortRegel zonder productdata (de PD-lijst is uitgebreider).
+  var MERKEN_BASIS = ["grohe", "hansgrohe", "axor", "geberit", "villeroy", "duravit", "ideal standard", "sphinx", "laufen",
+    "toto", "roca", "jacob delafon", "keuco", "dornbracht", "hansa", "hotbath", "clou", "wiesbaden", "plieger", "sealskin",
+    "novellini", "huppe", "kermi", "radaway", "riho", "kaldewei", "bette", "xenz", "vasco", "zehnder", "easy drain", "viega",
+    "tece", "wisa", "pressalit", "mosa", "damixa", "gessi", "lineabeta"];
+
+  function plat(t) {
+    t = String(t == null ? "" : t).toLowerCase();
+    if (t.normalize) t = t.normalize("NFD").replace(/[̀-ͯ]/g, "");
+    return t;
+  }
+  function normCode(c) { return String(c == null ? "" : c).replace(/[\s.\-\/]/g, "").toUpperCase(); }
+  function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function bevatWoord(t, w, eindGrens) {
+    var re = new RegExp("(^|[^a-z0-9])" + esc(w) + (eindGrens === false ? "" : "(?=$|[^a-z0-9])"));
+    var m = re.exec(t);
+    return m ? m.index + m[1].length : -1;
+  }
+  function eanGeldig(e) {
+    if (!/^\d{13}$/.test(e)) return false;
+    var s = 0;
+    for (var i = 0; i < 12; i++) s += (+e[i]) * (i % 2 ? 3 : 1);
+    return (10 - s % 10) % 10 === +e[12];
+  }
+  function peildatumTekst(PD) {
+    var m = /^(\d{4})-(\d{2})/.exec((PD && PD.peildatum) || "");
+    return m ? MAANDEN[+m[2] - 1] + " " + m[1] : null;
+  }
+
+  var CACHE = typeof WeakMap !== "undefined" ? new WeakMap() : null;
+  function index(PD) {
+    if (CACHE && CACHE.has(PD)) return CACHE.get(PD);
+    var idx = { codes: {}, ean: {}, merken: [], cats: [] };
+    (PD.artikelen || []).forEach(function (a) {
+      (a.codes || []).forEach(function (c) { var n = normCode(c); if (n.length >= 4 && !idx.codes[n]) idx.codes[n] = a; });
+      (a.ean || []).forEach(function (e) { e = String(e).replace(/\D/g, ""); if (e.length === 13) idx.ean[e] = a; });
+    });
+    (PD.merken || []).forEach(function (m) {
+      var al = (m.aliassen || []).concat([m.naam]).map(plat).filter(function (x, i, l) { return x && l.indexOf(x) === i; });
+      al.sort(function (a, b) { return b.length - a.length; });
+      var re = [];
+      (m.code_regex || []).forEach(function (r) { try { re.push(new RegExp(r)); } catch (e) { /* ongeldige regex overslaan */ } });
+      idx.merken.push({ naam: m.naam, aliassen: al, re: re });
+    });
+    var cats = PD.categorieen || {};
+    Object.keys(cats).forEach(function (k) {
+      idx.cats.push({ sleutel: k, trefwoorden: (cats[k].trefwoorden || []).map(plat) });
+    });
+    if (CACHE) CACHE.set(PD, idx);
+    return idx;
+  }
+
+  // Woorden die samen een artikelnummer kunnen vormen ("34 558 000", "115.882.KJ.1", "Art.nr.:26533000").
+  function codeVensters(tekst) {
+    var tokens = String(tekst || "").split(/[\s:;,()\[\]#"']+/).map(function (t) { return t.replace(/^[.\-]+|[.\-]+$/g, ""); })
+      .filter(Boolean);
+    var uit = [];
+    for (var i = 0; i < tokens.length; i++) {
+      for (var n = 1; n <= 4 && i + n <= tokens.length; n++) {
+        var ruw = tokens.slice(i, i + n).join(" "), norm = normCode(ruw);
+        if (norm.length < 4 || norm.length > 16 || !/\d/.test(norm) || !/^[A-Z0-9]+$/.test(norm)) continue;
+        if (n > 1 && !/\d/.test(tokens[i + n - 1])) continue; // laatste stuk moet een cijfer bevatten
+        uit.push({ ruw: ruw, norm: norm });
+      }
+    }
+    return uit;
+  }
+
+  // De regex moet het hele venster beslaan: "800 34558000" is geen code, "34558000" wel.
+  function heelMatch(re, s) { var m = re.exec(s); return !!m && m[0] === s; }
+
+  function zoekMerk(t, idx) {
+    var beste = null;
+    idx.merken.forEach(function (m) {
+      for (var i = 0; i < m.aliassen.length; i++) {
+        var pos = bevatWoord(t, m.aliassen[i]);
+        if (pos < 0) continue;
+        var len = m.aliassen[i].length;
+        if (!beste || len > beste.len || (len === beste.len && pos < beste.pos)) beste = { naam: m.naam, len: len, pos: pos };
+        break;
+      }
+    });
+    return beste ? beste.naam : null;
+  }
+
+  // Categorie op trefwoorden: het langste trefwoord wint, bij gelijke lengte het eerste in de tekst.
+  function zoekCategorie(t, idx, alle) {
+    var lijst = [];
+    idx.cats.forEach(function (c) {
+      var best = null;
+      c.trefwoorden.forEach(function (w) {
+        var pos = bevatWoord(t, w, w.length >= 5 ? false : true);
+        if (pos >= 0 && (!best || w.length > best.len)) best = { sleutel: c.sleutel, len: w.length, pos: pos };
+      });
+      if (best) lijst.push(best);
+    });
+    if (alle) {
+      // Een trefwoord dat binnen een langer trefwoord valt telt niet apart ("wastafel" in "wastafelmeubel").
+      return lijst.filter(function (x) {
+        return !lijst.some(function (y) { return y !== x && y.len > x.len && x.pos >= y.pos && x.pos + x.len <= y.pos + y.len; });
+      });
+    }
+    lijst.sort(function (a, b) { return b.len - a.len || a.pos - b.pos; });
+    var k = lijst.length ? lijst[0].sleutel : null;
+    // Een inbouwkraan of inbouwthermostaat is geen opbouwkraan.
+    if (/\binbouw/.test(t) && (k === "thermostaatkraan" || k === "wastafelkraan" || k === "badkraan") &&
+        idx.cats.some(function (c) { return c.sleutel === "inbouwkraan"; })) k = "inbouwkraan";
+    // "thermostaat bad" of "kraan voor het bad" is een badkraan.
+    else if (/(^|[^a-z])bad([^a-z]|$)/.test(t) && (k === "thermostaatkraan" || k === "wastafelkraan") &&
+        idx.cats.some(function (c) { return c.sleutel === "badkraan"; })) k = "badkraan";
+    return k;
+  }
+
+  function woorden(t) { return plat(t).split(/[^a-z0-9]+/).filter(Boolean); }
+  function lev1(a, b) { // afstand hooguit 1 (een letter anders, erbij of eraf)
+    if (a === b) return true;
+    if (Math.abs(a.length - b.length) > 1) return false;
+    var i = 0, j = 0, fout = 0;
+    while (i < a.length && j < b.length) {
+      if (a[i] === b[j]) { i++; j++; continue; }
+      if (++fout > 1) return false;
+      if (a.length > b.length) i++; else if (b.length > a.length) j++; else { i++; j++; }
+    }
+    return fout + (a.length - i) + (b.length - j) <= 1;
+  }
+  function serieScore(serie, set, lijst) {
+    var sw = woorden(serie);
+    if (!sw.length) return 0;
+    for (var i = 0; i < sw.length; i++) {
+      var w = sw[i];
+      if (set[w]) continue;
+      // Kleine tikfout mag (grotherm/grohtherm), maar niet in een typenummer (UP320 is geen UP720).
+      if (w.length >= 5 && !/\d/.test(w) && lijst.some(function (x) { return x[0] === w[0] && !/\d/.test(x) && lev1(x, w); })) continue;
+      return 0;
+    }
+    return sw.length;
+  }
+
+  // Zonder merknaam telt een serie alleen als die een eigen naam heeft (minstens 6 letters) en
+  // geen gewoon woord is ("Comfort", "Douchedrain", "Kwartrond"), anders matcht elke regel.
+  var GEWONE_WOORDEN = /^(comfort|compact|single|square|design|classic|smart|multi|connect|quadro|essence|essentials|focus|double|select|element|perfect|performance|cosmopolitan|infinity|hooked|fusion|douchedrain|showerdrain|tegeldrain|hoekinstap|kwartrond|inloop|standaard|premium|deluxe|modern|retro|basic|luxe|black|white|chrome|chroom)$/;
+  function serieZonderMerk(serie) {
+    var sw = woorden(serie);
+    return sw.some(function (w) {
+      return w.length >= 6 && /^[a-z]/.test(w) && !GEWONE_WOORDEN.test(w);
+    });
+  }
+
+  function zoekAantalInTekst(t) {
+    var m = /(?:^|\s)(\d{1,3})\s*(?:x|×|st\.?|stuks?)(?=\s|$)(?!\s*\d)/i.exec(t);
+    return m ? parseInt(m[1], 10) : null;
+  }
+
+  // Geeft null of { merk, serie, code, ean, categorie, artikel, match, aantal }.
+  function herkenProduct(omschrijving, PD) {
+    if (!PD || !omschrijving) return null;
+    var idx = index(PD), t = plat(omschrijving);
+    var uit = { merk: null, serie: null, code: null, ean: null, categorie: null, artikel: null, match: null,
+      aantal: zoekAantalInTekst(omschrijving) };
+    var vensters = codeVensters(omschrijving);
+
+    // 1. EAN of artikelnummer
+    for (var i = 0; i < vensters.length; i++) {
+      var v = vensters[i];
+      if (/^\d{13}$/.test(v.norm)) {
+        if (idx.ean[v.norm]) { uit.ean = v.norm; uit.artikel = idx.ean[v.norm]; break; }
+        if (!uit.ean && eanGeldig(v.norm)) uit.ean = v.norm;
+      }
+      if (idx.codes[v.norm]) { uit.code = v.ruw; uit.artikel = idx.codes[v.norm]; break; }
+    }
+    var merkNaam = zoekMerk(t, idx);
+    if (uit.artikel) {
+      var a = uit.artikel;
+      if (!uit.code && a.codes && a.codes.length) uit.code = a.codes[0];
+      uit.merk = a.merk; uit.serie = a.serie; uit.categorie = a.categorie; uit.match = "exact";
+      return uit;
+    }
+    // Code die past bij het nummerformaat van een merk (zonder artikel in de data).
+    var codeMerken = [], codePer = {};
+    vensters.forEach(function (v) {
+      idx.merken.forEach(function (m) {
+        if (!codePer[m.naam] && m.re.some(function (re) { return heelMatch(re, v.ruw) || heelMatch(re, v.norm); })) {
+          codePer[m.naam] = v.ruw; codeMerken.push(m.naam);
+        }
+      });
+    });
+    if (merkNaam) { uit.merk = merkNaam; uit.code = codePer[merkNaam] || null; }
+    else if (codeMerken.length === 1) { uit.merk = codeMerken[0]; uit.code = codePer[codeMerken[0]]; }
+    else if (codeMerken.length > 1) uit.code = codePer[codeMerken[0]]; // formaat past bij meer merken: geen merk kiezen
+
+    var cat = zoekCategorie(t, idx);
+    uit.categorie = cat;
+
+    // 2. merk + serie
+    var tw = woorden(omschrijving), set = {};
+    tw.forEach(function (w, i) { set[w] = true; if (tw[i + 1]) set[w + tw[i + 1]] = true; });
+    var kandidaten = (PD.artikelen || []).filter(function (a) { return !uit.merk || a.merk === uit.merk; });
+    var beste = null;
+    kandidaten.forEach(function (a) {
+      var s = serieScore(a.serie, set, tw);
+      if (!s) return;
+      if (!uit.merk && !serieZonderMerk(a.serie)) return;
+      var catOk = !cat || a.categorie === cat;
+      var overlap = woorden(a.oms).filter(function (w) { return w.length >= 3 && set[w]; }).length; // ook kleur: wit, mat
+      var score = (catOk ? 1000 : 0) + s * 50 + overlap;
+      if (!beste || score > beste.score) beste = { a: a, score: score, catOk: catOk, gelijk: [a] };
+      else if (score === beste.score && a.serie === beste.a.serie && a.categorie === beste.a.categorie) beste.gelijk.push(a);
+    });
+    if (beste && (beste.catOk || uit.merk)) {
+      uit.merk = beste.a.merk; uit.serie = beste.a.serie;
+      if (beste.catOk) {
+        uit.artikel = beste.a; uit.categorie = beste.a.categorie; uit.match = "serie";
+        // Meer uitvoeringen van dezelfde serie (kleur, maat) die de tekst niet onderscheidt.
+        if (beste.gelijk.length > 1) uit.varianten = beste.gelijk;
+        return uit;
+      }
+    }
+    // 3. categorie
+    if (uit.categorie) { uit.match = "categorie"; return uit; }
+    return uit.merk || uit.code || uit.ean ? uit : null;
+  }
+
+  // Geldt een productregel als 'onvoldoende gespecificeerd' (sanitair als één post zonder merk of type)?
+  function bewijsProduct(t, oms, PD) {
+    if (PD) {
+      var idx = index(PD);
+      if (zoekMerk(t, idx)) return true;
+      var v = codeVensters(oms);
+      if (v.some(function (x) { return idx.codes[x.norm] || idx.ean[x.norm] || (/^\d{13}$/.test(x.norm) && eanGeldig(x.norm)) ||
+        idx.merken.some(function (m) { return m.re.some(function (re) { return heelMatch(re, x.ruw) || heelMatch(re, x.norm); }); }); })) return true;
+      return false;
+    }
+    if (MERKEN_BASIS.some(function (m) { return bevatWoord(t, m) >= 0; })) return true;
+    return codeVensters(oms).some(function (x) { return /^\d{8,13}$/.test(x.norm) || /^\d{3}\d{3}[A-Z0-9]{2}\d$/.test(x.norm); });
+  }
+  function onvoldoendeGespecificeerd(omschrijving, PD) {
+    var t = plat(omschrijving);
+    if (bewijsProduct(t, omschrijving, PD)) return false;
+    if (/\bsanitair\b|sanitairpakket|sanitairset/.test(t)) return true;
+    if (PD) {
+      var c = zoekCategorie(t, index(PD), true);
+      if (c.length >= 3) return true; // drie of meer soorten onderdelen in één bedrag
+    }
+    return false;
+  }
+
+  var RE_ARBEID_START = /^[\W\d]*(?:\d+\s*(?:x|st\.?|stuks?)\s+)?(montage|monteren|plaatsen|installeren|installatie|aansluiten|demonteren|demontage|slopen|sloop|verwijderen|leggen|zetten|tegelzetten|tegelwerk|betegelen|loodgieter\w*|leidingwerk|elektra|arbeid\w*|uren|regie|voorrijkosten|kitten|kitwerk|egaliseren|stucwerk|stuken|waterdicht|afvoeren|aanleggen|aanpassen|verplaatsen|verleggen|frezen|hakken|opruimen|schoonmaken|opleveren|wegwerken|inbouwen|ombouwen|afwerken|afkitten|maken|vervangen)\b/;
+  var RE_ARBEID = /\b(montage|monteren|arbeid\w*|uurloon|uurtarief|loon|legloon|regie|manuren|uren|sloop\w*|slopen|tegelwerk|tegelzetten|leidingwerk|elektra|voorrijkosten|kitwerk|stucwerk|egaliseren|demontage|demonteren|installatiewerk|aansluiten|plaatsen|installeren|zetten|leggen|afvoeren|container|stortkosten|waterdicht\s+maken)\b/;
+  var RE_INCL_MONTAGE = /\b(incl\.?|inclusief|met|en)\s+(de\s+)?(montage|plaatsing|installatie|aansluiten|monteren|plaatsen)\b/;
+  var RE_MATERIAAL = /\b(tegellijm|lijm|voegmiddel|voegsel|voeg|kit|siliconen\w*|kimband|folie|tegelfolie|primer|voorstrijk\w*|egaliseermiddel|cement|zand|profielen|profiel|hoekprofiel\w*|afvoerbuis|buizen|buis|pvc|pex|klein\s*materiaal|bevestigingsmateriaal|hulpmaterialen|hulpmateriaal|materialen|materiaal|gipsplaat\w*|isolatie\w*|metal\s*stud|regelwerk|afdichting\w*|coating|sifon|afvoerset|stelpost\s+tegels)\b/;
+
+  // "product" | "arbeid" | "materiaal" | "overig". PD is optioneel (betere merkherkenning).
+  function soortRegel(omschrijving, PD) {
+    var t = plat(omschrijving).trim();
+    if (letters(t) < 3) return "overig";
+    if (/korting|reductie|kortings/.test(t)) return "overig";
+    var bewijs = bewijsProduct(t, omschrijving, PD);
+    if (RE_ARBEID_START.test(t)) return "arbeid";
+    if (bewijs) return "product";
+    var cat = PD ? zoekCategorie(t, index(PD)) : null;
+    if (onvoldoendeGespecificeerd(omschrijving, PD)) return "materiaal";
+    if (cat && RE_INCL_MONTAGE.test(t)) return "product";
+    if (RE_ARBEID.test(t)) return "arbeid";
+    if (RE_MATERIAAL.test(t)) return "materiaal";
+    if (cat) return "product";
+    var type = bepaalType(omschrijving);
+    if (type === "tegels") return "product";
+    if (type === "sanitair") return PD ? "materiaal" : "product";
+    if (/^(sloop|afval|tegelwerk|waterdicht|vloer|leidingwerk|elektra|vloerverwarming|ventilatie|montage|kitwerk|uren)$/.test(type)) return "arbeid";
+    return "overig";
+  }
+
+  function pct(n) { return Math.abs(Math.round(n)) + "%"; }
+
+  // Geeft { oordeel, band, verschilPct, toelichting, bron, bronnen, prijs, aantal }.
+  // oordeel: "binnen" | "boven" (meer dan 25% boven de bovenkant) | "onder" (meer dan 20% onder de
+  // onderkant) | "onbekend". prijs: per stuk (of per m² bij tegels), inclusief btw.
+  function beoordeelProduct(post, herk, PD, basis) {
+    var uit = { oordeel: "onbekend", band: null, verschilPct: null, toelichting: "", bron: [], bronnen: [], prijs: null, aantal: null };
+    post = post || {};
+    if (!herk || !PD) { uit.toelichting = "Dit product is niet herkend, daarom is er geen marktprijsband."; return uit; }
+    var cats = PD.categorieen || {}, cat = herk.categorie ? cats[herk.categorie] : null, a = herk.artikel;
+    var eenheid = (cat && cat.eenheid) || "st";
+    if (a && a.van != null && a.tot != null && herk.varianten && herk.varianten.length > 1) {
+      // Band van alle uitvoeringen samen: van de laagste 'van' tot de hoogste 'tot'.
+      uit.band = { van: Math.min.apply(null, herk.varianten.map(function (x) { return x.van; })),
+        tot: Math.max.apply(null, herk.varianten.map(function (x) { return x.tot; })), soort: "artikel", varianten: herk.varianten.length };
+      uit.bron = herk.varianten.map(function (x) { return x.bron; }).filter(function (x, i, l) { return x && l.indexOf(x) === i; });
+    } else if (a && a.van != null && a.tot != null) {
+      uit.band = { van: a.van, tot: a.tot, soort: "artikel" };
+      uit.bron = a.bron ? [a.bron] : [];
+    } else if (cat && cat.van != null && cat.tot != null) {
+      uit.band = { van: cat.van, tot: cat.tot, soort: "categorie" };
+      uit.bron = (cat.bron || []).slice();
+    } else {
+      uit.toelichting = "Voor dit product hebben we geen marktprijsband.";
+      return uit;
+    }
+    uit.band.eenheid = eenheid;
+    uit.bronnen = uit.bron.map(function (k) { var b = (PD.bronnen || {})[k] || []; return { sleutel: k, oms: b[0] || k, url: b[1] || null }; });
+    var peil = peildatumTekst(PD), bandTxt = euro(uit.band.van) + "–" + euro(uit.band.tot) + (eenheid === "m2" ? " per m²" : "");
+    uit.match = herk.match;
+    // Tekst volgt band.soort en match: exact = dit artikel, serie = deze serie, anders de categorie.
+    var bandZin = (uit.band.soort === "artikel" && herk.match === "exact" ? "de marktprijsband van dit artikel" :
+      uit.band.soort === "artikel" ? "de marktprijsband van deze serie" + (uit.band.varianten ? " (" + uit.band.varianten + " uitvoeringen)" : "") : "de marktprijsband voor " + (cat ? cat.naam.toLowerCase() : "deze categorie"))
+      + " van " + bandTxt + (peil ? " (peildatum " + peil + ")" : "");
+    var grof = uit.band.soort === "categorie" ? " Het precieze type is niet herkend, dus dit is een grove vergelijking." : "";
+
+    if (post.bedrag == null && post.eenheidsprijs == null) { uit.toelichting = "Er staat geen bedrag bij deze regel. Ter vergelijking: " + bandZin + "."; return uit; }
+    var prijs = null, n = 1;
+    if (eenheid === "m2") {
+      if (post.eenheidsprijs != null && (post.eenheid === "m2" || post.alleenTarief)) prijs = post.eenheidsprijs;
+      else if (post.eenheid === "m2" && post.aantal && post.bedrag != null) prijs = post.bedrag / post.aantal;
+      if (prijs == null) { uit.toelichting = "We kunnen de prijs niet per m² uitrekenen, omdat het aantal m² ontbreekt. Ter vergelijking: " + bandZin + "."; return uit; }
+      n = post.aantal || null;
+    } else {
+      if (post.eenheid && !/^(st|post)$/.test(post.eenheid)) { uit.toelichting = "Deze regel staat in een andere eenheid (" + (EENHEDEN[post.eenheid] || post.eenheid) + "), daarom vergelijken we hem niet per stuk."; return uit; }
+      n = (post.eenheid === "st" && post.aantal) || herk.aantal || 1;
+      prijs = post.eenheidsprijs != null && post.eenheid === "st" ? post.eenheidsprijs : (post.bedrag != null ? post.bedrag / n : post.eenheidsprijs);
+    }
+    var tarief = post.btw != null && post.btw > 0 ? post.btw : 21;
+    if (basis === "excl") prijs = prijs * (1 + tarief / 100);
+    prijs = rond(Math.abs(prijs));
+    uit.prijs = prijs; uit.aantal = n;
+    var perStuk = eenheid === "st" && n > 1 ? " Gerekend per stuk: " + n + " × " + euro(prijs) + " inclusief btw." : "";
+    if (eenheid === "st" && n === 1 && prijs > 0) perStuk = " Gerekend met " + euro(prijs) + " inclusief btw.";
+
+    if (RE_INCL_MONTAGE.test(plat(post.omschrijving || ""))) {
+      uit.toelichting = "Deze regel is inclusief montage. De marktprijsband geldt alleen voor het product, daarom geven we geen oordeel. Ter vergelijking: " + bandZin + ".";
+      return uit;
+    }
+    var van = uit.band.van, tot = uit.band.tot;
+    if (prijs > tot) uit.verschilPct = Math.round((prijs - tot) / tot * 100);
+    else if (prijs < van) uit.verschilPct = -Math.round((van - prijs) / van * 100);
+    else uit.verschilPct = 0;
+
+    if (prijs > tot * 1.25) {
+      uit.oordeel = "boven";
+      uit.toelichting = "Deze regel ligt " + pct(uit.verschilPct) + " boven " + bandZin + "." + perStuk + grof +
+        " Webwinkelprijzen zijn geen installateursprijzen: een installateur rekent vaak een opslag op materiaal, voor garantie, risico en levering. Vraag waaruit het verschil bestaat.";
+    } else if (prijs < van * 0.8) {
+      uit.oordeel = "onder";
+      uit.toelichting = "Deze regel ligt " + pct(uit.verschilPct) + " onder " + bandZin + "." + perStuk + grof +
+        " Check of het hetzelfde type en dezelfde maat is.";
+    } else {
+      uit.oordeel = "binnen";
+      if (uit.verschilPct > 0) uit.toelichting = "Deze regel ligt " + pct(uit.verschilPct) + " boven de bovenkant van " + bandZin +
+        ". Dat valt binnen een gebruikelijke opslag van een installateur op materiaal." + perStuk + grof;
+      else if (uit.verschilPct < 0) uit.toelichting = "Deze regel ligt " + pct(uit.verschilPct) + " onder de onderkant van " + bandZin +
+        ", maar nog binnen de marge." + perStuk + grof;
+      else uit.toelichting = "Deze regel valt binnen " + bandZin + "." + perStuk + grof;
+    }
+    return uit;
+  }
+
+  function voegProductenToe(res, PD) {
+    (res.posten || []).forEach(function (p) {
+      p.soort = soortRegel(p.omschrijving, PD);
+      if (p.soort === "materiaal" && onvoldoendeGespecificeerd(p.omschrijving, PD)) {
+        p.vaag = true;
+        p.vaagTekst = VAAG_TEKST;
+      }
+      if (PD && p.soort === "product") {
+        p.product = herkenProduct(p.omschrijving, PD);
+        p.productOordeel = beoordeelProduct(p, p.product, PD, res.basis);
+      }
+    });
+    return res;
+  }
+
+  /* ------------------------------------------------------------ geanonimiseerde specificatie */
+  // Platte tekst met alleen de posten (omschrijving, aantal, bedrag) en de totalen. Regels met
+  // contact- of bedrijfsgegevens van de aanbieder of de klant vallen weg.
+  var RE_PRIVE = [
+    /[\w.+-]+@[\w-]+\.[\w.]+/,                                         // e-mail
+    /https?:\/\/|\bwww\.|\b[\w-]+\.(nl|com|be|eu|net|org|info)\b/i,    // URL of website
+    /(\+31|0031|\b0)[\s\-]?[1-9](?:[\s\-]?\d){7,8}\b/,                 // telefoonnummer
+    /\b\d{4}\s?[A-Z]{2}\b/,                                            // postcode
+    /\b[A-Z]{2}\d{2}\s?[A-Z]{4}(?:\s?\d){6,}/i,                        // IBAN
+    /\bkvk\b|k\.v\.k|kamer\s+van\s+koophandel/i,                       // KvK
+    /btw[\s\-]?(nr|nummer|id|identificatie)|\bNL\s?\d{9}\s?B\s?\d{2}\b/i, // btw-nummer
+    /t\.a\.v|\btav\b|geachte|offerte\s*-?\s*(nummer|nr)|offertenr|klant\s*-?\s*(nummer|nr)|factuur\s*-?\s*(nummer|nr)|dossier\s*-?\s*(nummer|nr)|projectnummer/i,
+    /\b(dhr|mevr|mw|fam|de\s+heer|mevrouw)\b\.?/i,
+    /\bB\.V\.|\bBV\b|\bV\.O\.F\.|\bVOF\b/
+  ];
+  function prive(t) { return RE_PRIVE.some(function (re) { return re.test(t); }); }
+  function kaalEuro(n) { return euro(n).replace(/ /g, " "); }
+
+  function anoniemeSpecificatie(res) {
+    res = res || {};
+    var basis = res.basis === "incl" ? "incl." : "excl.";
+    var r = ["Specificatie badkamerofferte (zonder naam-, adres- en contactgegevens)", "Bedragen per post " + basis + " btw.", "", "Posten:"];
+    var weg = 0, n = 0;
+    (res.posten || []).forEach(function (p) {
+      var oms = String(p.omschrijving || "").replace(/\s+/g, " ").trim();
+      if (!oms || prive(oms)) { weg++; return; }
+      var delen = [oms];
+      if (p.aantal != null) delen.push(String(p.aantal).replace(".", ",") + " " + (EENHEDEN[p.eenheid] || p.eenheid || "").trim());
+      if (p.eenheidsprijs != null && p.alleenTarief) delen.push(kaalEuro(p.eenheidsprijs) + " per " + (EENHEDEN[p.eenheid] || "eenheid"));
+      if (p.bedrag != null) delen.push(kaalEuro(p.bedrag));
+      var noot = [];
+      if (p.stelpost) noot.push("stelpost");
+      if (p.optie) noot.push("optie, telt niet mee");
+      else if (!p.meetellen) noot.push("telt niet mee");
+      if (p.vaag) noot.push("merk en type niet genoemd");
+      r.push("- " + delen.join(" | ") + (noot.length ? " (" + noot.join(", ") + ")" : ""));
+      n++;
+    });
+    if (!n) r.push("- (geen posten gevonden)");
+    var t = res.totaal || {};
+    r.push("");
+    if (t.excl != null) r.push("Totaal excl. btw: " + kaalEuro(t.excl));
+    if (t.btw != null) r.push("Btw" + ((res.btwTarieven || []).length ? " (" + res.btwTarieven.join("% en ") + "%)" : "") + ": " + kaalEuro(t.btw));
+    if (t.incl != null) r.push("Totaal incl. btw: " + kaalEuro(t.incl));
+    if (weg) r.push("", "(" + weg + " regel" + (weg > 1 ? "s" : "") + " met persoons- of bedrijfsgegevens weggelaten)");
+    return r.join("\n");
+  }
+
   return {
     TYPES: TYPES, EENHEDEN: EENHEDEN, getal: getal, euro: euro, leesOfferte: leesOfferte,
     beoordeelPost: beoordeelPost, checklist: checklist, algemeneVragen: algemeneVragen,
-    bepaalType: bepaalType, controle: controle
+    bepaalType: bepaalType, controle: controle,
+    soortRegel: soortRegel, herkenProduct: herkenProduct, beoordeelProduct: beoordeelProduct,
+    anoniemeSpecificatie: anoniemeSpecificatie, onvoldoendeGespecificeerd: onvoldoendeGespecificeerd,
+    normCode: normCode, VAAG_TEKST: VAAG_TEKST
   };
 });

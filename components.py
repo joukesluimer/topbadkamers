@@ -176,6 +176,7 @@ def footer():
         <li><a href="/tools/">Alle gratis tools</a></li>
         <li><a href="/werkgebied/">Alle plaatsen</a></li>
         <li><a href="/over-ons/">Over Top Badkamers</a></li>
+        <li><a href="/hoe-verdienen-wij-geld/">Hoe verdienen wij geld?</a></li>
         <li><a href="/contact/">Contact</a></li>
       </ul>
       <h2 class="fh" style="margin-top:22px">Badkamerspecialisten</h2>

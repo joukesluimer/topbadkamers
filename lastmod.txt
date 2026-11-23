@@ -229,6 +229,7 @@
 /diensten/toilet-renoveren/	f053b1984cc3	2026-11-23
 /diensten/zakelijk-badkamers/	df1708a71759	2026-11-23
 /fotoverantwoording/	636612cd9c64	2026-11-23
+/hoe-verdienen-wij-geld/	ee4fce2788cd	2026-11-23
 /inspiratie/	f3723eb4b6de	2026-11-23
 /inspiratie/industriele-badkamer/	529810fe07d6	2026-11-23
 /inspiratie/japandi-badkamer/	9751531394f4	2026-11-23
@@ -274,10 +275,10 @@
 /over-ons/	998bf3bbd0e6	2026-11-22
 /prijzen/	1c11052e4fce	2026-11-23
 /privacy/	18ca6da01c0e	2026-11-22
-/tools/	865a33480078	2026-11-23
+/tools/	c87bb136cace	2026-11-23
 /tools/badkamercalculator/	f26cfb4168af	2026-11-23
 /tools/badkamercheck/	c82441336ba4	2026-11-23
-/tools/offertechecker/	51804136c812	2026-11-23
+/tools/offertechecker/	d6766909a00e	2026-11-23
 /tools/renovatieplanner/	041a45a48649	2026-11-23
 /tools/stijlkiezer/	3d614b246e5e	2026-11-23
 /voor-badkamerspecialisten/	e1fdd54e4149	2026-11-22
