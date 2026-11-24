@@ -959,6 +959,14 @@ APP_JS = r'''/* Top Badkamers: formulierlogica, tracking en Supabase-verzending.
         ? "Ik heb al een offerte en zoek een tegenofferte op dezelfde specificatie (zonder mijn gegevens of die van de huidige aanbieder):\n\n" + spec.slice(0, 3000)
         : "Ik heb al een offerte en zoek een vergelijkende offerte. ";
     }
+    if (url.get("via") === "indeling") {
+      var oi = f.querySelector("textarea[name=omschrijving]");
+      var ind = null;
+      try { ind = sessionStorage.getItem("tb_indeling"); } catch (e) {}
+      if (oi && !oi.value) oi.value = ind
+        ? "Ik heb mijn badkamer ingetekend met de indelingsplanner:\n\n" + ind.slice(0, 2000)
+        : "Ik heb mijn badkamer ingetekend met de indelingsplanner. ";
+    }
   });
 })();
 '''
@@ -2009,4 +2017,16 @@ STYLE_CSS += r'''
 /* ---------- Knop in het hoofdmenu: witte tekst op de accentkleur (contrast AA) ---------- */
 .nav a.btn-primary,.nav a.btn-primary:hover{color:#fff}
 .nav a.btn-primary:hover{background:var(--accent-dark)}
+'''
+
+
+# Ronde 3: site-brede micro-interacties (beleving.py)
+from beleving import BELEVING_CSS, BELEVING_JS
+STYLE_CSS += BELEVING_CSS
+APP_JS += BELEVING_JS
+
+# Ronde 3: met "Inspiratie" erbij past het menu niet meer tussen 901 en 1240 px.
+# Daar verbergen we de specialistenlink; die staat ook in de footer.
+STYLE_CSS += r'''
+@media(min-width:901px) and (max-width:1240px){.nav a[href$="/voor-badkamerspecialisten/"]{display:none}}
 '''

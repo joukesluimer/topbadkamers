@@ -1,7 +1,7 @@
 """Badkamerspullen: neutrale kopersgidsen voor sanitair en materialen.
 
 Een overzicht op /badkamerspullen/ en zeven gidsen op /badkamerspullen/<slug>/.
-Wij verkopen niets, krijgen geen commissie en noemen geen merken of winkels.
+Wij verkopen niets en noemen geen merken of winkels. Wij krijgen alleen een vergoeding van badkamerspecialisten als je via ons offertes aanvraagt.
 Alle prijzen zijn richtprijzen voor het product zelf (inclusief 21% btw),
 los van de montage. Elke gids noemt zijn bronnen op de pagina.
 
@@ -641,7 +641,7 @@ def gids_body(g):
       <p class="lead">{g['lead']}</p>
       <div class="callout callout-prijs">
         <p><strong>Richtprijs voor het product:</strong> {eur(laag)} – {eur(hoog)}{(' ' + eenheid) if eenheid else ''}, voor {g['prijs_wat']}. Inclusief btw, los van de montage.</p>
-        <p style="font-size:.93rem;margin-top:8px">Wij verkopen niets en krijgen geen commissie. Deze gids noemt geen merken of winkels.</p>
+        <p style="font-size:.93rem;margin-top:8px">Wij verkopen niets en verwijzen niet naar winkels. Deze gids noemt geen merken of winkels.</p>
       </div>
     </div>
     <div>{illustratie(g['slug'])}</div>
@@ -713,6 +713,7 @@ def gids_body(g):
 
 
 def index_body():
+    import badkamer_spullen2
     cr, cr_ld = crumbs([("Home", "/"), ("Badkamerspullen", None)])
     kaarten = "".join(
         f'<a class="card bs-kaart reveal" href="{BASIS}{g["slug"]}/">{illustratie(g["slug"], klein=True)}'
@@ -727,6 +728,9 @@ def index_body():
         "itemListElement": [
             {"@type": "ListItem", "position": i + 1, "name": g["kort"], "url": f"{BASIS}{g['slug']}/"}
             for i, g in enumerate(GIDSEN)
+        ] + [
+            {"@type": "ListItem", "position": len(GIDSEN) + i + 1, "name": t, "url": p}
+            for i, (p, t, _o) in enumerate(badkamer_spullen2.LINKS)
         ],
     }
     body = f"""{CSS}{cr}
@@ -737,7 +741,7 @@ def index_body():
 </div>
 <div class="wrap">
   <div class="bs-uitleg">
-    <div class="card"><h3>Wij verkopen niets</h3><p>Top Badkamers is geen winkel. We krijgen geen commissie en plaatsen geen links naar webwinkels.</p></div>
+    <div class="card"><h3>Wij verkopen niets</h3><p>Top Badkamers is geen winkel en plaatst geen links naar webwinkels. We krijgen alleen een vergoeding van specialisten als je via ons offertes aanvraagt.</p></div>
     <div class="card"><h3>Richtprijzen</h3><p>De prijzen zijn richtprijzen voor de consument, inclusief btw, voor het product zelf en los van de montage.</p></div>
     <div class="card"><h3>Met bronnen</h3><p>Elke gids noemt zijn bronnen, zoals kostenartikelen, Milieu Centraal en Kiwa.</p></div>
   </div>
@@ -745,6 +749,10 @@ def index_body():
 <section class="section soft"><div class="wrap">
   <h2>De gidsen</h2>
   <div class="grid g3">{kaarten}</div>
+</div></section>
+<section class="section"><div class="wrap">
+  <h2>Meer kopersgidsen</h2>
+  {badkamer_spullen2.index_kaarten()}
 </div></section>
 <section class="section"><div class="wrap narrow prose">
   <h2>Hoe komen de richtprijzen tot stand?</h2>

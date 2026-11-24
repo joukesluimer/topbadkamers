@@ -1,4 +1,4 @@
-"""Kostenpagina's voor badkamerwerk: /kosten/ en veertien pagina's per klus.
+"""Kostenpagina's voor badkamerwerk: /kosten/ en een pagina per klus.
 
 Elke pagina heeft een snel antwoord, een prijstabel per variant, wat de prijs
 bepaalt, een rekenvoorbeeld, btw-uitleg, besparingstips, wanneer je een
@@ -1035,6 +1035,10 @@ KOSTEN = [
                    ("/kennisbank/verbouwen-in-vve/", "Verbouwen in een VvE: waar let je op?")],
     },
 ]
+
+from badkamer_kosten3 import KOSTEN3, B3
+B.update(B3)
+KOSTEN += KOSTEN3
 
 KOSTEN_BY_SLUG = {k["slug"]: k for k in KOSTEN}
 

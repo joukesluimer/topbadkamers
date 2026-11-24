@@ -132,6 +132,7 @@ def header():
     <a href="/diensten/"><span class="nav-ic">{icon('druppel', 20)}</span>Diensten</a>
     <a href="/tools/offertechecker/" class="nav-check"><span class="nav-ic">{icon('form', 20)}</span>Offerte checken</a>
     <a href="/kosten/"><span class="nav-ic">{icon('euro', 20)}</span>Wat kost het?</a>
+    <a href="/inspiratie/"><span class="nav-ic">{icon('bad', 20)}</span>Inspiratie</a>
     <a href="/kennisbank/"><span class="nav-ic">{icon('check', 20)}</span>Kennisbank</a>
     <a href="/voor-badkamerspecialisten/"><span class="nav-ic">{icon('users', 20)}</span>Voor badkamerspecialisten</a>
     <a class="btn btn-primary" href="/offerte-aanvragen/">Offertes aanvragen</a>
@@ -172,8 +173,13 @@ def footer():
         <li><a href="/badkamerspullen/">Badkamerspullen kiezen</a></li>
         <li><a href="/kennisbank/">Kennisbank</a></li>
         <li><a href="/inspiratie/">Inspiratie: badkamerstijlen</a></li>
+        <li><a href="/inspiratie/voor-en-na/">Voor en na</a></li>
+        <li><a href="/materialen/">Materialen vergelijken</a></li>
+        <li><a href="/badkamer-voor/">Badkamer voor wie?</a></li>
+        <li><a href="/zo-verloopt-je-verbouwing/">Zo verloopt je verbouwing</a></li>
         <li><a href="/tools/offertechecker/">Badkamerofferte checken</a></li>
         <li><a href="/tools/badkamercalculator/">Badkamercalculator</a></li>
+        <li><a href="/tools/indelingsplanner/">Indelingsplanner</a></li>
         <li><a href="/tools/">Alle gratis tools</a></li>
         <li><a href="/werkgebied/">Alle plaatsen</a></li>
         <li><a href="/over-ons/">Over Top Badkamers</a></li>

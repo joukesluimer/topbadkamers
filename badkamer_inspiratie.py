@@ -591,6 +591,15 @@ def _stijlpagina(s, write, today):
 # ---------------------------------------------------------------------------
 
 def _overzicht(write):
+    import badkamer_inspiratie2 as _i2
+    from render_stijl_data2 import RENDERS_STIJL2
+    from components import render_beeld
+    kaarten2 = "".join(
+        f'<a class="bi-kaart" href="{PAD}{s2["slug"]}/">'
+        f'<figure class="bi-fig">{render_beeld(RENDERS_STIJL2[s2["slug"]], "(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 380px")}'
+        f'<figcaption class="bi-label">Illustratie (3D-render)</figcaption></figure>'
+        f'<div class="bi-kaart-tekst"><h2>{s2["naam"]}</h2><p>{s2["intro"].split(". ")[0]}.</p><span class="bi-go">Bekijk de stijl →</span></div></a>'
+        for s2 in _i2.STIJLEN)
     cr, cr_ld = crumbs([("Home", "/"), ("Inspiratie", None)])
     kaarten = "".join(
         f'<a class="bi-kaart" href="{PAD}{s["slug"]}/">'
@@ -609,11 +618,14 @@ def _overzicht(write):
 <section class="section-sm"><div class="wrap">
   <div class="narrow prose">
     <span class="badge">Inspiratie</span>
-    <h1>Badkamer inspiratie: zes stijlen in beeld</h1>
+    <h1>Badkamer inspiratie: twaalf stijlen in beeld</h1>
     <p class="lead">Modern, landelijk, industrieel, japandi, klassiek of juist een slimme kleine badkamer. Per stijl zie je een illustratie en lees je de kenmerken, de materialen en kleuren, wat het ongeveer kost en waar je op let.</p>
     <p>De beelden zijn 3D-illustraties die wij zelf hebben gemaakt, geen foto's van echte badkamers. Wij voeren zelf geen werk uit, maar brengen je in contact met maximaal drie badkamerspecialisten uit je regio.</p>
   </div>
   <div class="bi-galerij">{kaarten}</div>
+  <div class="narrow prose" style="margin-top:46px"><h2>Meer stijlen: materiaal en sfeer</h2>
+    <p>Van licht Scandinavisch tot marmer, terrazzo en een wellnessbadkamer met regendouche. Wil je eerst zien wat een renovatie doet? Bekijk de <a href="/inspiratie/voor-en-na/">voor-en-na-voorbeelden</a>.</p></div>
+  <div class="bi-galerij">{kaarten2}</div>
   <div class="narrow prose" style="margin-top:42px">
     <h2>Hoe kies je een stijl?</h2>
     <p>Verzamel voorbeelden van badkamers die je mooi vindt en kijk wat ze gemeen hebben: kleur, materiaal of vorm. Kies daarna één basis en hooguit één of twee accenten. Houd ook rekening met de rest van je huis, met onderhoud en met hoe lang je er wilt blijven wonen.</p>
@@ -624,11 +636,13 @@ def _overzicht(write):
 {cta_blok("Je stijl gevonden?", "Vraag gratis en vrijblijvend offertes aan bij maximaal drie badkamerspecialisten uit jouw regio en vergelijk ze naast elkaar.")}"""
     items = [{"@type": "ListItem", "position": i + 1, "url": SITE["url"] + f"{PAD}{s['slug']}/", "name": s["naam"]}
              for i, s in enumerate(STIJLEN)]
+    items += [{"@type": "ListItem", "position": len(items) + i + 1, "url": SITE["url"] + p, "name": t}
+              for i, (p, t, _o) in enumerate(_i2.LINKS)]
     lijst_ld = {"@context": "https://schema.org", "@type": "CollectionPage", "@id": SITE["url"] + PAD,
-                "name": "Badkamer inspiratie: zes stijlen in beeld", "inLanguage": "nl-NL",
+                "name": "Badkamer inspiratie: twaalf stijlen in beeld", "inLanguage": "nl-NL",
                 "mainEntity": {"@type": "ItemList", "itemListElement": items}}
-    write(PAD, page(title("Badkamer inspiratie: zes stijlen in beeld"),
-                    "Inspiratie voor je badkamer: modern, landelijk, industrieel, japandi, klassiek en klein. Met illustraties, kenmerken, materialen, kleuren en kosten per stijl.",
+    write(PAD, page(title("Badkamer inspiratie: twaalf stijlen in beeld"),
+                    "Inspiratie voor je badkamer: twaalf stijlen, van modern en japandi tot marmer, terrazzo en wellness. Met illustraties, kenmerken, materialen, kleuren en kosten per stijl.",
                     PAD, body, [cr_ld, lijst_ld, faq_ld]), prio=0.8)
 
 

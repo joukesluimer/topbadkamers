@@ -76,6 +76,11 @@ def incl(d):
 # HOME
 # ===========================================================================
 
+import beleving
+from badkamer_voorna import voorna_slider, VOORNA_CSS, VOORNA_JS
+from render_voorna_data import PAAR_BY_SLUG
+
+
 def build_home():
     kern = [p for p in PLAATSEN if p["prio"] == 1]
     chips = "".join(f'<li><a href="/badkamerspecialist/{p["slug"]}/">Badkamer {p["naam"]}</a></li>' for p in kern)
@@ -150,7 +155,7 @@ def build_home():
       <p><a class="btn btn-primary btn-lg" href="/tools/offertechecker/">Check je offerte</a> <a class="btn btn-ghost" href="/hoe-verdienen-wij-geld/">Hoe verdienen wij geld?</a></p>
       <p style="font-size:.9rem;color:#5b6d71">Wij verkopen geen sanitair en verwijzen niet naar winkels. De check is gratis; een specialist betaalt ons alleen als je via ons een offerte aanvraagt.</p>
     </div>
-    <div>{voorbeeld}</div>
+    <div>{beleving.hero_visual()}</div>
   </div>
 </div>
 </section>"""
@@ -288,8 +293,17 @@ def build_home():
         "publisher": {"@id": SITE["url"] + "/#organization"},
     }
 
-    body = (hero + check_sec + hoe_werkt_het() + beeld_sec + waarom_blok() + diensten_sec + prijs_sec + tips_sec
-            + regio_sec + faq_html + vakmensen_sec + cta_blok())
+    voorna_sec = f"""{VOORNA_CSS}<section class="section soft"><div class="wrap narrow">
+  <span class="badge">Voor en na</span>
+  <h2>Van jaren 80 naar nu: sleep en zie het verschil</h2>
+  <p>Dezelfde kleine badkamer, vanuit dezelfde hoek: eerst met bad en douchegordijn, daarna met een inloopdouche. Sleep de schuif om te vergelijken.</p>
+  {voorna_slider(PAAR_BY_SLUG["kleine-badkamer"], "(max-width: 860px) 100vw, 820px")}
+  <p style="margin-top:14px"><a class="link" href="/inspiratie/voor-en-na/">Bekijk alle vier de voor-en-na-voorbeelden →</a></p>
+</div></section>{VOORNA_JS}"""
+
+    body = (hero + check_sec + hoe_werkt_het() + voorna_sec + beleving.sectie_stijlen() + beleving.sectie_droombadkamer()
+            + beleving.sectie_ontdek() + waarom_blok() + diensten_sec + prijs_sec + beleving.sectie_cijfers()
+            + tips_sec + regio_sec + faq_html + vakmensen_sec + cta_blok())
 
     write("/", page(
         "Badkamerofferte vergelijken en checken | Top Badkamers",
@@ -1317,9 +1331,9 @@ Sitemap: {SITE['url']}/sitemap.xml
 
 import importlib
 
-CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen", "badkamer_inspiratie", "badkamer_verdienmodel"]
+CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen", "badkamer_spullen2", "badkamer_inspiratie", "badkamer_inspiratie2", "badkamer_verdienmodel", "badkamer_verloop", "badkamer_materialen", "badkamer_doelgroep", "badkamer_voorna"]
 TOOL_MODULES = ["badkamer_offertecheck", "badkamer_calculator", "badkamer_check",
-                "badkamer_stijl", "badkamer_planner"]
+                "badkamer_stijl", "badkamer_planner", "badkamer_indeling"]
 
 
 def _laad(namen):

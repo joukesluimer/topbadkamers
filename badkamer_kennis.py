@@ -15,8 +15,9 @@ from data import SITE, DIENSTEN
 from components import page, crumbs, faq_blok, cta_blok, cta_midden, stappen_blok, title, icon
 from badkamer_kennis_artikelen import ARTIKELEN as _ARTIKELEN1
 from badkamer_kennis_artikelen2 import ARTIKELEN2
+from badkamer_kennis_artikelen3 import ARTIKELEN3
 
-ARTIKELEN = _ARTIKELEN1 + ARTIKELEN2
+ARTIKELEN = _ARTIKELEN1 + ARTIKELEN2 + ARTIKELEN3
 
 GEPUBLICEERD = "2026-11-23"
 

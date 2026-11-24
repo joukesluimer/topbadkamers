@@ -57,6 +57,8 @@ for url, html in pages.items():
         if href.startswith("/assets/"):
             continue
         target = href if href.endswith("/") else href + "/"
+        if "' +" in href:  # pad dat in inline JS wordt samengesteld
+            continue
         if href in (".", ""):
             continue
         if target not in exists and href not in exists:
