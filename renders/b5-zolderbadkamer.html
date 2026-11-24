@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · voor en na · zolderbadkamer</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './b5-common.js';
+const { THREE } = C;
+C.pageStyle();
+
+// Zolderbadkamer van 2,8 x 2,4 m met een schuin dak aan de rechterkant (knieschot 1,0 m).
+// ?v=voor: grenen schrootjes, douchecabine met kunststof panelen, ingebouwd bad onder de schuinte, wastafel op zuil.
+// ?v=na: wit gestuct dak, inloopdouche, vrijstaand bad onder het dakraam, zwevend meubel.
+const V = new URLSearchParams(location.search).get('v') === 'na' ? 'na' : 'voor';
+const room = { w: 2.8, d: 2.4, h: 2.5 };
+const kneeH = 1.0, xTop = 1.4;
+const { renderer, scene, camera } = C.setup({ exposure: 0.88, fov: 60 });
+const wx = 1.0; // midden wastafel aan de achterwand
+
+if (V === 'voor') {
+  const beige = C.tileMaterial({ pattern: 'grid', tw: 0.15, th: 0.15, joint: 0.003, base: '#dccaa6', varL: 0.025, grout: '#f0e9db', gloss: 0.14, seed: 541, periodX: 1.2, periodY: 1.2, bevel: 2.5, surface: C.DECOR.vlek('120,80,40'), clearcoat: 0.6, normalScale: 0.7 });
+  const bruin = C.tileMaterial({ pattern: 'grid', tw: 0.15, th: 0.15, joint: 0.003, base: '#8a5a38', varL: 0.04, grout: '#e3dccd', gloss: 0.12, seed: 542, periodX: 0.9, periodY: 0.9, bevel: 2.5, clearcoat: 0.7 });
+  const vloer = C.tileMaterial({ pattern: 'grid', tw: 0.2, th: 0.2, joint: 0.004, base: '#6e4630', varL: 0.04, grout: '#4a3a2e', gloss: 0.4, seed: 543, periodX: 1.0, periodY: 1.0, bevel: 2, speck: 0.05 });
+  const verf = C.plasterMaterial('#efe6cf', { cloud: 0.04 });
+  const schrootjes = C.woodMaterial({ base: '#c99a62', seed: 544, size: 0.6, planks: 6, gaps: true, contrast: 0.22, roughness: 0.45, clearcoat: 0.4 });
+  C.floorCeil(scene, room, vloer, schrootjes);
+  C.wall(scene, room, 'back', beige, verf, 1.2, []);
+  C.wall(scene, room, 'left', beige, verf, 1.2, []);
+  C.wall(scene, room, 'right', beige, beige, room.h, []);
+  scene.add(C.boxMM(0, 1.2, 0, room.w, 1.215, 0.006, bruin));
+  scene.add(C.boxMM(0, 1.2, 0, 0.006, 1.215, room.d, bruin));
+  C.slope(scene, room, room.w, kneeH, xTop, schrootjes);
+  C.dakraam(scene, room.w, kneeH, xTop, room.h, 1.45, 0.55, { frame: '#9a6a3c', sunDir: [0.9, 1.1, 0.35], sun: 2.4, fill: 1.2, glowI: 1.3 });
+  // douchecabine 80 x 80 met verhoogde douchebak en kunststof reliëfpanelen in aluminium profiel
+  const bakMat = C.oldCeramic(C.OUD.pergamon);
+  scene.add(C.boxMM(0, 0, 0, 0.82, 0.1, 0.82, bakMat));
+  const alu = C.metalMaterial('rvs');
+  const paneel = new THREE.MeshPhysicalMaterial({ color: '#d9cfb8', roughness: 0.45, transparent: true, opacity: 0.55, side: THREE.DoubleSide, envMapIntensity: 0.6, depthWrite: false });
+  const p1 = C.box(0.006, 1.75, 0.8, paneel, 0.81, 0.1 + 0.875, 0.41); scene.add(p1);
+  const p2 = C.box(0.8, 1.75, 0.006, paneel, 0.41, 0.1 + 0.875, 0.81); scene.add(p2);
+  for (const [x0, z0, x1, z1] of [[0.79, 0, 0.83, 0.04], [0.79, 0.79, 0.83, 0.83], [0, 0.79, 0.04, 0.83]]) scene.add(C.boxMM(x0, 0.1, z0, x1, 1.86, z1, alu));
+  scene.add(C.boxMM(0.79, 1.83, 0, 0.83, 1.86, 0.83, alu)); scene.add(C.boxMM(0, 1.83, 0.79, 0.83, 1.86, 0.83, alu));
+  scene.add(C.boxMM(0.06, 0.95, 0.79, 0.8, 0.97, 0.83, alu));
+  const chroom = C.metalMaterial('chroom');
+  scene.add(C.cyl(0.011, 0.011, 0.7, chroom, 0.42, 1.5, 0.04, 16));
+  scene.add(C.cyl(0.016, 0.02, 0.2, chroom, 0.42, 1.7, 0.075, 20));
+  // ingebouwd bad onder de schuinte, langs het knieschot
+  const bad = C.inbouwBad({ L: 1.7, W: 0.75, H: 0.56, bathMat: C.oldCeramic(C.OUD.pergamon), front: beige, endRight: true });
+  bad.rotation.y = -Math.PI / 2; bad.position.set(room.w, 0, 0.0 + 0.85); scene.add(bad);
+  { const k = C.tap('kruis', 'chroom', 0, 0.56, 0.0, 0.12); k.rotation.y = -Math.PI / 2; k.position.set(room.w - 0.03, 0, 0.35); scene.add(k); }
+  // wastafel op zuil met spiegelkastje en tl-buis
+  const wt = C.zuilWastafel(C.oldCeramic(C.OUD.pergamon), { w: 0.55, d: 0.42 }); wt.position.set(wx, 0, 0); scene.add(wt);
+  scene.add(C.tap('kruis', 'chroom', wx, 0.84, 0.06, 0.12));
+  scene.add(C.box(0.5, 0.55, 0.13, C.matteMaterial('#f1ece0', 0.35), wx, 1.5, 0.065));
+  const sp = C.mirror(0.46, 0.5, 'rect', null); sp.position.set(wx, 1.5, 0.13); scene.add(sp);
+  C.tlBuis(scene, wx, 1.86, 0.02, 0.5, { intensity: 1.4, shadow: true });
+  scene.add(C.rbox(0.6, 0.012, 0.42, 0.02, C.fabricMaterial('#9a6b45'), 1.75, 0.006, 1.2));
+  scene.add(C.towel(C.fabricMaterial('#c78a4a'), 0.35, 0.5, 0.4, 1.3, 0.06));
+  C.bolLamp(scene, 0.7, 1.4, room.h, '#ffdcae', 2.2);
+  scene.add(new THREE.HemisphereLight('#f4efe2', '#6a5a48', 0.3));
+} else {
+  const wit = C.tileMaterial({ pattern: 'grid', tw: 0.3, th: 0.6, joint: 0.002, base: '#efece6', varL: 0.008, grout: '#d9d6d0', gloss: 0.12, seed: 551, periodX: 1.2, periodY: 1.2, bevel: 1.5, clearcoat: 0.5, normalScale: 0.5 });
+  const zellige = C.tileMaterial({ pattern: 'grid', tw: 0.1, th: 0.1, joint: 0.002, base: '#e9e2d3', varL: 0.035, varS: 0.03, grout: '#d9d2c4', gloss: 0.06, seed: 552, periodX: 0.8, periodY: 0.8, wobble: 0.22, clearcoat: 1, normalScale: 0.9 });
+  const vloer = C.tileMaterial({ pattern: 'half', tw: 1.2, th: 0.2, joint: 0.002, base: '#b89470', varL: 0.04, grout: '#8f7a64', gloss: 0.45, seed: 553, surface: C.SURF.hout, periodX: 2.4, periodY: 1.2, normalScale: 0.4 });
+  const verf = C.plasterMaterial('#f3f1ec', { cloud: 0.02 });
+  C.floorCeil(scene, room, vloer, verf);
+  C.wall(scene, room, 'back', (u) => (u < 0.95 ? zellige : verf), verf, room.h, [], 0.12, [0.95]);
+  C.wall(scene, room, 'left', (u) => (u < 0.95 ? zellige : verf), verf, room.h, [], 0.12, [0.95]);
+  C.wall(scene, room, 'right', verf, verf, room.h, []);
+  C.slope(scene, room, room.w, kneeH, xTop, verf);
+  C.dakraam(scene, room.w, kneeH, xTop, room.h, 1.45, 0.55, { sunDir: [0.9, 1.1, 0.35], sun: 3.0, fill: 1.5, glowI: 1.5 });
+  // inloopdouche in de hoek, plat met de vloer, glaswand in zwart profiel
+  scene.add(C.shower('messing', 0.45, room.h, { armY: 2.12, reach: 0.34, headR: 0.14, mixY: 1.05, handX: 0.28, mixW: 0.3, exposed: true }));
+  scene.add(C.drain(0.45, 0.08, 0.7, 'messing'));
+  const glas = C.glassPanel({ len: 0.95, h: 2.0, profileMat: C.metalMaterial('zwart'), profileW: 0.018, bars: [] });
+  glas.position.set(0.95, 0, 0); scene.add(glas);
+  // vrijstaand bad onder het dakraam
+  const bad = C.bath({ L: 1.65, W: 0.76, H: 0.58 }); bad.rotation.y = Math.PI / 2; bad.position.set(2.2, 0, 1.0); scene.add(bad);
+  scene.add(C.bathFiller('messing', 1.7, 1.0, Math.PI / 2));
+  // zwevend eiken meubel met opzetkom, ronde spiegel en wandlampjes
+  const eiken = C.woodMaterial({ base: '#b88c5e', seed: 554, size: 0.6, contrast: 0.18, roughness: 0.5 });
+  const meubel = C.vanity({ type: 'zwevend', w: 0.8, d: 0.45, h: 0.38, top: 0.86, mat: eiken, blad: C.matteMaterial('#e9e4da', 0.35), sink: 'opzet', bowlShape: 'rond', bowlR: 0.19, drawers: 1, metal: 'messing', handle: null });
+  meubel.position.set(wx + 0.25, 0, 0); scene.add(meubel);
+  scene.add(C.tap('wand', 'messing', wx + 0.25, 0.86, 0, 0.17));
+  const sp = C.mirror(0.6, 0.6, 'rond', C.metalMaterial('messing'), 0.012); sp.position.set(wx + 0.25, 1.55, 0); scene.add(sp);
+  C.sconce(scene, 'messing', wx + 0.25 - 0.48, 1.6, 0, '#ffd2a0', 0.7);
+  C.sconce(scene, 'messing', wx + 0.25 + 0.48, 1.6, 0, '#ffd2a0', 0.7);
+  scene.add(C.plant(2.62, 2.05, { h: 0.5, leaves: 12 }));
+  scene.add(C.towelStack([C.fabricMaterial('#e9e4da'), C.fabricMaterial('#cdbfa8'), C.fabricMaterial('#e9e4da')], 2.6, 0, 0.2, 0.3, 0.22));
+  C.spot(scene, 0.45, 0.45, room.h, C.KELVIN.neutraal, 4, { shadow: true, angle: 0.85 });
+  C.spot(scene, 1.0, 1.5, room.h, C.KELVIN.neutraal, 3, { shadow: true, angle: 0.9 });
+  scene.add(new THREE.HemisphereLight('#f2f4f6', '#6a6a68', 0.3));
+}
+
+C.archCamera(camera, [1.45, 1.5, 3.4], [1.45, 0, 0], -0.1);
+await C.finish(renderer, scene, camera, `b5-zolderbadkamer-${V}`, { aoRadius: 0.3, aoIntensity: 1.1, envScale: 0.6 });
+</script>
+</body>
+</html>

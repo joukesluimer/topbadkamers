@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · scandinavische badkamer</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './b4-common.js';
+const { THREE } = C;
+C.pageStyle();
+
+// Scandinavische badkamer: wit en licht, staande witte tegels 7,5 x 30 cm, licht eiken houtlook-vloer,
+// licht eiken meubel, geborsteld rvs, grijsblauwe en lichtgrijze accenten, veel daglicht.
+const room = { w: 3.2, d: 3.6, h: 2.6 };
+const { renderer, scene, camera } = C.setup({ exposure: 1.0, fov: 56 });
+
+const staand = C.tileMaterial({ pattern: 'grid', tw: 0.075, th: 0.3, joint: 0.0018, base: '#f5f4f0', varL: 0.012, grout: '#e2e0db', gloss: 0.07, seed: 11, bevel: 3, periodX: 0.6, periodY: 0.6, clearcoat: 0.6, normalScale: 0.8 });
+const verf = C.plasterMaterial('#d9e0e3', { cloud: 0.02, seed: 5 });
+const vloer = C.tileMaterial({ pattern: 'half', tw: 1.2, th: 0.2, joint: 0.0015, base: '#d4b48c', varL: 0.06, varS: 0.06, grout: '#a88d70', gloss: 0.45, seed: 13, surface: C.SURF.hout, periodX: 2.4, periodY: 1.2, normalScale: 0.4 });
+const plafond = C.plasterMaterial('#f5f5f3', { cloud: 0.01 });
+const eiken = C.woodMaterial({ base: '#d9b88f', seed: 17, size: 0.9, contrast: 0.11, roughness: 0.6 });
+const wit = new THREE.MeshPhysicalMaterial({ color: '#f4f3ef', roughness: 0.45, clearcoat: 0.3, envMapIntensity: 0.7 });
+
+C.floorCeil(scene, room, vloer, plafond);
+const raam = { u0: 1.5, u1: 2.4, v0: 1.25, v1: 2.3 };
+const nis = { u0: 0.25, u1: 0.8, v0: 1.0, v1: 1.3 };
+C.wall(scene, room, 'back', staand, (u) => (u < 1.02 ? staand : verf), 1.25, [nis], 0.12, [1.02]);
+C.wall(scene, room, 'left', staand, (u) => (u < 1.0 ? staand : verf), 1.25, [raam], 0.12, [1.0]);
+C.wall(scene, room, 'right', verf, verf, room.h, []);
+C.niche(scene, nis, staand, 0.09);
+C.windowLight(scene, room, 'left', raam, { frame: '#f4f3ef', reveal: verf, sill: eiken, sunDir: [-1.0, 1.0, 0.5], sun: 6.0, fill: 1.6, glowI: 1.55 });
+
+scene.add(C.shower('rvs', 0.52, room.h, { armY: 2.15, reach: 0.4, headR: 0.15, mixY: 1.05, handX: 0.3 }));
+scene.add(C.drain(0.52, 0.1, 0.8, 'rvs'));
+const glas = C.glassPanel({ len: 1.0, h: 2.0, wallProfile: C.metalMaterial('rvs'), stab: C.metalMaterial('rvs'), stabLen: 1.02 });
+glas.position.set(1.02, 0, 0); scene.add(glas);
+scene.add(C.bottle(C.matteMaterial('#f1efea', 0.4), 0.4, 1.0, -0.045, 0.16, 0.028));
+scene.add(C.bottle(C.matteMaterial('#8ea0ad', 0.4), 0.5, 1.0, -0.045, 0.13, 0.026));
+
+const mx = 1.98;
+const meubel = C.vanity({ type: 'zwevend', w: 1.0, d: 0.46, h: 0.4, top: 0.86, mat: eiken, blad: wit, bladT: 0.03, sink: 'opzet', bowlR: 0.2, bowlShape: 'rond', bowlScale: [1.0, 0.85], drawers: 1, handle: null });
+meubel.position.set(mx, 0, 0); scene.add(meubel);
+scene.add(C.tap('hoog', 'rvs', mx, 0.86, 0.07, 0.19));
+const sp = C.mirror(0.66, 0.66, 'rond', eiken, 0.03); sp.position.set(mx, 1.6, 0); scene.add(sp);
+C.sconce(scene, 'rvs', mx + 0.52, 1.62, 0, C.KELVIN.neutraal, 0.6);
+scene.add(C.bottle(C.matteMaterial('#c9cfd3', 0.5), mx + 0.34, 0.86, 0.14, 0.13, 0.03));
+// ladderrek met handdoeken en een krukje
+const ladder = new THREE.Group();
+for (const sx of [-0.2, 0.2]) { const p = C.box(0.035, 1.75, 0.035, eiken, sx, 0.87, 0); p.rotation.x = -0.1; ladder.add(p); }
+for (let i = 0; i < 4; i++) ladder.add(C.box(0.4, 0.025, 0.025, eiken, 0, 0.45 + i * 0.36, -0.045 - i * 0.036));
+ladder.add(C.towel(C.fabricMaterial('#9fb1bd'), 0.3, 0.3, 0, 1.17, -0.09));
+ladder.add(C.towel(C.fabricMaterial('#ece9e2'), 0.26, 0.22, 0, 0.81, -0.075));
+ladder.position.set(2.88, 0, 0.27); scene.add(ladder);
+// badmat voor het meubel
+scene.add(C.rbox(0.8, 0.012, 0.5, 0.005, C.fabricMaterial('#c9d2d8'), 1.98, 0.006, 0.95));
+scene.add(C.plant(3.0, 1.0, { potMat: C.matteMaterial('#f2f1ed', 0.5), h: 0.65, seed: 21, potR: 0.13 }));
+
+const wc = C.toilet(); wc.rotation.y = Math.PI / 2; wc.position.set(0, 0, 2.0); scene.add(wc);
+const plate = C.flushPlate('rvs', 0, 1.05, 0); plate.rotation.y = Math.PI / 2; plate.position.set(0, 0, 2.0); scene.add(plate);
+
+const lt = C.KELVIN.neutraal;
+C.spot(scene, 0.52, 0.35, room.h, lt, 5, { shadow: true, angle: 0.85 });
+C.spot(scene, mx, 0.3, room.h, lt, 4.5, { shadow: true, angle: 0.85 });
+C.spot(scene, 1.6, 1.9, room.h, lt, 3.5, {});
+scene.add(new THREE.HemisphereLight('#f3f5f7', '#7a7268', 0.3));
+
+if (C.VIEW === 2) C.viewCamera(camera, [1.75, 1.25, 1.75], [2.1, 0, 0], -0.05, 46);
+else C.viewCamera(camera, [2.8, 1.35, 3.45], [0.95, 0, 0.25], -0.035);
+await C.finish(renderer, scene, camera, `b4-scandinavische-badkamer-${C.VIEW}`, { aoRadius: 0.4, aoIntensity: 1.1, envScale: 0.6 });
+</script>
+</body>
+</html>

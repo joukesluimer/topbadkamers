@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · marmer badkamer</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './b4-common.js';
+const { THREE } = C;
+C.pageStyle();
+
+// Marmer badkamer: grote platen wit marmer met grijze aders op de wanden, marmeren vloertegels,
+// walnoten zwevend meubel met marmeren blad, vrijstaand bad onder het raam, goudkleurige kranen.
+const room = { w: 3.4, d: 3.8, h: 2.7 };
+const { renderer, scene, camera } = C.setup({ exposure: 0.95, fov: 56 });
+
+const marmerWand = C.tileMaterial({ pattern: 'grid', tw: 1.2, th: 2.7, joint: 0.0012, base: '#f2f1ee', varL: 0.006, grout: '#dddcd8', gloss: 0.09, seed: 401, surface: C.SURF.marmerRijk({ n: 2, vein: '96,98,104', angle: 1.2, strength: 0.85 }), periodX: 2.4, periodY: 2.7, ny: 1, clearcoat: 0.35, normalScale: 0.15, ppm: 700 });
+const marmerVloer = C.tileMaterial({ pattern: 'grid', tw: 0.8, th: 0.8, joint: 0.0015, base: '#eeedea', varL: 0.008, grout: '#d6d4cf', gloss: 0.12, seed: 403, surface: C.SURF.marmerRijk({ n: 2, vein: '98,100,106', strength: 0.9 }), periodX: 1.6, periodY: 1.6, clearcoat: 0.5, normalScale: 0.2 });
+const plafond = C.plasterMaterial('#f4f3f0', { cloud: 0.012 });
+const walnoot = C.woodMaterial({ base: '#6e4b33', seed: 41, size: 0.8, contrast: 0.2, roughness: 0.45, clearcoat: 0.3 });
+const goud = C.metalMaterial('goud');
+
+C.floorCeil(scene, room, marmerVloer, plafond);
+const raam = { u0: 1.75, u1: 2.75, v0: 1.25, v1: 2.35 };
+const nis = { u0: 0.25, u1: 0.85, v0: 1.0, v1: 1.35 };
+C.wall(scene, room, 'back', marmerWand, marmerWand, room.h, [nis]);
+C.wall(scene, room, 'left', marmerWand, marmerWand, room.h, [raam]);
+C.wall(scene, room, 'right', marmerWand, marmerWand, room.h, []);
+C.niche(scene, nis, marmerVloer, 0.09);
+C.windowLight(scene, room, 'left', raam, { frame: '#e9e7e2', reveal: marmerWand, sill: marmerVloer, sunDir: [-1.0, 1.05, 0.45], sun: 5.0, fill: 1.3, glowI: 1.45 });
+
+// inloopdouche linksachter met goud profiel
+scene.add(C.shower('goud', 0.55, room.h, { armY: 2.2, reach: 0.42, headR: 0.16, mixY: 1.05, handX: 0.3 }));
+scene.add(C.drain(0.55, 0.1, 0.8, 'goud'));
+const glas = C.glassPanel({ len: 1.1, h: 2.05, wallProfile: goud, stab: goud, stabLen: 1.08, stabSide: 1 });
+glas.position.set(1.1, 0, 0); scene.add(glas);
+scene.add(C.bottle(C.matteMaterial('#efe9df', 0.35), 0.42, 1.0, -0.045, 0.17, 0.028, goud));
+scene.add(C.bottle(C.matteMaterial('#5d564d', 0.35), 0.53, 1.0, -0.045, 0.14, 0.026, goud));
+
+// vrijstaand bad onder het raam
+const bad = C.bath({ L: 1.6, W: 0.76, H: 0.58 });
+bad.rotation.y = Math.PI / 2; bad.position.set(0.6, 0, 2.2); scene.add(bad);
+scene.add(C.bathFiller('goud', 0.6, 1.25, 0));
+scene.add(C.stool(walnoot, 1.3, 1.55, 0.45, 0.15));
+scene.add(C.towelStack([C.fabricMaterial('#f1ece3'), C.fabricMaterial('#d8cfc2')], 1.3, 0.45, 1.55, 0.26, 0.2));
+
+// zwevend walnoten meubel met marmeren blad
+const mx = 2.45;
+const meubel = C.vanity({ type: 'zwevend', w: 1.3, d: 0.5, h: 0.42, top: 0.88, mat: walnoot, blad: marmerVloer, bladT: 0.04, sink: 'geintegreerd', drawers: 2, handle: goud, metal: 'goud' });
+meubel.position.set(mx, 0, 0); scene.add(meubel);
+scene.add(C.tap('wand', 'goud', mx, 0.88, 0, 0.18));
+C.ledStrip(scene, mx, 0.4, 0.32, 1.2, C.KELVIN.warm, 0.7);
+const sp = C.mirror(0.75, 0.75, 'rond', goud, 0.018); sp.position.set(mx, 1.65, 0); scene.add(sp);
+C.sconce(scene, 'goud', mx - 0.6, 1.68, 0, C.KELVIN.warm, 0.7);
+C.sconce(scene, 'goud', mx + 0.6, 1.68, 0, C.KELVIN.warm, 0.7);
+scene.add(C.bottle(C.matteMaterial('#2c2a28', 0.35), mx + 0.45, 0.88, 0.14, 0.16, 0.03, goud));
+scene.add(C.towelStack([C.fabricMaterial('#f2eee6'), C.fabricMaterial('#f2eee6')], mx - 0.45, 0.88, 0.22, 0.26, 0.2));
+const rail = C.towelRail('goud', 0, 0.55, 0.5, 1.1, 7); rail.rotation.y = -Math.PI / 2; rail.position.set(room.w, 0, 1.6); scene.add(rail);
+const hd = C.towel(C.fabricMaterial('#e8e1d6'), 0.42, 0.55, 0, 1.43, 0.06); hd.rotation.y = -Math.PI / 2; hd.position.set(room.w, 0, 1.6); scene.add(hd);
+scene.add(C.plant(3.1, 0.75, { potMat: C.matteMaterial('#efece6', 0.3), h: 0.7, seed: 7 }));
+
+const warm = C.KELVIN.warm;
+C.spot(scene, 0.55, 0.4, room.h, warm, 5.5, { shadow: true, angle: 0.85 });
+C.spot(scene, mx, 0.35, room.h, warm, 5, { shadow: true, angle: 0.85 });
+C.spot(scene, 0.75, 2.3, room.h, warm, 4, { shadow: true, angle: 0.9 });
+C.spot(scene, 2.2, 2.2, room.h, warm, 3, {});
+scene.add(new THREE.HemisphereLight('#f6f2ea', '#6b665f', 0.22));
+
+if (C.VIEW === 2) C.viewCamera(camera, [2.15, 1.3, 1.75], [2.55, 0, 0], -0.04, 46);
+else C.viewCamera(camera, [3.05, 1.4, 3.7], [0.85, 0, 0.75], -0.03, 60);
+await C.finish(renderer, scene, camera, `b4-marmer-badkamer-${C.VIEW}`, { aoRadius: 0.4, aoIntensity: 1.2, envScale: 0.6 });
+</script>
+</body>
+</html>
