@@ -21,7 +21,7 @@ BASE = urlparse(SITE["url"]).path.rstrip("/")
 
 # href="/..", src="/..", action="/..", content="/.." (niet "//" van protocol-relatieve urls)
 ATTR = re.compile(r'(\b(?:href|src|action|poster|data-href)=["\'])/(?!/)')
-SRCSET = re.compile(r'(\bsrcset=["\'])([^"\']+)(["\'])')
+SRCSET = re.compile(r'(\b(?:imagesrcset|srcset)=["\'])([^"\']+)(["\'])')
 CSS_URL = re.compile(r'(url\(\s*["\']?)/(?!/)')
 # JS-strings die een sitepad zijn: "/assets/...", "/bedankt/", '/offerte-aanvragen/' enz.
 JS_PAD = re.compile(r'(["\'`])/(assets|bedankt|offerte-aanvragen|diensten|badkamerspecialist|werkgebied|prijzen|contact|cookies|privacy|voorwaarden|voor-badkamerspecialisten)/')

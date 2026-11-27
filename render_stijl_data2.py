@@ -38,12 +38,12 @@ RENDERS_STIJL2 = {
         "detail van het dubbele meubel met twee kommen, boogspiegels en de marmeren wand."),
     "marmer-badkamer": _r(
         "b4-marmer-badkamer-1",
-        "Illustratie van een marmeren badkamer met grote platen wit marmer met grijze aders op wanden en vloer, "
+        "Illustratie van een marmeren badkamer met grote platen wit marmer met grijze en goudachtige aders op wanden en vloer, "
         "een vrijstaand bad, een inloopdouche en een zwevend walnoten meubel met goudkleurige kranen",
         "marmeren badkamer met grote platen op wand en vloer, een vrijstaand bad en walnoot."),
     "marmer-badkamer-2": _r(
         "b4-marmer-badkamer-2",
-        "Detail van een zwevend walnoten wastafelmeubel met marmeren blad en geïntegreerde wasbak, een "
+        "Detail van een zwevend walnoten wastafelmeubel met marmeren blad en een ronde witte opzetkom, een "
         "goudkleurige wandkraan, een ronde spiegel en wandlampjes tegen een wand van geaderd marmer",
         "detail van het walnoten meubel met marmeren blad tegen de geaderde marmerwand."),
     "zwart-wit-badkamer": _r(

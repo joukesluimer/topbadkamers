@@ -114,7 +114,8 @@ def head(title, description, canonical, jsonld=None, depth_ok=True, noindex=Fals
 <meta property="og:url" content="{SITE['url']}{canonical}">
 <meta property="og:locale" content="nl_NL">
 <meta name="theme-color" content="#0b4a56">
-<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml"><meta property="og:image" content="https://joukesluimer.github.io/topbadkamers/assets/merk/logo.svg">
+<link rel="icon" href="/assets/merk/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/assets/fotos/merk/apple-touch-icon.png">
+<meta property="og:image" content="https://joukesluimer.github.io/topbadkamers/assets/fotos/merk/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Top Badkamers: badkamerofferte checken en vergelijken. Gratis."><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/assets/css/style.css">
 {ld}
 </head>"""

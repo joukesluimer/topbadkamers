@@ -967,6 +967,14 @@ APP_JS = r'''/* Top Badkamers: formulierlogica, tracking en Supabase-verzending.
         ? "Ik heb mijn badkamer ingetekend met de indelingsplanner:\n\n" + ind.slice(0, 2000)
         : "Ik heb mijn badkamer ingetekend met de indelingsplanner. ";
     }
+    if (url.get("via") === "3d") {
+      var o3 = f.querySelector("textarea[name=omschrijving]");
+      var k3 = null;
+      try { k3 = sessionStorage.getItem("tb_3d"); } catch (e) {}
+      if (o3 && !o3.value) o3.value = k3
+        ? "Ik heb mijn badkamer samengesteld met de 3D-badkamer:\n\n" + k3.slice(0, 2000)
+        : "Ik heb mijn badkamer samengesteld met de 3D-badkamer. ";
+    }
   });
 })();
 '''
@@ -1015,11 +1023,7 @@ window.TS_CONFIG = {
 };
 '''
 
-FAVICON_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-<rect width="64" height="64" rx="14" fill="#0b4a56"/>
-<path d="M32 9C32 9 16 27.6 16 38.8a16 16 0 0 0 32 0C48 27.6 32 9 32 9z" fill="#fff"/>
-<path d="M24.4 39.6a7.8 7.8 0 0 0 7.6 7.8" fill="none" stroke="#c4511f" stroke-width="4.2" stroke-linecap="round"/>
-</svg>'''
+from merk_data import FAVICON_SVG  # nieuw merkbeeld (ronde 4)
 
 
 
@@ -2030,3 +2034,8 @@ APP_JS += BELEVING_JS
 STYLE_CSS += r'''
 @media(min-width:901px) and (max-width:1240px){.nav a[href$="/voor-badkamerspecialisten/"]{display:none}}
 '''
+
+# Ronde 4: design-upgrade voor de hele site (komt als laatste, dus overrides werken)
+import stijl_v2
+STYLE_CSS += stijl_v2.CSS
+APP_JS += stijl_v2.JS

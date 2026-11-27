@@ -553,6 +553,313 @@ GIDSEN = [
     },
 ]
 
+# ---------------------------------------------------------------------------
+# Verdieping van de zes belangrijkste gidsen (ronde 5)
+# ---------------------------------------------------------------------------
+# Gekozen op zoekvolume in Semrush (database nl, november 2026): badkamermeubel 27.100 en
+# wastafelmeubel 12.100, badkamer tegels 9.900, regendouche 8.100, douchekraan 6.600,
+# inloopdouche 5.400, thermostaatkraan 4.400, hangtoilet 1.600 en toilet kopen 1.000.
+#
+# Per gids:
+#   keuze:   vragenboom [(vraag, bij ja, bij nee)]
+#   maten:   [(onderdeel, maat of norm, toelichting)]
+#   prod:    sleutels uit producten_badkamer.CATEGORIEEN (prijsband product, zonder montage)
+#   rp:      [(sleutel uit richtprijzen.RICHTPRIJZEN, label)]: montage en compleet onderdeel
+#   offerte: wat er op een goede offerte staat
+#   faq2:    extra vragen, achter de bestaande FAQ
+#   bron2:   extra bronnen uit B
+# Normen worden alleen genoemd als het een bestaande norm is; bij twijfel staat er "vuistregel".
+
+B.update({
+    "bbl": ("Besluit bouwwerken leefomgeving (Bbl), eisen aan toilet- en badruimte bij nieuwbouw",
+            None),
+    "nen1010": ("NEN 1010: veiligheidsbepalingen voor laagspanningsinstallaties, met de zones rond bad en douche (norm, niet gratis online)", None),
+    "en14428": ("NEN-EN 14428: Europese norm voor douchewanden (norm, niet gratis online)", None),
+    "en997": ("NEN-EN 997: Europese norm voor toiletpotten met eigen sifon (norm, niet gratis online)", None),
+    "en14411": ("NEN-EN 14411: Europese norm voor keramische tegels, met de indeling naar wateropname (norm, niet gratis online)", None),
+    "en1111": ("NEN-EN 1111: Europese norm voor thermostatische mengkranen (norm, niet gratis online)", None),
+    "semrush": ("Semrush, zoekvolumes Nederland (database nl), november 2026: gebruikt om de vragen te kiezen", None),
+})
+
+DIEP = {
+    "inloopdouche-kopen": {
+        "keuze": [
+            ("Is je douchezone minstens 90 bij 120 cm?",
+             "Een vaste glaswand (walk-in) past. Kies 8 mm glas en een stabilisatiestang bij een wand breder dan 90 cm.",
+             "Kies een korte vaste wand met draaibaar zijpaneel, of een nis met deur. Dan blijft het water binnen."),
+            ("Staat de douche tussen twee muren?",
+             "Een nisdeur (schuif- of draaideur) of een vaste wand met een open kant werkt goed.",
+             "Je hebt een hoekopstelling: een vaste wand met zijwand, of een hoekinstap met twee deuren."),
+            ("Wil je zonder drempel douchen?",
+             "Reken op werk aan de vloer: afschot, een goot en waterdicht maken. Dat kost meer dan de wand zelf.",
+             "Een douchebak of een verhoogde douchevloer kan. Dat is goedkoper en sneller."),
+            ("Heb je hard water (veel kalk)?",
+             "Kies glas met antikalkcoating en zo min mogelijk profielen en rails. Een wisser blijft nodig.",
+             "Helder glas zonder coating kan, maar ook dan scheelt een coating poetsen."),
+        ],
+        "maten": [
+            ("Douchezone met één vaste wand", "Vuistregel: minstens 90 × 120 cm", "Kleiner kan, maar dan spat er meer water langs."),
+            ("Breedte glaswand", "Meestal 80, 90, 100, 120 of 140 cm", "Hoe dichter de douchekop bij de opening, hoe langer de wand moet zijn."),
+            ("Glasdikte", "6, 8 of 10 mm gehard glas", "8 mm is gangbaar; 10 mm voelt steviger bij brede wanden."),
+            ("Hoogte wand", "Meestal 195 tot 200 cm", "Hoger kan als maatwerk, bijvoorbeeld tot het plafond."),
+            ("Afschot van de douchevloer", "Vuistregel: ongeveer 1 tot 2 cm per meter", "Naar de goot of put toe. Te weinig afschot geeft plassen."),
+            ("Douchewand", "NEN-EN 14428", "Europese norm voor douchewanden. Vraag naar de CE-markering en prestatieverklaring."),
+            ("Badruimte bij nieuwbouw", "Minstens 1,6 m², minstens 80 cm breed (Bbl)", "Bij bestaande woningen geldt dit niet altijd, maar het is een handige ondergrens."),
+            ("Stopcontact bij de douche", "Buiten zone 2: vuistregel 60 cm van de douche (NEN 1010)", "Laat de elektra in de badkamer altijd door een erkend installateur doen."),
+        ],
+        "prod": ["douchewand", "douchegoot", "douchecabine", "douchebak"],
+        "rp": [("montage_douche", "Douche, wand of cabine plaatsen en aansluiten"),
+               ("waterdicht", "Douchehoek waterdicht maken met kimband en afschot"),
+               ("sanitair_douche", "Complete douche (goot of bak, wand en kraan)")],
+        "offerte": [
+            "Het type wand, de breedte, de hoogte en de glasdikte, en of er een antikalkcoating op zit.",
+            "Of de prijs voor een standaardmaat of voor maatwerk is, en of inmeten erbij zit.",
+            "Hoe de douchevloer wordt gemaakt: afschot, goot of put, en de lengte van de goot.",
+            "Hoe de douchehoek waterdicht wordt gemaakt (kimband, folie of coating) en tot welke hoogte.",
+            "Of de afvoer moet worden verplaatst of verlaagd, met een aparte post.",
+            "Het kitwerk en wie de garantie geeft op glas, beslag en waterdichting.",
+        ],
+        "faq2": [
+            ("Welke glasdikte is het beste voor een inloopdouche?",
+             "Voor de meeste wanden is 8 mm gehard glas een goede keuze. Het is stevig en niet te zwaar. 10 mm voelt nog steviger, maar is zwaarder en duurder. 6 mm is vooral te vinden bij goedkope cabines."),
+            ("Heb ik een stabilisatiestang nodig?",
+             "Bij een vaste wand die aan één kant vrij staat meestal wel, zeker bij een wand breder dan ongeveer 90 cm. De stang voorkomt dat het glas trilt. Er zijn ook stangen naar het plafond."),
+            ("Hoe houd ik een inloopdouche schoon?",
+             "Trek na het douchen het glas en de vloer droog met een wisser. Dan blijft er weinig kalk achter. Gebruik een mild middel zonder schuurdeeltjes, zodat de coating heel blijft."),
+        ],
+        "bron2": ["en14428", "bbl", "nen1010"],
+    },
+    "toilet-kiezen": {
+        "keuze": [
+            ("Komt er een nieuwe wand of voorzetwand in de toiletruimte?",
+             "Dan is een hangtoilet met inbouwreservoir logisch. Het frame gaat achter de wand en de vloer blijft vrij.",
+             "Een staand toilet is eenvoudiger. Het past op de bestaande afvoer en vraagt geen breekwerk."),
+            ("Komt de afvoer uit de vloer?",
+             "Bij een staand toilet heb je een PK-afvoer (verticaal) nodig. Bij een hangtoilet gaat de afvoer naar de wand.",
+             "De afvoer komt uit de muur: een staand toilet met AO-afvoer (horizontaal) of een hangtoilet past."),
+            ("Wil je makkelijk schoonmaken?",
+             "Kies een randloze pot en een zitting die je met één klik afneemt. Een hangtoilet maakt dweilen eronder makkelijk.",
+             "Een pot met spoelrand kan, maar onder de rand blijft vaker vuil zitten."),
+            ("Zit er iemand in huis die moeilijk opstaat?",
+             "Kies een hogere zithoogte (ongeveer 46 tot 48 cm). Bij een hangtoilet stel je de hoogte bij het plaatsen in.",
+             "Een gewone zithoogte van ongeveer 40 tot 42 cm is prima."),
+        ],
+        "maten": [
+            ("Zithoogte gewoon", "Ongeveer 40 tot 42 cm", "Gemeten tot de bovenkant van de pot, zonder zitting."),
+            ("Zithoogte verhoogd", "Ongeveer 46 tot 48 cm", "Prettig voor lange mensen en ouderen."),
+            ("Diepte hangtoilet", "Ongeveer 48 tot 56 cm", "Een compacte pot (rond 48 cm) helpt in een klein toilet."),
+            ("Vrije ruimte voor de pot", "Vuistregel: minstens 60 cm", "Daarbij aan beide kanten ongeveer 20 cm tot de muur."),
+            ("Afvoer", "Meestal 90 of 110 mm", "Staand: PK (vloer) of AO (muur). Hangtoilet: altijd naar de wand."),
+            ("Spoelvolume", "Vaak 6 of 4,5 liter groot, 3 liter klein", "Een spoelstopknop of twee knoppen bespaart water."),
+            ("Toiletpot", "NEN-EN 997", "Europese norm voor toiletpotten. Een Kiwa- of KOMO-keur laat zien dat het product is getest."),
+            ("Toiletruimte bij nieuwbouw", "Minstens 85 × 120 cm (Bbl)", "In bestaande huizen is de ruimte vaak kleiner. Een compacte pot helpt dan."),
+        ],
+        "prod": ["hangtoilet", "staand_toilet", "inbouwreservoir", "bedieningsplaat", "toiletzitting"],
+        "rp": [("montage_toilet", "Toilet plaatsen en aansluiten op dezelfde plek"),
+               ("leidingwerk_toilet_verplaatsen", "Toilet of afvoer verplaatsen (extra)"),
+               ("sanitair_toilet", "Compleet toilet (pot, reservoir, plaat en zitting)")],
+        "offerte": [
+            "Of het om een staand toilet of een hangtoilet met inbouwreservoir gaat, en welke afvoer (PK, AO of wand).",
+            "De onderdelen apart: pot, inbouwreservoir, bedieningsplaat en zitting.",
+            "Of het oude toilet wordt verwijderd en afgevoerd.",
+            "Het maken van de voorzetwand, met tegelwerk en een revisieluik of afneembare plaat.",
+            "Of de afvoer of de waterleiding moet worden verplaatst, als aparte post.",
+            "De zithoogte die je wilt, zodat het frame op de juiste hoogte komt.",
+        ],
+        "faq2": [
+            ("Is een hangtoilet sterk genoeg?",
+             "Ja. Een inbouwreservoir met frame wordt aan de vloer en de muur vastgezet en is gemaakt voor het gewicht van een volwassen persoon. Laat het frame wel goed vastzetten volgens de instructie van de fabrikant."),
+            ("Wat is een randloos toilet?",
+             "Een pot zonder spoelrand aan de binnenkant. Het water stroomt via een opening langs de wand. Er is geen rand waar vuil achter blijft zitten, dus schoonmaken gaat sneller."),
+            ("Kan ik mijn staande toilet vervangen door een hangtoilet?",
+             "Vaak wel, maar er moet een voorzetwand komen met een inbouwreservoir, en de afvoer moet naar de wand. Dat is meer werk dan een staand toilet wisselen. Reken op tegelwerk."),
+        ],
+        "bron2": ["en997", "bbl", "kiwa_keramiek"],
+    },
+    "wastafelmeubel-kiezen": {
+        "keuze": [
+            ("Is de wand achter het meubel stevig (steen of versterkt)?",
+             "Een zwevend meubel kan. De vloer loopt eronder door en dat oogt ruimer.",
+             "Kies een staand meubel op pootjes, of laat de wand eerst versterken."),
+            ("Delen twee mensen de badkamer 's ochtends?",
+             "Kies een meubel van 120 cm of breder met twee kommen, of één brede kom met twee kranen.",
+             "Een meubel van 60 tot 100 cm met één kom is genoeg."),
+            ("Is de badkamer kleiner dan ongeveer 5 m²?",
+             "Kies een ondiep meubel (35 tot 40 cm) of een fonteinmeubel, en een spiegelkast voor opbergruimte.",
+             "Een gewone diepte van 45 tot 50 cm geeft meer ruimte in de lades."),
+            ("Wil je weinig onderhoud?",
+             "Kies een kom van keramiek of solid surface en een vochtbestendig front, met lades in plaats van deurtjes.",
+             "Echt hout of natuursteen kan, maar vraagt meer zorg tegen vocht en vlekken."),
+        ],
+        "maten": [
+            ("Breedte één kom", "Meestal 60, 80 of 100 cm", "60 cm is het minimum voor prettig handen wassen."),
+            ("Breedte twee kommen", "Vanaf ongeveer 120 cm", "Met 140 cm of meer heb je ook naast de kommen ruimte."),
+            ("Diepte", "Meestal 45 tot 50 cm, ondiep 35 tot 40 cm", "Let op de deur: die moet vrij kunnen draaien."),
+            ("Hoogte bovenkant wastafel", "Vuistregel: ongeveer 85 tot 90 cm", "Een zwevend meubel hang je op de hoogte die bij jullie past."),
+            ("Vrije ruimte voor het meubel", "Vuistregel: minstens 70 cm", "Zodat je kunt bukken zonder tegen de muur of het bad te stoten."),
+            ("Spiegel", "Onderkant ongeveer 10 tot 20 cm boven de kraan", "Zo zien ook kleinere mensen zichzelf goed."),
+            ("Stopcontact bij de wastafel", "Buiten zone 2 rond bad en douche (NEN 1010)", "Spiegelverlichting en stopcontacten laat je door een erkend installateur aansluiten."),
+        ],
+        "prod": ["wastafelmeubel", "wastafel", "wastafelkraan", "spiegel_kast"],
+        "rp": [("montage_meubel", "Wastafelmeubel ophangen en aansluiten"),
+               ("sanitair_meubel", "Compleet meubel met wastafel, kraan en spiegel")],
+        "offerte": [
+            "De breedte en diepte van het meubel, het aantal kommen en het materiaal van de kom en het front.",
+            "Of de kraan, de sifon en de spiegel of spiegelkast in de prijs zitten.",
+            "Hoe het meubel wordt bevestigd en of de wand moet worden versterkt.",
+            "Of de leidingen naar een andere hoogte of plek moeten, met een aparte post.",
+            "Of er elektra nodig is voor spiegelverlichting of een stopcontact.",
+            "Hoe het kitwerk wordt gedaan tussen wastafel en wand.",
+        ],
+        "faq2": [
+            ("Wat is beter: een badmeubel met lades of met deurtjes?",
+             "Lades zijn handiger: je ziet alles in één keer en er gaat meer in. Deurtjes zijn vaak goedkoper. In een klein meubel zit de sifon in de weg; let op een lade die om de sifon heen is gemaakt."),
+            ("Hoe hoog hang ik een zwevend badmeubel?",
+             "Meestal komt de bovenkant van de wastafel op ongeveer 85 tot 90 cm. Zijn jullie lang, dan kan het iets hoger. Spreek de hoogte af voordat de leidingen worden aangelegd."),
+            ("Welk materiaal kan het best tegen vocht?",
+             "Fronts van gelakt of vochtbestendig plaatmateriaal en kommen van keramiek of solid surface kunnen goed tegen vocht. Echt hout kan ook, mits het goed is afgewerkt en je water snel wegveegt."),
+        ],
+        "bron2": ["nen1010", "slimster_meubel"],
+    },
+    "kranen-kiezen": {
+        "keuze": [
+            ("Gaat het om de douche?",
+             "Kies een thermostaatkraan. Die houdt de temperatuur gelijk en heeft een stop bij ongeveer 38 °C tegen verbranden.",
+             "Voor de wastafel is een eenhendel mengkraan het meest gebruikt. Let op de hoogte van de uitloop bij een opzetkom."),
+            ("Wordt de wand opnieuw betegeld?",
+             "Dan kan een inbouwkraan. Het inbouwdeel gaat in de muur, je ziet alleen de knoppen.",
+             "Kies een opbouwkraan op de bestaande aansluitingen. Dat is sneller en goedkoper."),
+            ("Is de waterdruk laag (minder dan ongeveer 1 bar)?",
+             "Vraag een installateur of een thermostaat werkt. Sommige kranen hebben een minimale druk nodig.",
+             "De meeste kranen werken goed bij een normale druk van 2 tot 3 bar."),
+            ("Wil je water besparen?",
+             "Kies een kraan met een eco-knop of een begrenzer, en een waterbesparende douchekop.",
+             "Een gewone kraan is prima. Een besparende douchekop kan altijd later nog."),
+        ],
+        "maten": [
+            ("Hart-op-hart opbouwkraan", "150 mm", "De afstand tussen de twee wandaansluitingen. Met S-koppelingen kun je een paar mm bijstellen."),
+            ("Aansluiting", "Warm links, koud rechts", "Zo zit het in Nederland. Bij omgekeerde leidingen bestaan er kranen die je kunt omdraaien."),
+            ("Hoogte douchekraan", "Vuistregel: ongeveer 100 tot 110 cm", "Gemeten vanaf de afgewerkte vloer."),
+            ("Hoogte uitloop wastafelkraan", "Hoger bij een opzetkom", "Bij een opzetkom heb je een verhoogde kraan of een wandkraan nodig."),
+            ("Veiligheidsstop", "Ongeveer 38 °C", "Bij een thermostaat druk je op een knop om warmer te gaan."),
+            ("Thermostatische mengkranen", "NEN-EN 1111", "Europese norm. Een Kiwa-keur of KOMO-keur laat zien dat de kraan is getest voor drinkwater."),
+            ("Douchekop waterbesparend", "4,0 tot 7,2 liter per minuut (Milieu Centraal)", "Een gewone douchekop gebruikt vaak meer."),
+        ],
+        "prod": ["thermostaatkraan", "inbouwkraan", "wastafelkraan", "badkraan"],
+        "rp": [("uurtarief", "Loodgieter per uur (bij losse kraan vervangen)"),
+               ("voorrijkosten", "Voorrijkosten loodgieter")],
+        "offerte": [
+            "Het type kraan per plek: douche, wastafel en bad, en of het opbouw of inbouw is.",
+            "Bij inbouw: of het inbouwdeel apart op de offerte staat, en wie het in de muur zet.",
+            "De afwerking, zoals chroom, mat zwart of geborsteld, en of de rest (douche, plaat) dezelfde kleur krijgt.",
+            "Of de oude kraan wordt verwijderd en of de aansluitingen moeten worden aangepast.",
+            "Of er een keur op de kraan zit (Kiwa of KOMO) en hoeveel jaar garantie er is.",
+        ],
+        "faq2": [
+            ("Wat is de beste thermostaatkraan?",
+             "Er is geen beste voor iedereen. Let op een keur (Kiwa of KOMO), een veiligheidsstop bij 38 °C, een koude behuizing zodat je je niet brandt, en of er onderdelen en garantie zijn. Kies daarna de afwerking die past."),
+            ("Hoe lang gaat een thermostaatkraan mee?",
+             "Vaak tien jaar of langer. Kalk is de grootste vijand. Draai de knoppen af en toe helemaal open en dicht, dan blijft het binnenwerk soepel. Het thermostaatelement is meestal los te vervangen."),
+            ("Kan ik een opbouwkraan zelf vervangen?",
+             "Ja, als de aansluitingen op 150 mm hart-op-hart zitten en je de hoofdkraan kunt dichtdraaien. Gebruik nieuwe rubbers. Bij een inbouwkraan heb je een specialist nodig."),
+        ],
+        "bron2": ["en1111", "kiwa_kranen", "werkspot_kraan", "mc_douchekop"],
+    },
+    "badkamertegels-kopen": {
+        "keuze": [
+            ("Gaat het om de vloer?",
+             "Kies een vloertegel van porcellanato (keramische tegel met weinig waterzuiging) met antislip, minstens R10 of klasse B.",
+             "Voor de wand kan ook een lichtere wandtegel (faience). Die is goedkoper, maar niet geschikt voor de vloer."),
+            ("Is je ondergrond heel vlak?",
+             "Grote formaten (60 × 120 cm of groter) kunnen. Minder voegen, een rustig beeld.",
+             "Kies een kleiner formaat (30 × 60 cm of kleiner). Dat valt minder op bij een scheve wand of vloer."),
+            ("Wil je zonder drempel douchen met een put in het midden?",
+             "Kies kleine tegels of mozaïek in de douche. Die volgen het afschot naar vier kanten.",
+             "Met een goot langs de muur kun je grote tegels doorleggen in de douche."),
+            ("Heb je een budget onder ongeveer €30 per m²?",
+             "Kies een effen tegel in een standaardformaat. Patroon en groot formaat maken het duurder in materiaal en werk.",
+             "Je hebt ruimte voor groot formaat, natuursteenlook of een handgemaakte tegel."),
+        ],
+        "maten": [
+            ("Antislip vloer (schoen)", "R9 tot R13", "Hoe hoger, hoe stroever. Voor de badkamervloer is R10 een gangbaar advies."),
+            ("Antislip blote voeten", "Klasse A, B of C", "Voor de douche is B of C beter."),
+            ("Waterzuiging porcellanato", "Minder dan 0,5% (NEN-EN 14411, groep BIa)", "Daardoor geschikt voor vloer en natte zones."),
+            ("Extra tegels voor zaagverlies", "Vuistregel: 10%, bij visgraat 15%", "Koop ook een paar reservetegels uit dezelfde partij."),
+            ("Voegbreedte", "Vaak 2 tot 3 mm bij gerectificeerde tegels", "Gerectificeerde tegels hebben strak geslepen randen."),
+            ("Tegelformaten", "Van mozaïek tot 120 × 120 cm en groter", "Groot formaat vraagt een vlakke ondergrond en vaak twee mensen bij het leggen."),
+            ("Afschot douche", "Vuistregel: ongeveer 1 tot 2 cm per meter", "Bepaalt mee welk formaat in de douche kan."),
+        ],
+        "prod": ["tegels"],
+        "rp": [("tegels", "Tegels (materiaal) per niveau"),
+               ("tegelwerk", "Tegelzetten (legloon)"),
+               ("tegelwerk_hulpmateriaal", "Lijm, voegsel en kit"),
+               ("waterdicht", "Douchehoek waterdicht maken")],
+        "offerte": [
+            "Het aantal m² wand en vloer apart, en of zaagverlies is meegerekend.",
+            "De tegels zelf: formaat, soort en prijs per m², of een stelpost als je ze zelf uitkiest.",
+            "Het legloon per m², en of een toeslag geldt voor groot formaat, visgraat of mozaïek.",
+            "Lijm, voegsel, kit en hoekprofielen: zitten ze erin of komen ze erbij?",
+            "Voorbereiding van de ondergrond: egaliseren, uitvlakken en waterdicht maken.",
+            "De voegkleur en of je vooraf een proefstuk ziet.",
+        ],
+        "faq2": [
+            ("Welke tegels zijn het best voor een badkamervloer?",
+             "Keramische tegels van porcellanato met een antislipwaarde van minstens R10 (of klasse B voor blote voeten). Ze nemen weinig water op, zijn sterk en makkelijk schoon te houden."),
+            ("Hoeveel tegels moet ik kopen?",
+             "Meet de oppervlakte van wand en vloer en tel er 10% bij op voor zaagverlies, bij visgraat of een diagonaal patroon 15%. Koop een paar reservetegels uit dezelfde partij voor later."),
+            ("Zijn grote tegels duurder om te leggen?",
+             "Vaak wel. Grote tegels zijn zwaar, vragen een heel vlakke ondergrond en soms twee tegelzetters. Veel tegelzetters rekenen daarom een hoger tarief per m² voor groot formaat."),
+        ],
+        "bron2": ["en14411", "werkspot_tegels", "slimster_tegels"],
+    },
+    "douchesysteem-kiezen": {
+        "keuze": [
+            ("Wil je een grote regendouche (25 cm of meer)?",
+             "Check of je cv-ketel of warmtepomp genoeg warm water levert. Een grote kop vraagt veel water per minuut.",
+             "Een gewone handdouche of een kleinere hoofddouche werkt bij bijna elke installatie."),
+            ("Wordt de wand opnieuw betegeld?",
+             "Een inbouwsysteem kan: het inbouwdeel gaat in de muur. Strak, maar lastiger te vervangen.",
+             "Kies een opbouwset met thermostaat, stang en hoofddouche op de bestaande aansluitingen."),
+            ("Douchen er kinderen of ouderen?",
+             "Kies een thermostaat met veiligheidsstop bij 38 °C en een koude behuizing.",
+             "Een thermostaat blijft aan te raden voor comfort, maar is minder kritisch."),
+            ("Wil je zuinig douchen?",
+             "Kies een kop met eco-stand of een begrenzer. Waterbesparende koppen gebruiken 4,0 tot 7,2 liter per minuut.",
+             "Een regendouche zonder begrenzer gebruikt vaak flink meer. Houd dat in je energierekening in de gaten."),
+        ],
+        "maten": [
+            ("Hoogte hoofddouche", "Vuistregel: ongeveer 210 tot 220 cm", "Gemeten tot onderkant kop; afhankelijk van de lengte van de langste gebruiker."),
+            ("Hoogte thermostaat", "Vuistregel: ongeveer 100 tot 110 cm", "Makkelijk te pakken zonder te bukken."),
+            ("Diameter regendouche", "Meestal 20 tot 30 cm, soms 40 cm of meer", "Hoe groter, hoe meer water en warmte nodig is."),
+            ("Hart-op-hart opbouwthermostaat", "150 mm", "Standaard in Nederland."),
+            ("Waterdruk", "Vuistregel: ongeveer 2 tot 3 bar", "Bij lage druk werkt een grote regendouche minder goed."),
+            ("Warm water uit de ketel", "CW-klasse 1 tot 6 (Gaskeur)", "Hoe hoger de klasse, hoe meer warm water. Vraag de installateur wat je ketel kan."),
+            ("Douchekop waterbesparend", "4,0 tot 7,2 liter per minuut (Milieu Centraal)", "Ook bij regendouches bestaan zuinige koppen."),
+        ],
+        "prod": ["douchesysteem", "thermostaatkraan", "inbouwkraan", "handdouche_set"],
+        "rp": [("montage_douche", "Douche plaatsen en aansluiten"),
+               ("leidingwerk", "Water- en afvoerleidingen vernieuwen (hele badkamer)")],
+        "offerte": [
+            "Opbouw of inbouw, en bij inbouw of het inbouwdeel apart vermeld staat.",
+            "De onderdelen: thermostaat, hoofddouche (met diameter), handdouche, stang en slang.",
+            "Of de leidingen moeten worden verlegd voor een hogere of andere aansluiting.",
+            "Of de installateur heeft gecheckt of je ketel genoeg warm water levert.",
+            "De afwerking en of alles in dezelfde kleur komt.",
+            "Garantie op het thermostaatelement en of onderdelen later los te krijgen zijn.",
+        ],
+        "faq2": [
+            ("Is een regendouche geschikt voor elke cv-ketel?",
+             "Niet altijd. Een grote regendouche vraagt veel warm water per minuut. Een kleine combiketel of een warmtepomp met een klein voorraadvat kan dat soms niet bijhouden. Laat het vooraf checken door een installateur."),
+            ("Wat is beter: opbouw of inbouw?",
+             "Opbouw is goedkoper, sneller en makkelijk te vervangen. Inbouw oogt strakker en geeft meer ruimte in de douche, maar vraagt breek- en tegelwerk en is lastiger te repareren."),
+            ("Hoeveel water gebruikt een regendouche?",
+             "Dat verschilt per kop. Een waterbesparende kop gebruikt 4,0 tot 7,2 liter per minuut volgens Milieu Centraal. Veel grote regendouches gebruiken meer. Op de verpakking of in de specificaties staat het verbruik."),
+        ],
+        "bron2": ["en1111", "mc_douchekop", "cbs_douche"],
+    },
+}
+
+
 LINKS = [(BASIS, "Badkamerspullen", "Neutrale kopersgidsen met richtprijzen voor sanitair en materialen.")] + [
     (f"{BASIS}{g['slug']}/", g["kort"], g["kaart"]) for g in GIDSEN
 ]
@@ -585,7 +892,18 @@ CSS = """<style>
 .bs-letop .card h3{font-size:1.05rem}
 .bs-uitleg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:22px 0}
 .bs-uitleg .card p{margin:0}
-@media(max-width:760px){.bs-montage,.bs-letop,.bs-uitleg{grid-template-columns:1fr}}
+.bs-boom{margin:18px 0;display:grid;gap:14px}
+.bs-stap{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px 18px}
+.bs-boom h3{font-size:1.04rem;margin:0 0 10px;display:flex;gap:10px;align-items:baseline}
+.bs-nr{flex:0 0 28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark,var(--accent));font-weight:800;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.bs-takken{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bs-tak{border-radius:var(--radius);padding:10px 12px;font-size:.94rem;background:var(--bg-soft);border-left:4px solid var(--line)}
+.bs-tak b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.bs-tak-ja{border-left-color:var(--accent)}
+.bs-checklijst{counter-reset:ck;list-style:none;padding:0}
+.bs-checklijst li{position:relative;padding:10px 12px 10px 46px;border:1px solid var(--line);border-radius:var(--radius);margin:0 0 8px;background:#fff}
+.bs-checklijst li::before{content:"✓";position:absolute;left:14px;top:9px;width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent-dark,var(--accent));font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+@media(max-width:760px){.bs-montage,.bs-letop,.bs-uitleg,.bs-takken{grid-template-columns:1fr}}
 @media(max-width:640px){.bs-stapel thead{display:none}.bs-stapel tr{display:block;border-bottom:1px solid var(--line);padding:12px 0}
 .bs-stapel td{display:block;border:0;padding:4px 14px}.bs-stapel td:first-child{font-size:1.02rem;padding-bottom:6px}
 .bs-stapel td[data-kop]::before{content:attr(data-kop) ": ";font-weight:700;color:var(--ink)}}
@@ -624,6 +942,60 @@ def _andere_gidsen(huidig):
         f'<h3>{g["kort"]}</h3><span class="go">Lees de gids →</span></a>'
         for g in GIDSEN if g["slug"] != huidig)
     return f'<div class="grid g3">{kaarten}</div>'
+
+
+def _diep_keuze(g, d):
+    stappen = "".join(
+        f'<div class="bs-stap"><h3><span class="bs-nr">{i}</span>{v}</h3><div class="bs-takken"><div class="bs-tak bs-tak-ja"><b>Ja</b>{ja}</div>'
+        f'<div class="bs-tak"><b>Nee</b>{nee}</div></div></div>' for i, (v, ja, nee) in enumerate(d["keuze"], 1))
+    return f"""<section class="section"><div class="wrap narrow prose">
+  <h2 id="keuzehulp">Keuzehulp: welke past bij jou?</h2>
+  <p>Beantwoord deze vragen van boven naar beneden. Na de laatste vraag weet je welke soort en welke uitvoering bij jouw badkamer passen.</p>
+  <div class="bs-boom">{stappen}</div>
+</div></section>"""
+
+
+def _diep_maten(g, d):
+    rijen = "".join(f'<tr><td>{a}</td><td data-kop="Maat of norm">{b}</td><td data-kop="Toelichting">{c}</td></tr>'
+                    for a, b, c in d["maten"])
+    return f"""<section class="section"><div class="wrap narrow prose">
+  <h2 id="maten">Maten en normen</h2>
+  <p>De maten die je nodig hebt om goed te kopen. Waar "vuistregel" staat, is het een gangbaar advies en geen wettelijke eis. De normen zijn Europese productnormen; je kunt ernaar vragen bij de verkoper of de specialist.</p>
+  <div class="tablewrap"><table class="bs-tabel bs-stapel"><thead><tr><th>Onderdeel</th><th>Maat of norm</th><th>Toelichting</th></tr></thead><tbody>{rijen}</tbody></table></div>
+</div></section>"""
+
+
+def _diep_prijzen(g, d):
+    import producten_badkamer as PB
+    import richtprijzen as RP
+    cat = PB.PRODUCTDATA["categorieen"]
+    rijen = ""
+    for k in d["prod"]:
+        c = cat[k]
+        eenh = " per m²" if c.get("eenheid") == "m2" else ""
+        rijen += f'<tr><td>{c["naam"]}</td><td class="num">{eur(c["van"])} – {eur(c["tot"])}{eenh}</td><td>Alleen het product</td></tr>'
+    for k, label in d["rp"]:
+        p = RP.RICHTPRIJZEN[k]
+        eenh = RP.EENHEID_TEKST.get(p["eenheid"], "")
+        btw = "" if p["btw"] == "incl" else " (excl. btw)"
+        if p.get("niveaus"):
+            niv = " · ".join(f'{n}: {eur(a)} – {eur(b)}' for n, (a, b) in p["niveaus"].items())
+            rijen += f'<tr><td>{label}</td><td class="num">{eur(p["laag"])} – {eur(p["hoog"])} {eenh}{btw}</td><td>{niv}</td></tr>'
+        else:
+            rijen += f'<tr><td>{label}</td><td class="num">{eur(p["laag"])} – {eur(p["hoog"])} {eenh}{btw}</td><td>{p["toelichting"]}</td></tr>'
+    return f"""<h3 id="prijsklassen">Prijsklassen van product, montage en compleet onderdeel</h3>
+  <p>Dezelfde bandbreedtes gebruiken we in de <a href="/tools/offertechecker/">offertevergelijker</a> en de <a href="/tools/badkamercalculator/">badkamercalculator</a>. Zo kun je een regel op je offerte direct naast de markt leggen.</p>
+  <div class="tablewrap"><table class="bs-tabel"><thead><tr><th>Onderdeel</th><th>Richtprijs (incl. btw)</th><th>Toelichting</th></tr></thead><tbody>{rijen}</tbody></table></div>"""
+
+
+def _diep_offerte(g, d):
+    items = "".join(f"<li>{x}</li>" for x in d["offerte"])
+    return f"""<section class="section soft"><div class="wrap narrow prose">
+  <h2 id="offerte">Waar let je op bij de offerte?</h2>
+  <p>Laat je het product leveren en plaatsen door een specialist? Check dan of deze punten op de offerte staan. Wat er niet op staat, kan later als meerwerk komen.</p>
+  <ul class="bs-checklijst">{items}</ul>
+  <p>Heb je al een offerte? Leg hem in de <a href="/tools/offertechecker/">offertevergelijker</a> naast de richtprijzen. Je ziet per regel of de prijs in de buurt zit en wat ontbreekt.</p>
+</div></section>"""
 
 
 def gids_body(g):
@@ -671,6 +1043,9 @@ def gids_body(g):
   {midden}
 </div></section>"""
 
+    d = DIEP.get(g["slug"])
+    if d:
+        prijzen = prijzen.replace(midden, _diep_prijzen(g, d) + midden, 1)
     letop_kaarten = "".join(f'<div class="card"><h3>{k}</h3><p>{t}</p></div>' for k, t in g["letop"])
     letop = f"""<section class="section soft"><div class="wrap">
   <div class="narrow prose" style="margin:0 auto"><h2>Waar let je op bij het kopen?</h2>
@@ -690,14 +1065,14 @@ def gids_body(g):
   <p>Meer over het werk lees je op onze pagina over <a href="/diensten/{d_slug}/">{d_naam}</a>. Wat de montage kost, staat bij de <a href="/kosten/{k_slug}/">{k_naam}</a>. Laat je het product door het bedrijf leveren, dan geldt de garantie meestal voor product en montage samen; koop je zelf, spreek dat dan vooraf af.</p>
 </div></section>"""
 
-    faq_html, faq_ld = faq_blok(g["faqs"], f"Veelgestelde vragen: {g['kort'].lower().rstrip('?')}")
+    faq_html, faq_ld = faq_blok(g["faqs"] + (d["faq2"] if d else []), f"Veelgestelde vragen: {g['kort'].lower().rstrip('?')}")
 
     verder = "".join(f'<li><a href="{h}">{t}</a></li>' for h, t in g.get("verder", []))
     verder_html = f"<h3>Verder lezen</h3><ul>{verder}</ul>" if verder else ""
     bronnen = f"""<section class="section soft"><div class="wrap narrow prose">
   <h2>Bronnen</h2>
   <p>De richtprijzen zijn bandbreedtes uit kostenartikelen en vergelijkers, gecontroleerd in november 2026. Het zijn geen offertes en geen prijzen van één winkel.</p>
-  {_bronnen_html(g['bronnen'])}
+  {_bronnen_html(g['bronnen'] + (d['bron2'] if d else []))}
   {verder_html}
 </div></section>"""
 
@@ -706,6 +1081,10 @@ def gids_body(g):
   {_andere_gidsen(g['slug'])}
 </div></section>"""
 
+    if d:
+        hero += _diep_keuze(g, d)
+        soorten += _diep_maten(g, d)
+        montage += _diep_offerte(g, d)
     body = (CSS + cr + hero + soorten + prijzen + letop + montage + faq_html + bronnen + andere
             + cta_blok("Liever meteen een prijs inclusief montage?",
                        "Vul in een minuut het formulier in en ontvang vrijblijvend offertes van maximaal drie badkamerspecialisten uit jouw regio."))

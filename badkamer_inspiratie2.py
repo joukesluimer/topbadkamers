@@ -20,7 +20,7 @@ import richtprijzen as RP
 from components import page, crumbs, title, faq_blok, cta_blok, cta_midden, prijs_balken, offertecheck_blok
 from data import SITE
 from render_stijl_data2 import RENDERS_STIJL2
-from badkamer_inspiratie import CSS as BI_CSS, BRONNEN_KOSTEN, NIVEAUS, GIDSEN, KENNIS
+from badkamer_inspiratie import CSS as BI_CSS, BRONNEN_KOSTEN, NIVEAUS, GIDSEN, KENNIS, stijl_extra_html
 
 PAD = "/inspiratie/"
 GEPUBLICEERD = "2026-11-23"
@@ -527,6 +527,7 @@ def _stijlpagina(s, write, today):
       <ul>{valkuilen}</ul>
     </div>
   </div>
+  {stijl_extra_html(s, STIJLEN)}
 
   {cta_midden(f"Een {naam_l} laten maken?", "Vergelijk gratis offertes van maximaal drie badkamerspecialisten uit je regio.")}
 
@@ -559,7 +560,186 @@ def _stijlpagina(s, write, today):
     write(url, page(title(s["seo"]), s["description"], url, body, [cr_ld, art_ld, faq_ld]), prio=0.7)
 
 
+
+# ---------------------------------------------------------------------------
+# Badkamer ideeën: 30 ideeën per budget (/inspiratie/badkamer-ideeen/)
+# ---------------------------------------------------------------------------
+# Zoekvolume (Semrush, database nl, november 2026): badkamer ideeen 1.600, badkamer ideeën 720,
+# kleine badkamer ideeën 110. Alleen bestaande renders, met het label "Illustratie (3D-render)".
+# Prijs per idee: ("rp", sleutel, niveau of None) uit richtprijzen.py, ("pb", sleutel) uit
+# producten_badkamer.py, of None (dan geen bedrag: we verzinnen geen prijzen).
+
+IDEEEN_PAD = "/inspiratie/badkamer-ideeen/"
+
+IDEEEN = [
+    {
+        "id": "klein", "titel": "Klein budget: tot ongeveer €1.000",
+        "intro": "Je houdt de tegels en de indeling. Met een paar slimme ingrepen voelt de badkamer toch nieuw.",
+        "render": "scandinavische-badkamer-2",
+        "lijst": [
+            ("Laat de kitranden vernieuwen", "Oude, zwarte kit maakt een badkamer vies. Nieuwe kit in een lichte kleur is snel en goedkoop.", ("rp", "kitwerk_badkamer", None), "/kennisbank/badkamer-kitten/", "Badkamer kitten"),
+            ("Vervang de douchekraan door een thermostaat", "Meer comfort, gelijke temperatuur en een stop bij 38 °C.", ("pb", "thermostaatkraan"), "/badkamerspullen/kranen-kiezen/", "Kranen kiezen"),
+            ("Kies een waterbesparende douchekop", "Een kop van 4,0 tot 7,2 liter per minuut scheelt water en energie.", ("pb", "handdouche_set"), "/kennisbank/water-besparen-badkamer/", "Water besparen"),
+            ("Hang een spiegel met licht op", "Licht op je gezicht is beter dan alleen een lamp aan het plafond.", ("pb", "spiegel_kast"), "/kennisbank/badkamerverlichting/", "Badkamerverlichting"),
+            ("Alle accessoires in één kleur", "Haakjes, toiletrolhouder en handdoekstang in de kleur van de kraan geven rust.", ("pb", "accessoires"), "/materialen/kraanafwerkingen/", "Kraanafwerkingen"),
+            ("Een nieuwe toiletzitting met softclose", "Klein, maar je merkt het elke dag.", ("pb", "toiletzitting"), "/badkamerspullen/toilet-kiezen/", "Toilet kiezen"),
+            ("Verf de wand boven de tegels", "Vochtbestendige verf in een warme tint, zoals zand of salie, buiten de spatzone.", None, "/inspiratie/japandi-badkamer/", "Japandi-badkamer"),
+            ("Ruim op met een nis of een plank", "Minder spullen in zicht maakt elke badkamer rustiger. Een plank boven het toilet is een snelle start.", None, "/kennisbank/kleine-badkamer-indelen/", "Kleine badkamer indelen"),
+        ],
+    },
+    {
+        "id": "midden", "titel": "Middenbudget: €1.000 tot €5.000",
+        "intro": "Je vervangt één of twee grote onderdelen. De leidingen blijven grotendeels op hun plek.",
+        "render": "moderne-badkamer",
+        "lijst": [
+            ("Een zwevend wastafelmeubel", "De vloer loopt eronder door. Dat oogt ruimer en dweilt makkelijk.", ("rp", "sanitair_meubel", "midden"), "/badkamerspullen/wastafelmeubel-kiezen/", "Wastafelmeubel kiezen"),
+            ("Een vaste glaswand in plaats van een cabine", "Open, licht en makkelijk schoon te houden.", ("pb", "douchewand"), "/badkamerspullen/inloopdouche-kopen/", "Inloopdouche kopen"),
+            ("Een hangtoilet met inbouwreservoir", "Strak, makkelijk schoon te maken, en de vloer loopt door.", ("rp", "sanitair_toilet", "midden"), "/kennisbank/hangtoilet-of-staand-toilet/", "Hangtoilet of staand?"),
+            ("Een regendouche op de bestaande aansluiting", "Een opbouwset met thermostaat en grote hoofddouche, zonder breekwerk.", ("pb", "douchesysteem"), "/badkamerspullen/douchesysteem-kiezen/", "Douchesysteem kiezen"),
+            ("Een handdoekradiator", "Warme, droge handdoeken en een warmere badkamer.", ("pb", "badkamerradiator"), "/badkamerspullen/badkamerradiator-kiezen/", "Badkamerradiator kiezen"),
+            ("Elektrische vloerverwarming bij nieuwe vloertegels", "Warme voeten en een droge vloer, als je toch al nieuwe tegels legt.", ("rp", "vloerverwarming_elektrisch", None), "/kennisbank/vloerverwarming-of-radiator/", "Vloerverwarming of radiator?"),
+            ("Een stille, goede ventilator", "Minder vocht en schimmel. Vaak de beste investering voor weinig geld.", ("rp", "ventilator", None), "/kennisbank/badkamer-ventilatie/", "Badkamer ventileren"),
+        ],
+    },
+    {
+        "id": "compleet", "titel": "Complete badkamer: €6.000 tot €18.000",
+        "intro": "Alles eruit en opnieuw. Dit is ook het moment om de indeling slimmer te maken.",
+        "render": "japandi-badkamer",
+        "lijst": [
+            ("Een inloopdouche zonder drempel", "Eén doorlopende vloer met een goot langs de muur.", ("rp", "sanitair_douche", "midden"), "/kennisbank/inloopdouche-zonder-drempel/", "Inloopdouche zonder drempel"),
+            ("Grote tegels met weinig voegen", "Een rustig vlak dat makkelijk schoon blijft.", ("rp", "tegels", "midden"), "/kennisbank/grote-tegels-badkamer/", "Grote tegels"),
+            ("Japandi: zand, licht hout en rust", "Warme natuurtinten en weinig spullen in zicht.", None, "/inspiratie/japandi-badkamer/", "Japandi-badkamer"),
+            ("Modern: wit, antraciet en mat zwart", "Strak en tijdloos, met een zwevend meubel.", None, "/inspiratie/moderne-badkamer/", "Moderne badkamer"),
+            ("Landelijk: groene tegels en messing", "Warm en ambachtelijk, met een tegel met patroon op de vloer.", None, "/inspiratie/landelijke-badkamer/", "Landelijke badkamer"),
+            ("Scandinavisch: licht en eenvoudig", "Wit, licht eiken en een vleugje blauw. Ook met een kleiner budget.", None, "/inspiratie/scandinavische-badkamer/", "Scandinavische badkamer"),
+            ("Inbouwkranen in de wand", "Meer ruimte in de douche en een strak beeld. Kies ze voordat er getegeld wordt.", ("pb", "inbouwkraan"), "/kennisbank/inbouwkranen/", "Inbouwkranen"),
+            ("Een indeling die meegroeit", "Brede deur, geen drempel en ruimte voor een beugel later. Handig voor nu en straks.", None, "/kennisbank/levensloopbestendige-badkamer/", "Levensloopbestendige badkamer"),
+        ],
+    },
+    {
+        "id": "luxe", "titel": "Luxe budget: vanaf ongeveer €12.000",
+        "intro": "Ruimte, bijzondere materialen en comfort. Laat hier altijd eerst een ontwerp en een lichtplan maken.",
+        "render": "luxe-badkamer",
+        "lijst": [
+            ("Een vrijstaand bad als blikvanger", "Check eerst of de vloer het gewicht draagt en waar de afvoer kan komen.", ("pb", "vrijstaand_bad"), "/badkamerspullen/vrijstaand-bad-kopen/", "Vrijstaand bad kopen"),
+            ("Een wand in marmer of marmerlook", "Eén bijzonder vlak maakt de badkamer af. Keramische platen vragen weinig onderhoud.", ("rp", "tegels", "luxe"), "/inspiratie/marmer-badkamer/", "Marmer badkamer"),
+            ("Een dubbel wastafelmeubel", "Geen wachtrij meer in de ochtend.", ("rp", "sanitair_meubel", "luxe"), "/inspiratie/luxe-badkamer/", "Luxe badkamer"),
+            ("Licht in lagen", "Dimbare spots, wandlampjes bij de spiegel en ledlicht onder het meubel.", ("rp", "elektra", None), "/kennisbank/badkamerverlichting/", "Badkamerverlichting"),
+            ("Een wellnesshoek", "Een grote regendouche, warm licht en een bankje: spa-gevoel thuis.", None, "/inspiratie/wellness-badkamer/", "Wellness badkamer"),
+            ("Terrazzo op de vloer", "Kleurige steentjes geven karakter en het materiaal gaat lang mee.", None, "/inspiratie/terrazzo-badkamer/", "Terrazzo badkamer"),
+            ("Zwart-wit met één patroon", "Een tijdloze combinatie, met een patroonvloer als hoofdrol.", None, "/inspiratie/zwart-wit-badkamer/", "Zwart-wit badkamer"),
+        ],
+    },
+]
+
+
+def _idee_prijs(bron):
+    if not bron:
+        return ""
+    import producten_badkamer as PB
+    f = lambda v: f"€{v:,.0f}".replace(",", ".")
+    if bron[0] == "rp":
+        p = RP.RICHTPRIJZEN[bron[1]]
+        lo, hi = p["niveaus"][bron[2]] if bron[2] else (p["laag"], p["hoog"])
+        eenh = {"m2": " per m²", "post": "", "stuk": ""}.get(p["eenheid"], "")
+        wat = "incl. montage" if bron[1] in ("kitwerk_badkamer", "vloerverwarming_elektrisch", "ventilator", "elektra") else "product"
+        return f'<span class="bid-prijs">{f(lo)} – {f(hi)}{eenh} · {wat}</span>'
+    c = PB.PRODUCTDATA["categorieen"][bron[1]]
+    eenh = " per m²" if c.get("eenheid") == "m2" else ""
+    return f'<span class="bid-prijs">{f(c["van"])} – {f(c["tot"])}{eenh} · product</span>'
+
+
+def _ideeen_render(sleutel, sizes):
+    if sleutel in RENDERS_STIJL2:
+        return _figuur(sleutel, sizes)
+    import badkamer_inspiratie as BI
+    return BI._figuur(sleutel, sizes)
+
+
+CSS_IDEEEN = """<style>
+.bid-nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px;padding:0;list-style:none}
+.bid-nav li{margin:0}.bid-nav li::before{display:none}
+.bid-nav a{display:inline-block;padding:7px 14px;border:1px solid var(--line);border-radius:999px;text-decoration:none;font-weight:700;font-size:.9rem;background:#fff}
+.bid-nav a:hover,.bid-nav a:focus-visible{border-color:var(--accent)}
+.bid-lijst{margin:16px 0;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bid-item{border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 14px 58px;background:#fff;position:relative}
+.bid-nr{position:absolute;left:14px;top:13px;width:32px;height:32px;border-radius:50%;background:var(--accent-soft,#f6e4da);color:var(--accent-dark,#9a3d14);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.92rem}
+.bid-lijst h3{font-size:1rem;margin:0 0 4px}
+.bid-lijst p{font-size:.92rem;margin:0 0 6px}
+.bid-prijs{display:inline-block;font-size:.8rem;font-weight:700;background:var(--bg-soft,#f6f4f0);border-radius:999px;padding:2px 9px;margin-right:6px}
+.bid-link{font-size:.88rem;font-weight:700}
+@media (max-width:700px){.bid-lijst{grid-template-columns:1fr}}
+</style>"""
+
+
+def _ideeen_pagina(write, today):
+    url = IDEEEN_PAD
+    cr, cr_ld = crumbs([("Home", "/"), ("Inspiratie", PAD), ("Badkamer ideeën", None)])
+    n = 0
+    secties = ""
+    nav = "".join(f'<li><a href="#{b["id"]}">{b["titel"].split(":")[0]}</a></li>' for b in IDEEEN)
+    for b in IDEEEN:
+        items = ""
+        for titel, tekst, bron, href, label in b["lijst"]:
+            n += 1
+            items += (f'<div class="bid-item"><span class="bid-nr">{n}</span><h3>{titel}</h3><p>{tekst}</p>{_idee_prijs(bron)}'
+                      f'<a class="bid-link" href="{href}">{label} →</a></div>')
+        secties += f"""
+  <h2 id="{b['id']}">{b['titel']}</h2>
+  <p>{b['intro']}</p>
+  <div class="bi2-detail">{_ideeen_render(b['render'], "(max-width: 860px) 100vw, 820px")}</div>
+  <div class="bid-lijst">{items}</div>"""
+    assert n == 30, n
+
+    faqs = [
+        ("Wat kost een nieuwe badkamer?", "De meeste complete badkamers van 5 tot 9 m² kosten €6.000 tot €18.000, inclusief sloopwerk, leidingwerk, tegels, sanitair, montage en 21% btw. Wil je alleen opfrissen, dan kan het met een paar honderd tot een paar duizend euro."),
+        ("Hoe maak ik een kleine badkamer groter?", "Gebruik lichte, grote tegels, een zwevend meubel, een hangtoilet en een heldere glazen wand. Een spiegel over de hele breedte en een nis in plaats van planken helpen ook."),
+        ("Welke badkamerstijl is tijdloos?", "Een rustige basis van wit, zand of grijs met natuurlijke materialen blijft het langst mooi. Kranen, spiegel en accessoires kun je later makkelijker vervangen dan tegels."),
+        ("Waar begin ik met een badkamerverbouwing?", "Begin met wat je wilt en wat het mag kosten. Kies daarna een stijl en een indeling, en vraag offertes met de posten apart. Lees ook de volgorde van een badkamerrenovatie."),
+        ("Zijn de beelden op deze pagina echte badkamers?", "Nee. Het zijn illustraties: 3D-renders die wij zelf hebben gemaakt om een stijl te laten zien. Ze tonen geen werk van een bepaald bedrijf."),
+    ]
+    faq_html, faq_ld = faq_blok(faqs, "Veelgestelde vragen over badkamer ideeën")
+    description = "30 badkamer ideeën per budget: van nieuwe kit en een thermostaatkraan tot een inloopdouche en een vrijstaand bad. Met richtprijzen en links naar stijlen en kopersgidsen."
+
+    body = f"""{BI_CSS}{CSS2}{CSS_IDEEEN}{cr}
+<article class="section-sm"><div class="wrap narrow prose">
+  <span class="badge">Inspiratie · ideeën</span>
+  <h1>Badkamer ideeën: 30 ideeën per budget</h1>
+  <p class="lead">Wat kun je doen met €500, met €3.000 of met een heel nieuw budget? Hieronder staan 30 ideeën, van klein opfrissen tot een luxe badkamer. Bij elk idee staat een richtprijs als die er is, en een link naar een stijl of een kopersgids.</p>
+  <div class="bi-hero">{_ideeen_render("wellness-badkamer", "(max-width: 860px) 100vw, 820px")}</div>
+  <ul class="bid-nav">{nav}</ul>
+  <p style="font-size:.88rem">Richtprijzen inclusief 21% btw, uit <a href="/kosten/nieuwe-badkamer/">onze richtprijzen</a> en de <a href="/tools/offertechecker/">offertevergelijker</a>. Bij "product" is het alleen het product, zonder montage. Geen bedrag betekent dat het sterk afhangt van wat je kiest.</p>
+{secties}
+
+  {cta_midden("Een idee laten uitvoeren?", "Vergelijk gratis offertes van maximaal drie badkamerspecialisten uit je regio.")}
+
+  <h2 id="kiezen">Hoe kies je uit al deze ideeën?</h2>
+  <ul class="checklist">
+    <li>Bepaal eerst je budget en of de leidingen op hun plek kunnen blijven. Dat scheelt het meest.</li>
+    <li>Kies één stijl als basis. Twijfel je, probeer dan de <a href="/tools/stijlkiezer/">stijlkiezer</a> of lees <a href="/kennisbank/badkamerstijlen/">badkamerstijlen uitgelegd</a>.</li>
+    <li>Reken je plan door met de <a href="/tools/badkamercalculator/">badkamercalculator</a>.</li>
+    <li>Vraag offertes met de posten apart en leg ze naast elkaar in de <a href="/tools/offertechecker/">offertevergelijker</a>.</li>
+  </ul>
+  {offertecheck_blok("je badkamer")}
+  <p style="margin-top:14px"><a href="{PAD}">Alle badkamerstijlen op een rij</a> · <a href="/badkamerspullen/">Alle kopersgidsen</a></p>
+</div></article>
+{faq_html}
+{cta_blok("Klaar voor je nieuwe badkamer?", "Beschrijf je wensen in een minuut en ontvang gratis en vrijblijvend offertes van maximaal drie badkamerspecialisten uit jouw regio.")}"""
+
+    art_ld = {
+        "@context": "https://schema.org", "@type": "Article",
+        "headline": "Badkamer ideeën: 30 ideeën per budget", "description": description, "inLanguage": "nl-NL",
+        "datePublished": "2026-11-27", "dateModified": today,
+        "author": {"@type": "Organization", "@id": SITE["url"] + "/#organization", "name": SITE["naam"]},
+        "publisher": {"@type": "Organization", "@id": SITE["url"] + "/#organization", "name": SITE["naam"]},
+        "mainEntityOfPage": SITE["url"] + url,
+        "isPartOf": {"@type": "CollectionPage", "@id": SITE["url"] + PAD},
+    }
+    write(url, page(title("Badkamer ideeën: 30 ideeën per budget"), description, url, body, [cr_ld, art_ld, faq_ld]), prio=0.7)
+
+
 def build(write):
     today = datetime.date.today().isoformat()
     for s in STIJLEN:
         _stijlpagina(s, write, today)
+    _ideeen_pagina(write, today)

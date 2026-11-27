@@ -1040,6 +1040,17 @@ from badkamer_kosten3 import KOSTEN3, B3
 B.update(B3)
 KOSTEN += KOSTEN3
 
+# Ronde 5: verdieping van de vijf belangrijkste kostenpagina's (EXTRA) en nieuwe pagina's (KOSTEN4).
+from badkamer_kosten4 import KOSTEN4, B4, EXTRA
+B.update(B4)
+for _k in KOSTEN:
+    _x = EXTRA.get(_k["slug"])
+    if _x:
+        _x = dict(_x)
+        _k["faqs"] = list(_k["faqs"]) + list(_x.pop("faqs_extra", []))
+        _k.update(_x)
+KOSTEN += KOSTEN4
+
 KOSTEN_BY_SLUG = {k["slug"]: k for k in KOSTEN}
 
 LINKS = [("/kosten/", "Kosten badkamerwerk", "Richtprijzen voor een nieuwe badkamer, inloopdouche, bad, tegelwerk en meer.")] + [
@@ -1073,6 +1084,7 @@ STYLE = """<style>
 .kc-grid .card h3{display:flex;gap:10px;align-items:center}
 .kc-grid .card .price{margin-top:4px}
 @media (max-width:600px){.kc-snel{flex-direction:column;gap:8px}.kc-snel .kc-bedrag{font-size:1.3rem}}
+@media (max-width:600px){.kc-opb table{min-width:0}.kc-opb thead{display:none}.kc-opb table,.kc-opb tbody,.kc-opb tr,.kc-opb td{display:block;width:auto}.kc-opb tr{padding:10px 0;border-bottom:1px solid var(--line)}.kc-opb tr:last-child{border-bottom:0}.kc-opb td{padding:2px 14px;border:0;text-align:left}}
 </style>"""
 
 
@@ -1099,6 +1111,67 @@ def bronnen_html(sleutels):
             f'inschatting aangegeven.</p><ul class="kc-bronnen">{li}</ul>')
 
 
+def bron_kort(sleutel):
+    """Link naar een bron uit B of richtprijzen.BRONNEN."""
+    naam, url = B.get(sleutel) or RP.BRONNEN[sleutel]
+    if not url:
+        return naam.lower()
+    return f'<a href="{url}" rel="nofollow noopener">{naam.split(",")[0]}</a>'
+
+
+def opbouw_html(rijen):
+    """Prijsopbouw per post. Rij: (post, waarde, toelichting, bronnen).
+    waarde is een sleutel uit richtprijzen.py (bedrag, eenheid en bronnen komen dan daaruit)
+    of een tuple (laag, hoog, eenheidstekst); bronnen is dan een lijst sleutels."""
+    uit = []
+    for post, waarde, uitleg, bronnen in rijen:
+        if isinstance(waarde, str):
+            p = RP.RICHTPRIJZEN[waarde]
+            bedr = f"{bedrag(*rp(waarde))} {RP.EENHEID_TEKST[p['eenheid']]}" + (" excl. btw" if p["btw"] == "excl" else "")
+            bronnen = bronnen or p["bron"]
+        else:
+            bedr = f"{bedrag(waarde[0], waarde[1])} {waarde[2]}".strip()
+        gezien, delen = set(), []
+        for b in bronnen:
+            naam = (B.get(b) or RP.BRONNEN[b])[0].split(",")[0]
+            if b != "eigen" and naam not in gezien:
+                gezien.add(naam)
+                delen.append(bron_kort(b))
+        links = ", ".join(delen)
+        if "eigen" in bronnen:
+            links = (links + ", " if links else "") + "eigen inschatting"
+        uit.append((f"<strong>{post}</strong>", bedr, f"{uitleg} <small>Bron: {links}.</small>"))
+    return f'<div class="kc-opb">{tabel(["Post", "Richtprijs", "Wat zit erin"], uit)}</div>'
+
+
+def extra_secties(k):
+    """De verdiepende blokken van ronde 5. Geeft (opbouw, voorbeelden, spijt, valkuilen) als HTML."""
+    opb = ""
+    if k.get("opbouw"):
+        intro = k.get("opbouw_intro", "")
+        opb = (f'<h2>Prijsopbouw per post</h2><p>{intro}</p>{opbouw_html(k["opbouw"])}'
+               f'<p><small>Bedragen per post komen uit dezelfde richtprijzen als de <a href="{CALC}">badkamercalculator</a> '
+               f'en de <a href="/tools/offertechecker/">offertechecker</a>, inclusief 21% btw tenzij anders vermeld. Peildatum november {JAAR}.</small></p>')
+    vb = ""
+    for titel, intro, rijen, slot in k.get("voorbeelden", []):
+        vb += f"<h3>{titel}</h3><p>{intro}</p>{tabel(['Post', 'Richtprijs'], voorbeeld_rijen(rijen))}<p><small>{slot}</small></p>"
+    spijt = ""
+    if k.get("spijt"):
+        wel = "".join(f"<li>{icon('check', 20)}<strong>{a}</strong> {b}</li>" for a, b in k["spijt"]["wel"])
+        niet = "".join(f"<li><strong>{a}</strong> {b}</li>" for a, b in k["spijt"]["niet"])
+        spijt = (f"<h2>Besparen zonder spijt</h2><p>{k['spijt'].get('intro', '')}</p>"
+                 f"<h3>Hier kun je veilig op besparen</h3><ul class=\"kc-tips\">{wel}</ul>"
+                 f"<h3>Hier bespaar je beter niet op</h3><ul class=\"kc-factoren\">{niet}</ul>")
+    val = ""
+    if k.get("valkuilen"):
+        li = "".join(f"<li><strong>{a}</strong>{b}</li>" for a, b in k["valkuilen"])
+        val = (f"<h2>Valkuilen in offertes</h2><p>Een lage totaalprijs zegt weinig als er posten ontbreken. Let bij "
+               f"{k['kort'].lower()} vooral hierop:</p><ul class=\"kc-factoren\">{li}</ul>"
+               f"<p>Heb je een offerte? Zet hem in de <a href=\"/tools/offertechecker/\">offertechecker</a>: die legt elke regel "
+               f"naast deze richtprijzen en laat zien wat ontbreekt of vaag is.</p>")
+    return opb, vb, spijt, val
+
+
 def kosten_body(k):
     d = DIENST_BY_SLUG[k["dienst"]]
     cr, cr_ld = crumbs([("Home", "/"), ("Kosten", "/kosten/"), (k["kort"], None)])
@@ -1108,8 +1181,8 @@ def kosten_body(k):
         varianten = prijs_balken([(lbl, v, t) for lbl, v, t, _ in k["varianten"]], k["varianten_eenheid"], k["varianten_noot"])
     else:
         varianten = f'<p><small>{k["varianten_eenheid"]}. {k["varianten_noot"]}</small></p>'
-    var_tabel = tabel(["Variant", "Richtprijs", "Wat je krijgt"],
-                      [(f"<strong>{lbl}</strong>", bedrag(v, t), uitleg) for lbl, v, t, uitleg in k["varianten"]])
+    var_tabel = '<div class="kc-opb">' + tabel(["Variant", "Richtprijs", "Wat je krijgt"],
+                      [(f"<strong>{lbl}</strong>", bedrag(v, t), uitleg) for lbl, v, t, uitleg in k["varianten"]]) + '</div>'
     factoren = "".join(f"<li><strong>{kop}</strong>{tekst}</li>" for kop, tekst in k["factoren"])
     intro, rijen, slot = k["voorbeeld"]
     voorbeeld = tabel(["Post", "Richtprijs"], voorbeeld_rijen(rijen))
@@ -1119,6 +1192,9 @@ def kosten_body(k):
         for s in k["verwant"])
     kennis = "".join(f'<li><a href="{p}">{t}</a></li>' for p, t in k["kennis"])
     faq_html, faq_ld = faq_blok(k["faqs"], f"Veelgestelde vragen over {k['kort'].lower()}")
+    x_opbouw, x_voorbeelden, x_spijt, x_valkuilen = extra_secties(k)
+    vb_kop = "Rekenvoorbeelden" if x_voorbeelden else "Rekenvoorbeeld"
+    tips_kop = "Meer tips om te besparen" if x_spijt else "Tips om te besparen"
 
     eenheid_kort = k["eenheid"]
     body = f"""{STYLE}{cr}
@@ -1138,14 +1214,17 @@ def kosten_body(k):
   <h2>Prijzen per variant</h2>
   {varianten}
   {var_tabel}
+  {x_opbouw}
 
   <h2>Wat bepaalt de prijs?</h2>
   <ul class="kc-factoren">{factoren}</ul>
 
-  <h2>Rekenvoorbeeld</h2>
+  <h2>{vb_kop}</h2>
+  {"<h3>" + k["voorbeeld_titel"] + "</h3>" if k.get("voorbeeld_titel") else ""}
   <p>{intro}</p>
   {voorbeeld}
   <p>{slot}</p>
+  {x_voorbeelden}
   <p>Wil je een schatting voor je eigen badkamer? Gebruik de <a href="{CALC}">badkamercalculator</a>.</p>
 
   {cta_midden("Weet wat het bij jou kost", "Vraag gratis offertes aan bij maximaal drie badkamerspecialisten uit jouw regio en vergelijk ze rustig.")}
@@ -1154,7 +1233,9 @@ def kosten_body(k):
   <h2>Welke btw betaal je?</h2>
   <p>{BTW_BASIS} {k['btw_extra']}</p>
 
-  <h2>Tips om te besparen</h2>
+  {x_valkuilen}
+  {x_spijt}
+  <h2>{tips_kop}</h2>
   <ul class="kc-tips">{tips}</ul>
 
   <h2>Wanneer heb je een specialist nodig?</h2>

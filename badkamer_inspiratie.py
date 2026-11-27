@@ -472,6 +472,289 @@ def _bronnen_html():
 
 
 # ---------------------------------------------------------------------------
+# Verdieping van zes stijlen (ronde 5): palet, shoplijst, kosten, valkuilen en combinaties
+# ---------------------------------------------------------------------------
+# Gekozen op zoekvolume (Semrush, database nl, november 2026): japandi badkamer 1.900,
+# luxe badkamer 1.600, moderne badkamer 1.300, landelijke badkamer 1.000,
+# scandinavische badkamer 720 en klassieke badkamer 390.
+#
+# palet:     [(rol, naam, hex, procent)] volgens de 60-30-10-verdeling (basis, tweede kleur, accent)
+# shop:      [(onderdeel, omschrijving, bron)]; bron = ("rp", sleutel, niveau) uit richtprijzen.py
+#            of ("pb", sleutel) uit producten_badkamer.py. Geen winkels, geen merken.
+# niveau:    typisch prijsniveau voor het rekenvoorbeeld (basis, midden of luxe)
+# valkuilen: [(valkuil, oplossing)]
+# combi:     [(slug andere stijl of None, titel, uitleg)]
+# Alle bedragen komen uit richtprijzen.py en producten_badkamer.py; hier staan geen nieuwe bedragen.
+
+REKEN_M2 = 25  # tegelwerk wand en vloer in het rekenvoorbeeld (badkamer van ongeveer 6 m²)
+
+STIJL_EXTRA = {
+    "moderne-badkamer": {
+        "palet": [("Basis", "Warm wit", "#f1efea", 60), ("Tweede kleur", "Antraciet", "#4a4c4f", 30), ("Accent", "Mat zwart en eiken", "#1b1b1c", 10)],
+        "niveau": "midden",
+        "shop": [
+            ("Wandtegels", "Groot formaat (60 × 120 cm) in warm wit, gerectificeerd, met een smalle voeg.", ("rp", "tegels", "midden")),
+            ("Vloertegels", "Antraciet porcellanato 60 × 60 cm met betonlook, antislip R10, ook in de douche.", ("rp", "tegels", "midden")),
+            ("Douche", "Inloopdouche met een heldere vaste glaswand, smal profiel en een goot langs de muur.", ("rp", "sanitair_douche", "midden")),
+            ("Kraan douche", "Inbouwthermostaat in mat zwart, met hoofddouche aan de wand of het plafond.", ("pb", "inbouwkraan")),
+            ("Wastafelmeubel", "Zwevend meubel in licht eiken met lades en een witte keramische kom.", ("rp", "sanitair_meubel", "midden")),
+            ("Toilet", "Hangtoilet zonder spoelrand met inbouwreservoir en een zwarte bedieningsplaat.", ("rp", "sanitair_toilet", "midden")),
+            ("Spiegel", "Rechthoekige spiegel met ledverlichting, of een spiegelkast in de wand.", ("pb", "spiegel_kast")),
+            ("Radiator", "Strakke handdoekradiator in mat zwart of wit.", ("pb", "badkamerradiator")),
+        ],
+        "valkuilen": [
+            ("Een kale, galmende ruimte", "Harde vlakken weerkaatsen geluid. Een handdoekenrek met textiel, een mat en een plant maken het zachter."),
+            ("Inbouwkranen zonder plan", "Het inbouwdeel moet in de muur voordat er getegeld wordt. Kies de kraan dus voordat de tegelzetter begint."),
+            ("Te veel zwart", "Zwart op elk onderdeel maakt een kleine badkamer donker. Houd zwart bij kranen en details."),
+        ],
+        "combi": [
+            ("japandi-badkamer", "Modern + japandi", "Houd de strakke lijnen en grote tegels, en ruil grijs voor zand en licht hout. Warmer, nog steeds rustig."),
+            ("industriele-badkamer", "Modern + industrieel", "Een betonlook-vloer en een zwart profiel om de douchewand geven een stoerdere variant."),
+            ("luxe-badkamer", "Modern + luxe", "Eén wand met grote platen in marmerlook maakt een moderne badkamer meteen chiquer."),
+        ],
+    },
+    "landelijke-badkamer": {
+        "palet": [("Basis", "Gebroken wit", "#ece6da", 60), ("Tweede kleur", "Flessengroen", "#3f7a62", 30), ("Accent", "Messing", "#c9a35c", 10)],
+        "niveau": "midden",
+        "shop": [
+            ("Wandtegels", "Handgemaakte of handvorm-tegel in groen, tot ongeveer 120 cm hoog. Kleine kleurverschillen horen erbij.", ("rp", "tegels", "luxe")),
+            ("Vloertegels", "Keramische tegel met cementtegel-patroon, antislip, in grijsgroen en wit.", ("rp", "tegels", "midden")),
+            ("Bad", "Vrijstaand bad met een ronde rand, of een inbouwbad met een betegelde ombouw.", ("pb", "vrijstaand_bad")),
+            ("Kranen", "Kruiskranen of een badkraan met handdouche in (geborsteld) messing.", ("pb", "badkraan")),
+            ("Wastafelmeubel", "Meubel in eiken of geschilderd hout op pootjes, met een witte kom.", ("rp", "sanitair_meubel", "midden")),
+            ("Spiegel", "Ronde of boogvormige spiegel met een messing of houten lijst.", ("pb", "spiegel_kast")),
+            ("Accessoires", "Haakjes, een handdoekstang en een toiletrolhouder in dezelfde kleur als de kranen.", ("pb", "accessoires")),
+        ],
+        "valkuilen": [
+            ("Te veel patroon", "Een patroonvloer én een tegel met reliëf én bloemetjesbehang is te druk. Kies één patroon."),
+            ("Messing dat vlekt", "Onbehandeld messing verkleurt. Wil je dat niet, kies dan een kraan met een gecoate afwerking."),
+            ("Kalkverf in de douche", "Kalkverf is niet waterdicht. Gebruik het alleen buiten de spatzone en tegel de douche."),
+        ],
+        "combi": [
+            ("klassieke-badkamer", "Landelijk + klassiek", "Metrotegels in plaats van handgemaakte tegels en een lambrisering geven een nette, landelijke badkamer."),
+            ("scandinavische-badkamer", "Landelijk + scandinavisch", "Lichter hout, meer wit en minder patroon. Fris, maar nog steeds warm."),
+            ("japandi-badkamer", "Landelijk + japandi", "Houd het hout en de handgemaakte tegel, laat het patroon weg en kies zachte zandtinten."),
+        ],
+    },
+    "japandi-badkamer": {
+        "palet": [("Basis", "Zand en gebroken wit", "#e3d9c9", 60), ("Tweede kleur", "Licht eiken", "#cfab80", 30), ("Accent", "Salie en mat zwart", "#a4ae95", 10)],
+        "niveau": "midden",
+        "shop": [
+            ("Wandtegels", "Langwerpige tegel in gebroken wit, in visgraat of rechte rijen, met een zandkleurige voeg.", ("rp", "tegels", "midden")),
+            ("Vloer", "Warme terrazzo of een tegel in terrazzolook, of een rustige stenen tegel in zand.", ("rp", "tegels", "midden")),
+            ("Wastafelmeubel", "Laag, zwevend meubel in licht eiken met een eenvoudige kom van keramiek of steen.", ("rp", "sanitair_meubel", "midden")),
+            ("Douche", "Inloopdouche met een smalle goot en helder of licht getint glas.", ("rp", "sanitair_douche", "midden")),
+            ("Kranen", "Eenvoudige kraan in mat zwart of geborsteld rvs, zonder versiering.", ("pb", "wastafelkraan")),
+            ("Spiegel", "Ronde spiegel zonder lijst of met een dunne houten rand.", ("pb", "spiegel_kast")),
+            ("Accessoires", "Houten krukje, linnen handdoeken en een bamboe of houten mand.", ("pb", "accessoires")),
+        ],
+        "valkuilen": [
+            ("Het wordt saai", "Alleen beige zonder structuur voelt vlak. Zorg voor verschil in materiaal: hout, steen, linnen."),
+            ("Hout op de verkeerde plek", "Echt hout in de douche heeft het zwaar. Gebruik het bij het meubel en kies in de douche tegels."),
+            ("Te veel spullen", "Japandi draait om rust. Plan dichte opbergruimte, zoals lades en een nis."),
+        ],
+        "combi": [
+            ("scandinavische-badkamer", "Japandi + scandinavisch", "De bekendste mix: licht hout en wit uit Scandinavië, met de rust en natuurtinten van Japan."),
+            ("terrazzo-badkamer", "Japandi + terrazzo", "Een vloer van warme terrazzo met kleine steentjes past goed bij zand en eiken."),
+            ("wellness-badkamer", "Japandi + wellness", "Voeg een regendouche, warm licht en een bankje toe voor een spa-gevoel."),
+        ],
+    },
+    "klassieke-badkamer": {
+        "palet": [("Basis", "Wit", "#f4f2ec", 60), ("Tweede kleur", "Grijsgroen", "#c9d0c8", 30), ("Accent", "Goud", "#d9b26a", 10)],
+        "niveau": "midden",
+        "shop": [
+            ("Wandtegels", "Metrotegel 7,5 × 15 cm in wit, met facetrand, in halfsteens verband.", ("rp", "tegels", "midden")),
+            ("Vloertegels", "Marmerlook-tegel of een zwart-wit patroon (dambord of mozaïek).", ("rp", "tegels", "midden")),
+            ("Bad", "Bad op pootjes of een inbouwbad met een betegelde ombouw en lambrisering.", ("rp", "sanitair_bad", "midden")),
+            ("Kranen", "Kruisgreepkranen of een badkraan met telefoonhanddouche in goud, messing of chroom.", ("pb", "badkraan")),
+            ("Wastafelmeubel", "Meubel met paneeldeurtjes in witte of grijsgroene lak en een marmerlook blad.", ("rp", "sanitair_meubel", "midden")),
+            ("Toilet", "Hangtoilet of een staand toilet met klassieke vorm, met bedieningsplaat in de kraankleur.", ("rp", "sanitair_toilet", "midden")),
+            ("Spiegel", "Spiegel met een gouden of houten lijst, met wandlampjes ernaast.", ("pb", "spiegel_kast")),
+            ("Radiator", "Klassieke kolomradiator of een handdoekradiator in de kraankleur.", ("pb", "badkamerradiator")),
+        ],
+        "valkuilen": [
+            ("Te veel goud", "Goud op elk onderdeel wordt snel kitsch. Houd het bij kranen, spiegel en lampjes."),
+            ("Witte voegen", "Veel voegen in wit verkleuren. Een lichtgrijze voeg blijft netter."),
+            ("Een klassiek bad zonder ruimte", "Een bad op pootjes heeft ruimte rondom nodig. In een kleine badkamer past een inbouwbad met ombouw beter."),
+        ],
+        "combi": [
+            ("marmer-badkamer", "Klassiek + marmer", "Marmer of marmerlook op de vloer en het wastafelblad maakt het klassieke beeld rijker."),
+            ("zwart-wit-badkamer", "Klassiek + zwart-wit", "Een zwart-wit tegelvloer met witte metrotegels is een tijdloze combinatie."),
+            ("landelijke-badkamer", "Klassiek + landelijk", "Groene tegels en messing in plaats van wit en goud geven een warmere, landelijke variant."),
+        ],
+    },
+    "scandinavische-badkamer": {
+        "palet": [("Basis", "Warm wit", "#f5f4f0", 60), ("Tweede kleur", "Licht eiken", "#d4b48c", 30), ("Accent", "Grijsblauw", "#9fb1bd", 10)],
+        "niveau": "basis",
+        "shop": [
+            ("Wandtegels", "Witte staande tegel 7,5 × 30 cm, mat of zacht glanzend, met een lichtgrijze voeg.", ("rp", "tegels", "basis")),
+            ("Vloertegels", "Houtlook-tegel in licht eiken, antislip, die in de douche doorloopt.", ("rp", "tegels", "midden")),
+            ("Douche", "Vaste glaswand of nis met deur, met een eenvoudige opbouwthermostaat.", ("rp", "sanitair_douche", "basis")),
+            ("Kraan", "Opbouwthermostaat in geborsteld rvs of chroom.", ("pb", "thermostaatkraan")),
+            ("Wastafelmeubel", "Licht eiken meubel met witte kom, zwevend of op slanke poten.", ("rp", "sanitair_meubel", "basis")),
+            ("Toilet", "Wit hangtoilet of staand toilet met een eenvoudige witte plaat.", ("rp", "sanitair_toilet", "basis")),
+            ("Accessoires", "Houten ladder voor handdoeken, wollen mat en een plant.", ("pb", "accessoires")),
+        ],
+        "valkuilen": [
+            ("Kil wit", "Koel wit met grijs voelt al snel als een ziekenhuis. Kies warm wit en voeg hout toe."),
+            ("Echt hout op de vloer", "Een houten vloer in een badkamer is gevoelig voor vocht. Houtlook-tegels geven hetzelfde beeld."),
+            ("Te weinig licht", "Scandinavisch leunt op licht. Plan naast de plafondlamp ook licht bij de spiegel."),
+        ],
+        "combi": [
+            ("japandi-badkamer", "Scandinavisch + japandi", "Iets donkerder hout, zandtinten en minder spullen: rustiger en warmer."),
+            ("moderne-badkamer", "Scandinavisch + modern", "Grotere tegels en een zwarte kraan maken het strakker zonder het lichte gevoel te verliezen."),
+            ("landelijke-badkamer", "Scandinavisch + landelijk", "Een handgemaakte tegel in zacht blauw of groen geeft meer karakter."),
+        ],
+    },
+    "luxe-badkamer": {
+        "palet": [("Basis", "Calacatta-wit en greige", "#ece6dc", 60), ("Tweede kleur", "Donker eiken", "#5e4433", 30), ("Accent", "Goud", "#d9b26a", 10)],
+        "niveau": "luxe",
+        "shop": [
+            ("Blikvanger", "Eén wand met grote platen in marmerlook (keramisch) of echt marmer met warme aders.", ("rp", "tegels", "luxe")),
+            ("Vloertegels", "Lichte vloertegel 120 × 120 cm, gerectificeerd, met een smalle voeg en antislip.", ("rp", "tegels", "luxe")),
+            ("Bad", "Vrijstaand bad van solid surface of acryl, met een staande badkraan.", ("pb", "vrijstaand_bad")),
+            ("Douche", "Ruime inloopdouche (120 cm of breder) met goot, regendouche en handdouche.", ("rp", "sanitair_douche", "luxe")),
+            ("Kranen", "Inbouwthermostaat in geborsteld goud, met dezelfde kleur op alle onderdelen.", ("pb", "inbouwkraan")),
+            ("Wastafelmeubel", "Dubbel meubel in donker eiken met twee kommen en een stenen of keramisch blad.", ("rp", "sanitair_meubel", "luxe")),
+            ("Toilet", "Hangtoilet zonder spoelrand, eventueel met douchewc-functie, in een aparte nis.", ("rp", "sanitair_toilet", "luxe")),
+            ("Radiator", "Designradiator in de kraankleur. Plan ook dimbare spots en wandlampjes bij de spiegels; die vallen onder elektra.", ("pb", "badkamerradiator")),
+        ],
+        "valkuilen": [
+            ("Duur zonder plan", "Dure materialen maken niet vanzelf een mooie badkamer. Laat eerst een indeling en lichtplan maken."),
+            ("Het gewicht vergeten", "Een vrijstaand bad, grote platen en natuursteen zijn zwaar. Laat de vloer checken."),
+            ("Te weinig warm water", "Een grote regendouche en een groot bad vragen veel warm water. Check de ketel of warmtepomp."),
+        ],
+        "combi": [
+            ("marmer-badkamer", "Luxe + marmer", "Marmer op meer vlakken, zoals de vloer en een badombouw, voor een hotelgevoel."),
+            ("wellness-badkamer", "Luxe + wellness", "Voeg een stoomdouche of infrarood, een bankje en warm licht toe."),
+            ("moderne-badkamer", "Luxe + modern", "Grote donkere platen en zwarte kranen in plaats van goud geven een strakke, luxe badkamer."),
+        ],
+    },
+}
+
+CSS_EXTRA = """<style>
+.bx-bord{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:110px 110px;gap:8px;margin:16px 0 8px}
+.bx-bord span{border-radius:10px;border:1px solid rgba(0,0,0,.08);background-size:cover;position:relative}
+.bx-bord span:first-child{grid-row:span 2}
+.bx-bord em{position:absolute;left:6px;bottom:6px;font-style:normal;font-size:.72rem;background:rgba(255,255,255,.9);color:#334;padding:2px 7px;border-radius:999px}
+.bx-603010{display:flex;height:56px;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(0,0,0,.08);margin:14px 0 6px}
+.bx-603010 span{display:flex;align-items:flex-end;padding:6px 8px;font-size:.74rem;font-weight:700}
+.bx-legenda{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;margin:0 0 14px;padding:0;list-style:none}
+.bx-legenda li{margin:0}.bx-legenda li::before{display:none}
+.bx-legenda i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid rgba(0,0,0,.12)}
+.bx-shop{width:100%;border-collapse:collapse;font-size:.93rem;margin:12px 0}
+.bx-shop th,.bx-shop td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.bx-shop th{font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted,#5b6470)}
+.bx-shop td:first-child{font-weight:700;white-space:nowrap}
+.bx-shop td:last-child{white-space:nowrap}
+.bx-som{background:var(--bg-soft,#f6f4f0);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin:12px 0}
+.bx-som p{margin:0 0 6px}.bx-som p:last-child{margin:0}
+.bx-val{display:grid;gap:10px;margin:12px 0;padding:0;list-style:none}
+.bx-val li{margin:0;border:1px solid var(--line);border-left:4px solid #c0392b;border-radius:var(--radius);padding:10px 14px;background:#fff}
+.bx-val li::before{display:none}
+.bx-val b{display:block}
+.bx-combi{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:12px 0}
+.bx-combi a{display:block;border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;text-decoration:none;color:inherit;background:#fff}
+.bx-combi a:hover,.bx-combi a:focus-visible{border-color:var(--accent)}
+.bx-combi b{display:block;margin-bottom:4px}
+.bx-combi span{font-size:.9rem;color:var(--muted,#5b6470)}
+@media (max-width:560px){.bx-bord{grid-template-columns:1fr 1fr;grid-template-rows:90px 90px 90px}.bx-bord span:first-child{grid-row:span 1;grid-column:span 2}
+.bx-shop thead{display:none}.bx-shop tr{display:block;border-bottom:1px solid var(--line);padding:8px 0}.bx-shop td{display:block;border:0;padding:2px 14px;white-space:normal!important}}
+</style>"""
+
+
+def _eur(v):
+    return f"€{v:,.0f}".replace(",", ".")
+
+
+def _shop_prijs(bron):
+    """(laag, hoog, tekst) voor een shoplijst-regel."""
+    import richtprijzen as RP
+    import producten_badkamer as PB
+    if bron[0] == "rp":
+        p = RP.RICHTPRIJZEN[bron[1]]
+        lo, hi = p["niveaus"][bron[2]]
+        eenh = " per m²" if p["eenheid"] == "m2" else ""
+        return lo, hi, f"{_eur(lo)} – {_eur(hi)}{eenh}", p["eenheid"]
+    c = PB.PRODUCTDATA["categorieen"][bron[1]]
+    eenh = " per m²" if c.get("eenheid") == "m2" else ""
+    return c["van"], c["tot"], f"{_eur(c['van'])} – {_eur(c['tot'])}{eenh}", c.get("eenheid", "st")
+
+
+def stijl_extra_html(s, alle_stijlen):
+    """Extra secties voor een stijlpagina, of '' als de stijl geen verdieping heeft."""
+    import richtprijzen as RP
+    x = STIJL_EXTRA.get(s["slug"])
+    if not x:
+        return ""
+    naam_l = s["naam"].lower()
+    namen = {o["slug"]: o["naam"] for o in alle_stijlen}
+
+    # Materiaalbord: de stalen van de stijl in een raster, grootste staal eerst
+    bord = "".join(f'<span style="background:{bg}" aria-hidden="true"><em>{n}</em></span>'
+                   for n, _t, bg in s["materialen"][:5])
+    verdeling = "".join(
+        f'<span style="flex:{pct};background:{hx};color:{"#fff" if _donker(hx) else "#223"}">{pct}%</span>'
+        for _r, _n, hx, pct in x["palet"])
+    legenda = "".join(f'<li><i style="background:{hx}"></i><strong>{r}:</strong> {n} ({pct}%)</li>'
+                      for r, n, hx, pct in x["palet"])
+
+    # Shoplijst met richtprijzen
+    rijen, som_lo, som_hi = "", 0, 0
+    for onderdeel, oms, bron in x["shop"]:
+        lo, hi, tekst, eenh = _shop_prijs(bron)
+        rijen += f"<tr><td>{onderdeel}</td><td>{oms}</td><td>{tekst}</td></tr>"
+    # Rekenvoorbeeld: sanitair op het typische niveau plus tegels voor REKEN_M2 m²
+    niv = x["niveau"]
+    posten = [("Douche", "sanitair_douche"), ("Toilet", "sanitair_toilet"), ("Wastafelmeubel", "sanitair_meubel")]
+    if any(b[1] in ("sanitair_bad", "vrijstaand_bad", "badkraan") for _o, _m, b in x["shop"]):
+        posten.append(("Bad", "sanitair_bad"))
+    for _n, k in posten:
+        a, b = RP.RICHTPRIJZEN[k]["niveaus"][niv]
+        som_lo += a; som_hi += b
+    tlo, thi = RP.RICHTPRIJZEN["tegels"]["niveaus"][niv]
+    som_lo += tlo * REKEN_M2; som_hi += thi * REKEN_M2
+    posten_tekst = ", ".join(n.lower() for n, _ in posten)
+
+    val = "".join(f"<li><b>{v}</b>{o}</li>" for v, o in x["valkuilen"])
+    combi = "".join(
+        f'<a href="/inspiratie/{sl}/"><b>{t}</b><span>{u}</span></a>' if sl in namen else f'<div><b>{t}</b><span>{u}</span></div>'
+        for sl, t, u in x["combi"])
+
+    return f"""{CSS_EXTRA}
+  <h2 id="palet">Materiaal- en kleurenpalet</h2>
+  <p>Zo verhouden de materialen en kleuren zich in een {naam_l}. Gebruik de 60-30-10-regel: ongeveer 60% basis, 30% tweede kleur en 10% accent. Dan blijft het rustig.</p>
+  <div class="bx-bord">{bord}</div>
+  <div class="bx-603010" aria-hidden="true">{verdeling}</div>
+  <ul class="bx-legenda">{legenda}</ul>
+
+  <h2 id="shoplijst">Shoplijst per onderdeel</h2>
+  <p>Waar je op zoekt als je de spullen voor een {naam_l} uitkiest. We noemen geen winkels en geen merken: met deze omschrijving kun je overal vergelijken. De richtprijs is voor het product, inclusief 21% btw, zonder montage.</p>
+  <div class="tablewrap"><table class="bx-shop"><thead><tr><th>Onderdeel</th><th>Waar je op let</th><th>Richtprijs</th></tr></thead><tbody>{rijen}</tbody></table></div>
+  <p style="font-size:.86rem">Bandbreedtes uit <a href="/kosten/nieuwe-badkamer/">onze richtprijzen</a> en de <a href="/tools/offertechecker/">offertevergelijker</a>. Bij een niveau staat de band van dat niveau; bij een losse categorie de hele band van eenvoudig tot duur.</p>
+
+  <h2 id="wat-kost-het">Wat kosten de spullen voor deze stijl?</h2>
+  <div class="bx-som">
+    <p><strong>Rekenvoorbeeld materiaal: {_eur(som_lo)} – {_eur(som_hi)}</strong></p>
+    <p>Voor {posten_tekst} op niveau <em>{niv}</em>, plus ongeveer {REKEN_M2} m² tegels op hetzelfde niveau (een badkamer van ongeveer 6 m²). Zonder sloopwerk, leidingwerk, tegelzetten en montage. Die komen er meestal nog bij en zijn vaak het grootste deel van de prijs.</p>
+  </div>
+
+  <h2 id="valkuilen-oplossing">Valkuilen en hoe je ze voorkomt</h2>
+  <ul class="bx-val">{val}</ul>
+
+  <h2 id="combinaties">Combinaties met andere stijlen</h2>
+  <p>Een stijl hoeft niet zuiver te zijn. Deze mengvormen werken goed:</p>
+  <div class="bx-combi">{combi}</div>
+"""
+
+
+def _donker(hx):
+    h = hx.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return (0.299 * r + 0.587 * g + 0.114 * b) < 140
+
+
+# ---------------------------------------------------------------------------
 # Stijlpagina
 # ---------------------------------------------------------------------------
 
@@ -553,6 +836,7 @@ def _stijlpagina(s, write, today):
       <ul>{valkuilen}</ul>
     </div>
   </div>
+  {stijl_extra_html(s, STIJLEN)}
 
   <div class="bi-probeer">
     <p><strong>Zelf proberen?</strong> In de stijlkiezer staat {s['kort'].lower()} al klaar. Wissel de wandtegel, de vloer, de kraankleur, het meubel en de douche en zie meteen wat er verandert.</p>
@@ -624,7 +908,7 @@ def _overzicht(write):
   </div>
   <div class="bi-galerij">{kaarten}</div>
   <div class="narrow prose" style="margin-top:46px"><h2>Meer stijlen: materiaal en sfeer</h2>
-    <p>Van licht Scandinavisch tot marmer, terrazzo en een wellnessbadkamer met regendouche. Wil je eerst zien wat een renovatie doet? Bekijk de <a href="/inspiratie/voor-en-na/">voor-en-na-voorbeelden</a>.</p></div>
+    <p>Van licht Scandinavisch tot marmer, terrazzo en een wellnessbadkamer met regendouche. Wil je eerst zien wat een renovatie doet? Bekijk de <a href="/inspiratie/voor-en-na/">voor-en-na-voorbeelden</a>. Zoek je ideeën bij je budget? Lees <a href="/inspiratie/badkamer-ideeen/">30 badkamer ideeën per budget</a>.</p></div>
   <div class="bi-galerij">{kaarten2}</div>
   <div class="narrow prose" style="margin-top:42px">
     <h2>Hoe kies je een stijl?</h2>

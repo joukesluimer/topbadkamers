@@ -20,7 +20,8 @@ import datetime
 from data import (SITE, DIENSTEN, PLAATSEN, buurplaatsen,
                   PRIJSINDEX, INDEX_TOELICHTING, lokale_prijs)
 from wijk_data import WIJKEN  # noqa: F401  (wijkteksten zijn nog schilderspecifiek; fase 2)
-from badkamer_plaats import plaats_sectie, dienst_blok
+from badkamer_plaats import plaats_sectie, dienst_blok, lokale_faq, lokale_dienst_faq
+import dienst_verdieping as DV
 from plaats_content import bouwperiode_zin
 from components import (
     page, crumbs, offerte_form, hoe_werkt_het, waarom_blok, dienst_cards,
@@ -77,6 +78,7 @@ def incl(d):
 # ===========================================================================
 
 import beleving
+import beleving2
 from badkamer_voorna import voorna_slider, VOORNA_CSS, VOORNA_JS
 from render_voorna_data import PAAR_BY_SLUG
 
@@ -113,31 +115,7 @@ def build_home():
     <p class="ov-noot">Verzonnen offerte, echte prijsbanden (november 2026).</p>
   </div>"""
 
-    hero = f"""<section class="hero hero-badkamer">
-<div class="wrap hero-in">
-  <div>
-    <span class="badge badge-dark badge-live"><i></i>Gratis voor jou</span>
-    <h1>Badkamerofferte vergelijken: weet of je prijs klopt</h1>
-    <p class="lead">Heb je al een offerte? Check hem per regel: per product, m² en uur zie je hoe de prijs zich verhoudt tot de markt, wat ontbreekt en wat te vaag is. Nog geen offerte? Vraag er gratis tot drie aan bij badkamerspecialisten uit je regio.</p>
-    <div class="hero-paden">
-      <a class="hero-pad hero-pad-hoofd" href="/tools/offertechecker/"><span class="hero-pad-ic">{icon('form',24)}</span><span><strong>Ik heb al een offerte</strong><small>Upload je pdf of plak de tekst en check hem per regel</small></span><span class="pijl" aria-hidden="true">→</span></a>
-      <a class="hero-pad" href="#offerte"><span class="hero-pad-ic">{icon('users',24)}</span><span><strong>Ik heb nog geen offerte</strong><small>Vraag er gratis tot drie aan bij specialisten uit je regio</small></span><span class="pijl" aria-hidden="true">→</span></a>
-    </div>
-    <ul class="hero-usps">
-      <li><span class="check">{icon('check',12)}</span><span>Je offerte wordt in je browser gelezen; er gaat niets naar een server</span></li>
-      <li><span class="check">{icon('check',12)}</span><span>{f"{n_art} veelgebruikte producten met marktprijzen, plus richtprijzen voor het werk" if n_art else "Marktprijzen voor producten en richtprijzen voor het werk"}</span></li>
-      <li><span class="check">{icon('check',12)}</span><span>Offertes aanvragen: maximaal 3 bedrijven, en je betaalt niets</span></li>
-    </ul>
-  </div>
-  <div>{offerte_form("Nog geen offerte? Vraag er 3 aan", "Gratis · vrijblijvend · maximaal 3 badkamerspecialisten")}</div>
-</div>
-</section>
-<div class="trustbar"><div class="wrap"><ul>
-  <li>{icon('form',20)}<span>Offerte <strong>per regel</strong> gecheckt</span></li>
-  <li>{icon('shield',20)}<span>Je offerte blijft <strong>in je browser</strong></span></li>
-  <li>{icon('users',20)}<span><strong>Maximaal 3</strong> offertes aanvragen</span></li>
-  <li>{icon('euro',20)}<span><strong>Gratis</strong> voor jou</span></li>
-</ul></div></div>"""
+    hero = beleving2.hero()
 
     check_sec = f"""<section class="section">
 <div class="wrap">
@@ -301,7 +279,7 @@ def build_home():
   <p style="margin-top:14px"><a class="link" href="/inspiratie/voor-en-na/">Bekijk alle vier de voor-en-na-voorbeelden →</a></p>
 </div></section>{VOORNA_JS}"""
 
-    body = (hero + check_sec + hoe_werkt_het() + voorna_sec + beleving.sectie_stijlen() + beleving.sectie_droombadkamer()
+    body = (hero + beleving2.zo_werkt_het() + check_sec + beleving2.inspiratie() + voorna_sec + beleving.sectie_droombadkamer()
             + beleving.sectie_ontdek() + waarom_blok() + diensten_sec + prijs_sec + beleving.sectie_cijfers()
             + tips_sec + regio_sec + faq_html + vakmensen_sec + cta_blok())
 
@@ -418,7 +396,7 @@ def dienst_body(d, plaats=None):
     else:
         cr, cr_ld = crumbs([("Home", "/"), ("Diensten", "/diensten/"), (d["naam"], None)])
         h1 = f"{d.get('naam_lang', d['naam'])}: kosten, werkwijze en offertes"
-        intro_extra = ""
+        intro_extra = DV.intentie_blok(d)
 
     feiten = feiten_blok([
         (f"{eur(p_van)}–{eur(p_tot)}", f"richtprijs {d['prijs_eenheid']}{inplaats}"),
@@ -465,7 +443,7 @@ def dienst_body(d, plaats=None):
   {feiten}
 
   <h2>Zo gaat een badkamerspecialist te werk</h2>
-  {stappen_blok(d["werkwijze"])}
+  {DV.stappen_met_duur(d)}
 
   <h2>Waar hangt de prijs vanaf?</h2>
   <p>Twee offertes voor ogenschijnlijk dezelfde klus kunnen ver uit elkaar liggen. Dat komt zelden door de winstmarge en bijna altijd door deze factoren:</p>
@@ -494,7 +472,7 @@ def dienst_body(d, plaats=None):
 def build_dienst_pages():
     for d in DIENSTEN:
         cr, cr_ld, body_top = dienst_body(d)
-        faq_html, faq_ld = faq_blok(d["faq"], f"Veelgestelde vragen over {d['naam'].lower()}")
+        faq_html, faq_ld = faq_blok(d["faq"] + DV.extra_faq(d), f"Veelgestelde vragen over {d['naam'].lower()}")
 
         andere = f"""<section class="section"><div class="wrap">
   <h2>Andere badkamerklussen</h2>
@@ -524,7 +502,7 @@ def build_dienst_pages():
                        "lowPrice": d["prijs_van"], "highPrice": d["prijs_tot"]},
         }
 
-        body = body_top + faq_html + regio + andere + cta_blok(
+        body = body_top + DV.verdieping(d) + faq_html + regio + andere + cta_blok(
             f"Offertes voor {d['naam'].lower()} vergelijken?",
             "Vertel in een minuut wat je nodig hebt. Wij zoeken maximaal drie bedrijven die dit werk doen en beschikbaar zijn.")
 
@@ -663,7 +641,7 @@ def build_plaats_pages():
              "In principe 21%, over het werk en het sanitair. Het lage tarief van 9% geldt alleen voor een paar soorten werk aan een woning ouder dan twee jaar, zoals schilderen, stukadoren en isoleren."),
             ("Kan ik ook zakelijk aanvragen, bijvoorbeeld voor een VvE?",
              f"Ja. VvE's, verhuurders en bedrijven in {p['naam']} volgen dezelfde route. Kies bij de eerste vraag voor zakelijk, dan komt je aanvraag bij bedrijven terecht die zulke projecten aankunnen."),
-        ]
+        ] + lokale_faq(p)
         faq_html, faq_ld = faq_blok(faqs, f"Veelgestelde vragen over badkamers in {p['naam']}")
 
         svc_ld = {
@@ -729,7 +707,7 @@ def build_plaats_dienst_pages():
                  f"Reken in {p['naam']} op {eur(p_van)} tot {eur(p_tot)} {d['prijs_eenheid']}{incl(d)}."),
                 (f"Werken jullie bedrijven ook in {p['naam']}?",
                  f"Ja. We koppelen je aan bedrijven die {p['naam']} in hun werkgebied hebben staan, zodat je geen onnodige voorrijkosten betaalt."),
-            ]
+            ] + lokale_dienst_faq(d, p)
             faq_html, faq_ld = faq_blok(faqs, f"Vragen over {d['naam'].lower()} in {p['naam']}")
 
             andere = f"""<section class="section soft"><div class="wrap">
@@ -1282,6 +1260,10 @@ def build_assets():
     pdfjs = os.path.join(ROOT, "vendor", "pdfjs")
     if os.path.isdir(pdfjs):
         shutil.copytree(pdfjs, os.path.join(OUT, "assets", "vendor", "pdfjs"))
+    # three.js voor de 3D-badkamer (pas geladen na een klik op "Start 3D")
+    three = os.path.join(ROOT, "vendor", "three")
+    if os.path.isdir(three):
+        shutil.copytree(three, os.path.join(OUT, "assets", "vendor", "three"))
 
     fotos = os.path.join(ROOT, "fotos")
     if os.path.isdir(fotos) and os.listdir(fotos):
@@ -1333,7 +1315,8 @@ import importlib
 
 CONTENT_MODULES = ["badkamer_kosten", "badkamer_kennis", "badkamer_spullen", "badkamer_spullen2", "badkamer_inspiratie", "badkamer_inspiratie2", "badkamer_verdienmodel", "badkamer_verloop", "badkamer_materialen", "badkamer_doelgroep", "badkamer_voorna"]
 TOOL_MODULES = ["badkamer_offertecheck", "badkamer_calculator", "badkamer_check",
-                "badkamer_stijl", "badkamer_planner", "badkamer_indeling"]
+                "badkamer_stijl", "badkamer_planner", "badkamer_indeling",
+                "badkamer_tegelpatroon", "badkamer_waterverbruik", "badkamer_3d"]
 
 
 def _laad(namen):
@@ -1396,6 +1379,8 @@ def main():
     build_tools_index()
     build_assets()
     build_sitemap()
+    import seo_extra  # seo-ronde 5: schema, gerelateerde pagina's, snelheid
+    seo_extra.nabewerken()
 
     print(f"✓ {len(URLS)} indexeerbare pagina's gegenereerd in {OUT}")
     print(f"  {len(PLAATSEN)} plaatsen, {len(DIENSTEN)} diensten")

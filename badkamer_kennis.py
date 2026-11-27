@@ -16,8 +16,29 @@ from components import page, crumbs, faq_blok, cta_blok, cta_midden, stappen_blo
 from badkamer_kennis_artikelen import ARTIKELEN as _ARTIKELEN1
 from badkamer_kennis_artikelen2 import ARTIKELEN2
 from badkamer_kennis_artikelen3 import ARTIKELEN3
+from badkamer_kennis_artikelen4 import ARTIKELEN4, VERDIEPING
 
-ARTIKELEN = _ARTIKELEN1 + ARTIKELEN2 + ARTIKELEN3
+ARTIKELEN = _ARTIKELEN1 + ARTIKELEN2 + ARTIKELEN3 + ARTIKELEN4
+
+
+def _verdiep(artikelen, verdieping):
+    """Past de verdieping uit ronde 5 toe: secties vervangen of toevoegen, en FAQ, bronnen en links aanvullen."""
+    per_slug = {a["slug"]: a for a in artikelen}
+    for slug, v in verdieping.items():
+        a = per_slug[slug]
+        vervang = v.get("vervang", {})
+        secties = [(sid, *vervang[sid]) if sid in vervang else (sid, kop, h) for sid, kop, h in a["secties"]]
+        a["secties"] = secties + list(v.get("secties", []))
+        a["faq"] = list(a["faq"]) + list(v.get("faq", []))
+        a["bronnen"] = list(a["bronnen"]) + [b for b in v.get("bronnen", []) if b not in a["bronnen"]]
+        a["gerelateerd"] = list(a["gerelateerd"]) + [g for g in v.get("gerelateerd", []) if g not in a["gerelateerd"]]
+        a["extra"] = list(a.get("extra", [])) + list(v.get("extra", []))
+        for sleutel in ("titel", "seo_titel", "description", "kort_antwoord", "stappen", "stappen_kop"):
+            if sleutel in v:
+                a[sleutel] = v[sleutel]
+
+
+_verdiep(ARTIKELEN, VERDIEPING)
 
 GEPUBLICEERD = "2026-11-23"
 
@@ -26,7 +47,7 @@ THEMAS = [
     ("Plannen en regels", "form", "Wat je regelt voordat de sloop begint: volgorde, VvE, asbest en garantie."),
     ("Wonen en situatie", "house", "Je woonsituatie telt mee: huren, ouder worden in je huis of een badkamer op zolder."),
     ("Techniek en vocht", "druppel", "Waterdicht maken, ventileren, schimmel, lekkage, kalk en verwarming."),
-    ("Ontwerp en materialen", "tegels", "Tegels, microcement, indeling en stijl: keuzes die je elke dag ziet."),
+    ("Ontwerp en materialen", "tegels", "Tegels, vloer, plafond, microcement, indeling en stijl: keuzes die je elke dag ziet."),
 ]
 
 # Titels van de kostenpagina's (module badkamer_kosten.py van een andere agent; alleen de URL's)
@@ -45,6 +66,13 @@ KOSTEN_TITELS = {
 # niet in de lijst op het overzicht.
 KOSTEN_TITELS_EXTRA = {
     "badkamer-op-zolder": "Wat kost een badkamer op zolder?",
+    # ronde 5 (kennisbank-verdieping)
+    "badkamer-opknappen": "Wat kost een badkamer opknappen?",
+    "badkamer-ventilatie": "Wat kost ventilatie in de badkamer?",
+    "kleine-badkamer": "Wat kost een kleine badkamer?",
+    "douche-vervangen": "Wat kost een douche vervangen?",
+    "toilet-verplaatsen": "Wat kost een toilet verplaatsen?",
+    "bad-vervangen-door-douche": "Wat kost het om een bad te vervangen door een douche?",
 }
 
 TOOLS = {
