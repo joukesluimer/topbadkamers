@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · voor en na · toiletruimte</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","three/examples/jsm/postprocessing/Pass":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/Pass.js","three/examples/jsm/postprocessing/Pass.js":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/Pass.js","three-mesh-bvh":"https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.7.6/src/index.js","three-gpu-pathtracer":"https://cdn.jsdelivr.net/npm/three-gpu-pathtracer@0.0.23/src/index.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './b5-common.js';
+import * as P from './b7-common.js';
+const { THREE } = C;
+C.pageStyle();
+
+// Toiletruimte van 1,0 x 1,6 m. ?v=voor: staand toilet met duoblok, bruine tegels tot 1,5 m met sierstrook,
+// geel behang erboven, klein beige fonteintje. ?v=na: hangtoilet in een voorzetwand met groene tegels,
+// fontein op een eiken plank, ronde spiegel. Camera en afmetingen in beide versies gelijk.
+const V = new URLSearchParams(location.search).get('v') === 'na' ? 'na' : 'voor';
+const room = { w: 1.0, d: 1.6, h: 2.5 };
+const { renderer, scene, camera } = C.setup({ exposure: 0.9, fov: 66 });
+const fz = 1.05; // plek fontein aan de linkerwand
+
+if (V === 'voor') {
+  const bruin = C.tileMaterial({ pattern: 'grid', tw: 0.15, th: 0.15, joint: 0.003, base: '#8a5a38', varL: 0.04, grout: '#e3dccd', gloss: 0.12, seed: 521, periodX: 0.9, periodY: 0.9, bevel: 2.5, surface: C.DECOR.vlek('60,35,15'), clearcoat: 0.7, normalScale: 0.7 });
+  const decor = C.tileMaterial({ pattern: 'grid', tw: 0.15, th: 0.15, joint: 0.003, base: '#e2d2ae', varL: 0.01, grout: '#e3dccd', gloss: 0.14, seed: 522, periodX: 0.6, periodY: 0.3, bevel: 2.5, surface: C.DECOR.ruit('#8a5a38'), clearcoat: 0.6 });
+  const vloer = C.tileMaterial({ pattern: 'grid', tw: 0.2, th: 0.2, joint: 0.004, base: '#5e3d2a', varL: 0.04, grout: '#3f3229', gloss: 0.4, seed: 523, periodX: 1.0, periodY: 1.0, bevel: 2, speck: 0.06 });
+  // behang: zacht geel met een fijn streepje
+  const N = 256, cv = document.createElement('canvas'); cv.width = cv.height = N; const x = cv.getContext('2d');
+  x.fillStyle = '#eadcb4'; x.fillRect(0, 0, N, N);
+  for (let i = 0; i < 8; i++) { x.fillStyle = 'rgba(160,120,60,0.18)'; x.fillRect(i * 32 + 4, 0, 3, N); x.fillStyle = 'rgba(255,255,255,0.25)'; x.fillRect(i * 32 + 14, 0, 8, N); }
+  const bt = new THREE.CanvasTexture(cv); bt.colorSpace = THREE.SRGBColorSpace; bt.wrapS = bt.wrapT = THREE.RepeatWrapping; bt.repeat.set(1 / 0.25, 1 / 0.25);
+  const behang = new THREE.MeshStandardMaterial({ map: bt, roughness: 0.9, envMapIntensity: 0.4 });
+  const plafond = C.plasterMaterial('#efe8d6', { cloud: 0.03 });
+  C.floorCeil(scene, room, vloer, plafond);
+  C.wall(scene, room, 'back', bruin, behang, 1.5, []);
+  C.wall(scene, room, 'left', bruin, behang, 1.5, []);
+  C.wall(scene, room, 'right', bruin, behang, 1.5, []);
+  scene.add(C.boxMM(0, 1.2, 0, room.w, 1.35, 0.004, decor));
+  scene.add(C.boxMM(0, 1.2, 0, 0.004, 1.35, room.d, decor));
+  scene.add(C.boxMM(room.w - 0.004, 1.2, 0, room.w, 1.35, room.d, decor));
+  // houten afwerklat boven de tegels
+  const grenen = C.woodMaterial({ base: '#c08a52', seed: 524, size: 0.5, roughness: 0.5 });
+  scene.add(C.boxMM(0, 1.5, 0, room.w, 1.53, 0.02, grenen));
+  scene.add(C.boxMM(0, 1.5, 0, 0.02, 1.53, room.d, grenen));
+  scene.add(C.boxMM(room.w - 0.02, 1.5, 0, room.w, 1.53, room.d, grenen));
+  // staand toilet met duoblok in bahamabeige, zichtbare aanvoerleiding
+  const wc = C.oldToilet(C.oldCeramic(C.OUD.bahama), C.matteMaterial('#d2b88c', 0.35)); wc.position.set(0.5, 0, 0); scene.add(wc);
+  const chroom = C.metalMaterial('chroom');
+  scene.add(C.tube([[0.82, 0.12, 0.03], [0.82, 0.6, 0.03], [0.78, 0.66, 0.05], [0.71, 0.68, 0.08]], 0.008, chroom));
+  scene.add(C.cyl(0.02, 0.02, 0.05, chroom, 0.82, 0.25, 0.04, 16));
+  // klein fonteintje met één kraan
+  const ft = C.fontein('oud', C.oldCeramic(C.OUD.bahama), { w: 0.34, d: 0.22, top: 0.85 }); ft.rotation.y = Math.PI / 2; ft.position.set(0, 0, fz); scene.add(ft);
+  const kr = C.tap('laag', 'chroom', 0, 0.85, 0.035, 0.1); kr.rotation.y = Math.PI / 2; kr.position.set(0, 0, fz); scene.add(kr);
+  scene.add(C.tube([[0.04, 0.72, fz], [0.04, 0.45, fz], [0.02, 0.4, fz]], 0.012, chroom));
+  // rolhouder, luchtverfrisser en een plafondlamp
+  scene.add(C.rolHouder('chroom', room.w, 0.75, 0.55, -Math.PI / 2));
+  scene.add(C.bottle(C.matteMaterial('#7fb07a', 0.3), 0.22, 0.81, 0.1, 0.17, 0.03));
+  scene.add(C.rbox(0.5, 0.012, 0.35, 0.02, C.fabricMaterial('#b77b4a'), 0.5, 0.006, 0.82));
+  C.bolLamp(scene, 0.5, 0.9, room.h, '#ffd8a0', 2.0);
+  scene.add(new THREE.HemisphereLight('#f4ecd8', '#5e4a38', 0.35));
+} else {
+  const groen = C.tileMaterial({ pattern: 'grid', tw: 0.075, th: 0.3, joint: 0.002, base: '#3f5d4c', varL: 0.04, grout: '#aab3a8', gloss: 0.08, seed: 531, periodX: 0.6, periodY: 1.2, bevel: 2, clearcoat: 1, normalScale: 0.8, wobble: 0.15 });
+  const verf = C.plasterMaterial('#efebe4', { cloud: 0.02 });
+  const vloer = C.tileMaterial({ pattern: 'grid', tw: 0.6, th: 0.6, joint: 0.002, base: '#d9d2c6', varL: 0.01, grout: '#c7c0b3', gloss: 0.3, seed: 533, surface: C.SURF.terrazzo(['#8b8070', '#b9ab95', '#6f6a63', '#f2eee7']), periodX: 1.2, periodY: 1.2, normalScale: 0.4 });
+  const plafond = C.plasterMaterial('#f4f3f0', { cloud: 0.015 });
+  C.floorCeil(scene, room, vloer, plafond);
+  C.wall(scene, room, 'back', groen, groen, room.h, []);
+  C.wall(scene, room, 'left', verf, verf, room.h, []);
+  C.wall(scene, room, 'right', verf, verf, room.h, []);
+  // voorzetwand met inbouwreservoir, betegeld, met plank erop
+  scene.add(C.boxMM(0, 0, 0, room.w, 1.15, 0.2, groen));
+  const eiken = C.woodMaterial({ base: '#b88c5e', seed: 534, size: 0.6, contrast: 0.18, roughness: 0.5 });
+  scene.add(C.boxMM(0, 1.15, 0, room.w, 1.18, 0.22, eiken));
+  const wc = C.toilet(); wc.position.set(0.5, 0, 0.2); scene.add(wc);
+  scene.add(C.flushPlate('zwart', 0.5, 0.98, 0.2));
+  scene.add(C.plant(0.2, 0.1, { y: 1.18, potH: 0.14, potR: 0.07, h: 0.35, leaves: 9, potMat: C.matteMaterial('#c9b9a3', 0.8) }));
+  scene.add(C.bottle(C.matteMaterial('#2b2b2b', 0.3), 0.82, 1.18, 0.1, 0.16, 0.03, C.metalMaterial('zwart')));
+  // fontein als strak blok op een eiken plank, zwarte wandkraan, ronde spiegel
+  const ft = C.fontein('blok', C.CERAMIC(), { w: 0.4, d: 0.22, top: 0.86, h: 0.1, blad: eiken }); ft.rotation.y = Math.PI / 2; ft.position.set(0, 0, fz); scene.add(ft);
+  const kr = C.tap('wand', 'zwart', 0, 0.82, 0, 0.14); kr.rotation.y = Math.PI / 2; kr.position.set(0, 0, fz); scene.add(kr);
+  const sp = C.mirror(0.42, 0.42, 'rond', C.metalMaterial('zwart'), 0.012); sp.rotation.y = Math.PI / 2; sp.position.set(0, 1.45, fz); scene.add(sp);
+  scene.add(C.rolHouder('zwart', room.w, 0.75, 0.55, -Math.PI / 2));
+  C.sconce(scene, 'zwart', 0.0, 1.95, fz, '#ffd2a0', 0.6, Math.PI / 2);
+  C.spot(scene, 0.5, 0.35, room.h, C.KELVIN.neutraal, 4, { shadow: true, angle: 0.8 });
+  C.spot(scene, 0.5, 1.1, room.h, C.KELVIN.neutraal, 3, { shadow: true, angle: 0.9 });
+  scene.add(new THREE.HemisphereLight('#f2f4f6', '#6a6a68', 0.3));
+}
+
+C.archCamera(camera, [0.5, 1.25, 2.08], [0.5, 0, 0], -0.22);
+await P.pathTrace(renderer, scene, camera, `b5-toiletruimte-${V}`, { exposure: 0.9, envIntensity: 0.5 });
+</script>
+</body>
+</html>

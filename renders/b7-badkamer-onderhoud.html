@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · badkamer onderhoud</title>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/","three/examples/jsm/postprocessing/Pass":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/Pass.js","three/examples/jsm/postprocessing/Pass.js":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/Pass.js","three-mesh-bvh":"https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.7.6/src/index.js","three-gpu-pathtracer":"https://cdn.jsdelivr.net/npm/three-gpu-pathtracer@0.0.23/src/index.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './bd-common.js';
+import * as P from './b7-common.js';
+const { THREE, MAT } = C;
+C.pageStyle();
+
+// Badkamer onderhoud: close-up van een douchehoek met strakke kitranden in de hoek
+// en langs de vloer, en schone voegen tussen wand- en vloertegels.
+const { renderer, scene, camera } = C.setup({ exposure: 0.76 });
+const W = 1.6, D = 1.6, H = 2.5;
+
+const wallTile = C.tileMaterial({ tile: [0.2, 0.2], grout: 0.003, color: '#f2f1ed', groutColor: '#cfccc4', surface: 'glossy', nx: 6, ny: 6, ppm: 1600, seed: 71, varL: 0.012, tilt: 0.005, clearcoat: 0.45 });
+const floorTile = C.tileMaterial({ tile: [0.15, 0.15], grout: 0.0035, color: '#8e8c88', groutColor: '#6e6c68', surface: 'concrete', nx: 8, ny: 8, ppm: 1600, seed: 72, varL: 0.03, tilt: 0.002 });
+const plaster = C.plasterMaterial('#f2f0ec');
+
+const R = C.room(scene, {
+  W, D, H,
+  walls: { back: wallTile, left: wallTile, right: wallTile, front: wallTile },
+  floor: floorTile, ceil: plaster,
+  windows: [{ wall: 'right', a0: 0.5, a1: 1.3, y0: 1.2, y1: 2.1, frame: '#f2f2f0', glow: 5 }],
+});
+
+// kitranden: verticale hoek en langs de vloer (licht grijs, satijnglans)
+const kit = MAT.sealant('#dddbd5');
+scene.add(C.sealBead(1.95, 0.0085, kit, 'y'));
+scene.add(C.sealBead(D, 0.0085, kit, 'z'));
+scene.add(C.sealBead(W, 0.0085, kit, 'x'));
+
+// douchegoot langs de achterwand, deels in beeld
+const drain = C.linearDrain(0.9);
+drain.position.set(0.55, 0, 0.09);
+scene.add(drain);
+// kitrand rond de goot is niet nodig; wel een strak afgewerkte rand van de vloertegels
+// hoekplanchet met twee flessen
+const chrome = MAT.chrome();
+const shelfShape = new THREE.Shape();
+shelfShape.moveTo(0, 0); shelfShape.lineTo(0.24, 0); shelfShape.absarc(0, 0, 0.24, 0, Math.PI / 2, false); shelfShape.lineTo(0, 0);
+const shelfGeo = new THREE.ExtrudeGeometry(shelfShape, { depth: 0.008, bevelEnabled: true, bevelThickness: 0.002, bevelSize: 0.002, bevelSegments: 2, curveSegments: 32 });
+shelfGeo.rotateX(Math.PI / 2);
+const shelf = new THREE.Mesh(shelfGeo, chrome);
+shelf.position.set(0.004, 0.5, 0.004);
+shelf.castShadow = true; shelf.receiveShadow = true;
+scene.add(shelf);
+scene.add(C.cyl(0.03, 0.2, MAT.plastic('#f1ece2'), 0.07, 0.5 + 0.1, 0.12));
+scene.add(C.cyl(0.012, 0.02, MAT.plastic('#3b4743'), 0.07, 0.5 + 0.21, 0.12));
+scene.add(C.cyl(0.026, 0.16, MAT.plastic('#8fa69c'), 0.15, 0.5 + 0.08, 0.06));
+
+// thermostaatkraan op de linkerwand, net in beeld
+const mix = C.showerSet(chrome, { headH: 2.1, arm: 0.3, mixerH: 1.05, hand: false });
+mix.rotation.y = Math.PI / 2;
+mix.position.set(0, 0, 0.95);
+scene.add(mix);
+
+C.downlight(scene, 0.55, 0.6, H, { intensity: 2.2 });
+C.autoLights(scene, R, { window: 13, bounce: 5, colors: { floor: '#a3a19c' } });
+
+C.lookCamera(camera, [0.78, 0.78, 0.85], [0.07, 0.3, 0.07], 42);
+await P.pathTrace(renderer, scene, camera, 'bd-badkamer-onderhoud', { windows: R.windows.map((w) => ({ ...w, intensity: 14 })), exposure: 0.8 });
+</script>
+</body>
+</html>

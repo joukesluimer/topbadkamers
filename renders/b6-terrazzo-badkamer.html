@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Render · terrazzo badkamer (path traced)</title>
+<script type="importmap">{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+  "three/examples/jsm/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+  "three-mesh-bvh":"https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.7.8/src/index.js",
+  "three-gpu-pathtracer":"https://cdn.jsdelivr.net/npm/three-gpu-pathtracer@0.0.23/src/index.js"
+}}</script>
+</head>
+<body>
+<script type="module">
+import * as C from './b6-terrazzo-common.js';
+const { THREE } = C;
+C.pageStyle();
+
+// Terrazzo met mate: een gepolijste terrazzovloer in grote tegels en een terrazzo wastafelblad met spatrand,
+// tegen rustige, warmgrijze microcementwanden. Eiken meubel, gedempte terracotta kom, messing kranen.
+// Gerenderd met path tracing: echte reflecties in spiegel en glas, zacht raamlicht, warme spots.
+const room = { w: 3.2, d: 3.6, h: 2.6 };
+const { renderer, scene, camera } = C.setup({ fov: 52 });
+
+// rustige cementbasis met weinig, grotere en hoekige korrels in gedempte tinten
+const KORRELS = [['#a59d92', 20], ['#8c8178', 12], ['#d3c3ad', 14], ['#c49a88', 12], ['#a87060', 7], ['#9aa08e', 7], ['#4a4643', 5], ['#f3efe7', 8]];
+const vloer = C.terrazzoMaterial({ period: 1.8, tile: 0.6, joint: 0.0018, base: '#e5dfd5', cover: 0.12, seed: 61, roughness: 0.32, clearcoat: 0.3,
+  chips: KORRELS, dmin: 7, dmax: 42, skew: 1.5, sand: 6000 });
+const blad = C.terrazzoMaterial({ period: 1.2, tile: null, base: '#e8e2d8', cover: 0.12, seed: 62, roughness: 0.22, clearcoat: 0.45,
+  chips: KORRELS, dmin: 6, dmax: 30, skew: 1.5, sand: 6000 });
+const wandMat = C.microcementMaterial('#d8cec2', { seed: 31, cloud: 0.05, rough: 0.82 });
+const plafond = C.plasterMaterial('#f2efea', { cloud: 0.01, roughness: 0.95 });
+const eiken = C.woodMaterial({ base: '#c29a70', seed: 63, size: 0.9, contrast: 0.12, roughness: 0.5 });
+const terracotta = C.matteMaterial('#a86a52', 0.72);
+
+C.floorCeil(scene, room, vloer, plafond);
+const raam = { u0: 1.5, u1: 2.5, v0: 1.25, v1: 2.3 };
+const nis = { u0: 0.22, u1: 0.82, v0: 1.05, v1: 1.4 };
+C.wall(scene, room, 'back', wandMat, wandMat, room.h, [nis]);
+C.wall(scene, room, 'left', wandMat, wandMat, room.h, [raam]);
+C.wall(scene, room, 'right', wandMat, wandMat, room.h, []);
+C.frontWall(scene, room, wandMat);
+C.niche(scene, nis, blad, 0.09);
+C.daylightWindow(scene, room, raam, { frameMat: C.matteMaterial('#ece8e1', 0.45), reveal: wandMat, sill: blad, intensity: 40, sun: 2.5, sunDir: [-1.0, 0.75, 0.55] });
+
+// terrazzo plint (8 cm) buiten de douche
+const plint = (x0, z0, x1, z1) => scene.add(C.boxMM(x0, 0, z0, x1, 0.08, z1, vloer));
+plint(1.03, 0, room.w, 0.012);
+plint(room.w - 0.012, 0, room.w, room.d);
+plint(0, 1.0, 0.012, room.d);
+
+scene.add(C.shower('messing', 0.52, room.h, { armY: 2.15, reach: 0.4, headR: 0.15, mixY: 1.0, handX: 0.32 }));
+scene.add(C.drain(0.52, 0.1, 0.8, 'messing'));
+const glas = C.glassPanel({ len: 1.0, h: 2.0, wallProfile: C.metalMaterial('messing'), stab: C.metalMaterial('messing'), stabLen: 1.02 });
+glas.position.set(1.02, 0, 0); scene.add(glas);
+scene.add(C.bottle(C.matteMaterial('#ece4d9', 0.45), 0.4, 1.05, -0.045, 0.16, 0.028));
+scene.add(C.bottle(C.matteMaterial('#9c6a55', 0.45), 0.5, 1.05, -0.045, 0.13, 0.026));
+
+const mx = 2.05;
+const meubel = C.vanity({ type: 'zwevend', w: 1.1, d: 0.46, h: 0.36, top: 0.86, mat: eiken, blad, bladT: 0.045, sink: 'opzet', bowlR: 0.2, bowlShape: 'rond', bowlScale: [1.0, 0.85], bowlMat: terracotta, drawers: 1, handle: C.metalMaterial('messing') });
+meubel.position.set(mx, 0, 0); scene.add(meubel);
+// spatrand van terrazzo achter het blad
+scene.add(C.boxMM(mx - 0.55, 0.86, 0, mx + 0.55, 0.98, 0.02, blad));
+scene.add(C.tap('wand', 'messing', mx, 0.86, 0, 0.19));
+const sp = C.mirror(0.7, 0.7, 'rond', C.metalMaterial('messing'), 0.012); sp.position.set(mx, 1.66, 0); scene.add(sp);
+C.sconce(scene, 'messing', mx + 0.56, 1.66, 0, C.KELVIN.warm, 0.6);
+scene.add(C.bottle(C.matteMaterial('#e6ddd2', 0.5), mx + 0.38, 0.86, 0.14, 0.12, 0.033));
+scene.add(C.stool(eiken, 2.85, 0.85, 0.45, 0.16));
+scene.add(C.towelStack([C.fabricMaterial('#cfae9c'), C.fabricMaterial('#ece6dc')], 2.85, 0.45, 0.85, 0.26, 0.2));
+scene.add(C.plant(2.92, 0.3, { potMat: terracotta, h: 0.65, seed: 64, potR: 0.14, potH: 0.32 }));
+const wc = C.toilet(); wc.rotation.y = Math.PI / 2; wc.position.set(0, 0, 2.0); scene.add(wc);
+const plate = C.flushPlate('messing', 0, 1.05, 0); plate.rotation.y = Math.PI / 2; plate.position.set(0, 0, 2.0); scene.add(plate);
+// handdoekrek op de voorwand (zichtbaar in de spiegel)
+scene.add(C.towelRail('messing', 2.3, 0.5, 0.5, 1.1, 7).rotateY(Math.PI));
+scene.children[scene.children.length - 1].position.set(4.6, 0, room.d);
+
+const warm = C.KELVIN.warm;
+C.spot(scene, 0.52, 0.4, room.h, warm, 4.5, { angle: 0.8, shadow: true });
+C.spot(scene, mx, 0.35, room.h, warm, 4, { angle: 0.8, shadow: true });
+C.spot(scene, 1.6, 2.0, room.h, warm, 3, { angle: 0.9 });
+
+if (C.VIEW === 2) C.viewCamera(camera, [1.72, 1.32, 1.65], [2.05, 0, 0], -0.07, 44);
+else C.viewCamera(camera, [2.88, 1.4, 3.42], [0.95, 0, 0.25], -0.03, 52);
+if (!C.PT) scene.add(new THREE.HemisphereLight('#f4eee6', '#7a6a5e', 0.25));
+await C.finishAny(renderer, scene, camera, `b4-terrazzo-badkamer-${C.VIEW}`, {
+  pt: { exposure: 1.0, spp: 256 },
+  raster: { exposure: 0.92, aoRadius: 0.35, aoIntensity: 1.25, envScale: 0.8, vignette: 0.26 },
+});
+</script>
+</body>
+</html>
